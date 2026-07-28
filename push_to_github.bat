@@ -31,7 +31,8 @@ git commit -m "Upload full program Klinik Komputer %date% %time%"
 
 echo.
 echo [4/4] Pushing to GitHub (main branch)...
-git push -u origin main
+git pull origin main --rebase >nul 2>&1
+git push -u origin main --force
 
 echo.
 echo ========================================================
