@@ -164,6 +164,18 @@ h3 {
     background: var(--primary-dark);
 }
 
+.btn-online-shop {
+    background: transparent;
+    border: 1px solid var(--text-primary);
+    color: var(--text-primary);
+}
+
+.btn-online-shop:hover {
+    background: #03ac0e;
+    border-color: #03ac0e;
+    color: var(--white);
+}
+
 .btn-accent {
     background: var(--accent);
     color: var(--white);
@@ -556,6 +568,20 @@ tbody tr:last-child {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+.nav-actions .btn {
+    min-width: 76px;
+    height: 33px;
+    padding: 0 14px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
 }
 
 .nav-mobile-btn {

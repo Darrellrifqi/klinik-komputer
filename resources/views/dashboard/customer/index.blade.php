@@ -1,8 +1,10 @@
 @extends('layouts.dashboard')
 @php
     $schoolKits  = $kits->where('is_regular', false);
+    $regularKits = $kits->where('is_regular', true);
+
     $isPengadaan = $schoolKits->isNotEmpty();
-    $isUmum      = !$isPengadaan && (auth()->user()->nik != null || auth()->user()->status === 'active');
+    $isUmum      = !$isPengadaan && ($regularKits->isNotEmpty() || !empty(auth()->user()->nik));
     
     if ($isPengadaan) {
         $titleName = 'Dashboard Member Pengadaan';
@@ -41,10 +43,6 @@
 <a href="{{ route('home') }}">
     <span class="nav-icon">Beranda</span>
 </a>
-@endsection
-
-@section('topbar_actions')
-<a href="{{ route('service.booking') }}" class="btn btn-primary btn-sm">Booking Baru</a>
 @endsection
 
 @section('content')
@@ -87,7 +85,7 @@
             <div class="stat-label">Laptop Perakitan</div>
         </div>
     </div>
-    @else
+    @elseif($isUmum)
     <div class="stat-card">
         <div class="stat-icon green">
             <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -96,8 +94,21 @@
             </svg>
         </div>
         <div class="stat-info">
-            <div class="stat-num" style="font-size: 0.88rem; font-family: monospace;">{{ auth()->user()->nik ?? 'MEMBER' }}</div>
+            <div class="stat-num" style="font-size: 0.88rem; font-family: monospace;">{{ auth()->user()->nik ?: 'MEMBER' }}</div>
             <div class="stat-label">Member Mandiri / Umum</div>
+        </div>
+    </div>
+    @else
+    <div class="stat-card">
+        <div class="stat-icon blue">
+            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+        </div>
+        <div class="stat-info">
+            <div class="stat-num" style="font-size: 0.88rem; font-family: sans-serif;">Pelanggan</div>
+            <div class="stat-label">Akun Customer</div>
         </div>
     </div>
     @endif
@@ -118,27 +129,30 @@
     {{-- Header --}}
     <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-top: 4px;">
         <div>
-            <div style="display: flex; align-items: center; gap: 7px; margin-bottom: 3px;">
-                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="8" r="6"></circle><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"></path>
-                </svg>
-                <span style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary);">
-                    Benefit {{ $isPengadaan ? 'Member Pengadaan' : 'Member Umum' }}
-                </span>
+            <div style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 2px;">
+                {{ $isPengadaan ? 'BENEFIT LAPTOP ACP / PENGADAAN' : 'BENEFIT MEMBER UMUM' }}
             </div>
-            <div style="font-size: 0.95rem; font-weight: 800; color: var(--text-primary); line-height: 1.2;">Gratis Tune-Up Unit</div>
-            <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px;">Periode {{ $tuneUpResetDate->copy()->subYear()->format('d M Y') }} – {{ $tuneUpResetDate->format('d M Y') }}</div>
+            <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); margin: 0 0 2px 0;">
+                Gratis Tune-Up Unit
+            </h4>
+            <div style="font-size: 0.73rem; color: var(--text-muted);">
+                Periode {{ $tuneUpResetDate->copy()->subYear()->format('d M Y') }} &ndash; {{ $tuneUpResetDate->format('d M Y') }}
+            </div>
         </div>
+
+        {{-- Progress Counter Badge --}}
         <div style="text-align: right;">
-            <div style="font-family: monospace; font-size: 2rem; font-weight: 900; line-height: 1; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--primary)' }};">{{ $tuneUpCount }}<span style="font-size: 1rem; font-weight: 400; color: var(--text-muted);">/2</span></div>
-            <div style="font-size: 0.65rem; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--text-muted)' }}; margin-top: 2px; font-weight: 600;">
-                {{ $tuneQuotaFull ? 'Kuota habis' : ($tuneUpCount == 0 ? 'Belum digunakan' : 'Sisa 1x lagi') }}
+            <div style="font-size: 1.25rem; font-weight: 900; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--primary)' }}; line-height: 1;">
+                {{ $tuneUpCount }}<span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">/2</span>
+            </div>
+            <div style="font-size: 0.65rem; font-weight: 600; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--text-muted)' }}; margin-top: 2px;">
+                {{ $tuneQuotaFull ? 'Kuota Habis' : ($tuneUpCount === 1 ? 'Tersisa 1x' : 'Belum digunakan') }}
             </div>
         </div>
     </div>
 
-    {{-- Game-style milestone slots --}}
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px;">
+    {{-- 2 Quota Slot Cards --}}
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
 
         {{-- Slot 1 --}}
         <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $slot1Done ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $slot1Done ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
@@ -185,36 +199,28 @@
         </div>
     </div>
 
-    {{-- XP-style progress bar --}}
-    <div style="background: var(--bg-alt); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; display:flex; align-items:center; gap:14px;">
-        <div style="flex:1;">
-            <div style="width:100%; height:8px; background: var(--border-light); border-radius:99px; overflow:hidden; position:relative;">
-                <div style="width: {{ min(100, ($tuneUpCount/2)*100) }}%; height:100%; background: {{ $tuneQuotaFull ? 'linear-gradient(90deg,#f87171,#dc2626)' : 'linear-gradient(90deg, var(--primary), #86efac)' }}; border-radius:99px; transition: width 0.8s cubic-bezier(0.34,1.56,0.64,1);"></div>
-                {{-- Midpoint marker --}}
-                <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:2px; height:100%; background: rgba(0,0,0,0.12);"></div>
-            </div>
-            <div style="display:flex; justify-content:space-between; margin-top:4px; font-size:0.62rem; color:var(--text-muted);">
-                <span>0</span><span>1</span><span>2</span>
-            </div>
-        </div>
-        <div style="font-size: 0.7rem; color: var(--text-muted); white-space:nowrap; text-align:right;">
-            Reset pada<br><strong style="color: var(--text-secondary);">{{ $tuneUpResetDate->format('d M Y') }}</strong>
-        </div>
-    </div>
-
     @if($tuneQuotaFull)
     <div style="margin-top: 10px; text-align:center; font-size: 0.72rem; color: #dc2626; font-weight: 700; padding: 6px 10px; background: rgba(220,38,38,0.05); border-radius: 6px; border: 1px solid rgba(220,38,38,0.15);">
         ⚠ Kuota Tune-Up Gratis periode ini telah habis — Tune-Up selanjutnya berbayar
     </div>
     @endif
 </div>
-
-<style>
-@keyframes shimmer-light {
-    0%   { left: -100%; }
-    100% { left: 200%; }
-}
-</style>
+@else
+<div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+    <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; background: rgba(95, 138, 99, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+        </div>
+        <div>
+            <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">Ingin Menjadi Member Umum Klinik Komputer?</div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary);">Dapatkan benefit 2x Tune-Up unit gratis per tahun. Silakan datang langsung ke kantor atau hubungi CS via WhatsApp.</div>
+        </div>
+    </div>
+    <a href="https://wa.me/6285103051000?text=Halo%20Klinik%20Komputer,%20saya%20tertarik%20menjadi%20Member%20Umum" target="_blank" class="btn btn-primary btn-sm" style="padding: 7px 16px; font-weight: 700; font-size: 0.76rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+        Tanya via WA
+    </a>
+</div>
 @endif
 
 <!-- Laptop Perakitan Sekolah (Khusus Member Pengadaan) -->

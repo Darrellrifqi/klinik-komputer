@@ -81,7 +81,7 @@
 
         <!-- Actions -->
         <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-            <a href="https://wa.me/6281390727420?text=Halo, saya sudah mengisi form pengadaan dengan nomor {{ $order->order_number }} dari {{ $order->school_name }}"
+            <a href="https://wa.me/6285103051000?text=Halo, saya sudah mengisi form pengadaan dengan nomor {{ $order->order_number }} dari {{ $order->school_name }}"
                target="_blank" class="btn btn-primary">Konfirmasi via WhatsApp</a>
             <a href="{{ route('procurement.index') }}?track={{ $order->order_number }}#tracking" class="btn btn-outline">Lacak Status Pengadaan</a>
             <a href="{{ route('procurement.index') }}" class="btn btn-outline">Ajukan Pengadaan Lain</a>
@@ -90,7 +90,7 @@
 
         <div style="margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: 6px; border: 1px solid var(--border); font-size: 0.78rem; color: var(--text-secondary); text-align: left;">
             <strong>Klinik Komputer</strong> — Komplek Ruko Segitiga Emas Kosambi, Jl. A. Yani Blok E8, Kota Bandung<br>
-            WhatsApp: 081390727420 &bull; Jam Kerja: Senin–Jumat 09.00–17.00 WIB, Sabtu 09.00–14.00 WIB
+            WhatsApp: 085103051000 &bull; Jam Kerja: Senin–Jumat 09.00–17.00 WIB, Sabtu 09.00–14.00 WIB
         </div>
     </div>
 </section>

@@ -124,8 +124,15 @@
                             </div>
                         </td>
                         <td style="font-size:0.78rem; color:var(--text-muted);">{{ $ticket->created_at->format('d M Y') }}</td>
-                        <td>
-                            <a href="{{ route('dashboard.cs.show', $ticket) }}" class="btn btn-outline btn-sm">Detail</a>
+                        <td style="white-space: nowrap;">
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <a href="{{ route('dashboard.cs.show', $ticket) }}" class="btn btn-outline btn-sm">Detail</a>
+                                <form action="{{ route('dashboard.cs.tickets.destroy', $ticket) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tiket {{ $ticket->ticket_number }} ini secara permanen dari database?');" style="margin: 0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" style="padding: 4px 8px; font-size: 0.72rem;">Hapus</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @endforeach

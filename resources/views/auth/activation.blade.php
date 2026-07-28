@@ -183,7 +183,7 @@
 
                                     <div style="margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-light); font-size: 0.78rem; color: var(--text-muted); text-align: center; line-height: 1.4;">
                                         Butuh bantuan atau Serial Number tidak valid? Hubungi guru pendamping atau 
-                                        <a href="https://wa.me/6281390727420" target="_blank" style="color: var(--primary); font-weight: 700;">WhatsApp Support</a>.
+                                        <a href="https://wa.me/6285103051000" target="_blank" style="color: var(--primary); font-weight: 700;">WhatsApp Support</a>.
                                     </div>
                                 </div>
 
@@ -191,7 +191,7 @@
                                 <div id="panelRegular" style="display: none;">
                                     <div style="margin-bottom: 22px;">
                                         <h3 style="font-size: 1.15rem; color: var(--text-primary); font-weight: 800; margin-bottom: 6px;">Registrasi Member Mandiri (Umum)</h3>
-                                        <p style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4;">Jika Anda membeli produk Axioo secara mandiri di retail/merchant, daftarkan diri Anda secara manual di bawah ini dengan menyertakan bukti nota pembelian.</p>
+                                        <p style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4;">Daftarkan keanggotaan Member Umum Klinik Komputer untuk mendapatkan benefit 2x Tune-Up gratis per tahun. Pendaftaran keanggotaan dapat dilakukan dengan datang langsung ke kantor Klinik Komputer atau hubungi CS via WhatsApp.</p>
                                     </div>
 
                                     <form action="{{ route('kit.activate.regular') }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 14px;">

@@ -144,12 +144,8 @@
                     </div>
 
                     <!-- Buttons Row -->
-                    <div style="display: flex; gap: 8px; margin-top: 6px;">
-                        <button type="button" class="btn btn-outline btn-sm trigger-modal-btn" style="flex: 1; font-weight: 700; font-size: 0.78rem; border-radius: 8px; padding: 8px;">Detail</button>
-                        <a href="https://wa.me/6281390727420?text=Halo, saya ingin bertanya mengenai laptop {{ urlencode($product->name) }}" target="_blank" class="btn btn-primary btn-sm" style="font-weight: 700; font-size: 0.78rem; border-radius: 8px; padding: 8px 14px;">Tanya WA</a>
-                        @if($product->tokopedia_url)
-                        <a href="{{ $product->tokopedia_url }}" target="_blank" class="btn-online-shop btn-sm" style="padding: 8px 12px; font-weight: 700; font-size: 0.78rem; border-radius: 8px;">Tokopedia</a>
-                        @endif
+                    <div style="margin-top: 6px;">
+                        <button type="button" class="btn btn-primary btn-sm trigger-modal-btn" style="width: 100%; font-weight: 700; font-size: 0.8rem; border-radius: 8px; padding: 10px; justify-content: center; text-align: center;">Lihat Detail</button>
                     </div>
                 </div>
             </div>
@@ -180,7 +176,7 @@
                 @if(request('series'))
                     <a href="{{ route('products') }}" class="btn btn-outline" style="padding: 10px 20px; font-weight: 600;">Lihat Semua Produk</a>
                 @endif
-                <a href="https://wa.me/6281390727420?text={{ urlencode('Halo Klinik Komputer, saya ingin menanyakan ketersediaan stok laptop Axioo') }}" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; padding: 10px 22px;">
+                <a href="https://wa.me/6285103051000?text={{ urlencode('Halo Klinik Komputer, saya ingin menanyakan ketersediaan stok laptop Axioo') }}" target="_blank" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 8px; font-weight: 600; padding: 10px 22px;">
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
                     Tanya via WhatsApp
                 </a>
@@ -307,15 +303,15 @@
                 {{-- Specs populated dynamically by JS --}}
             </div>
 
-            <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px;">
-                <a id="modalWaBtn" href="#" target="_blank" class="btn btn-primary" style="width: 100%; text-align: center; justify-content: center; font-weight: 700; padding: 12px; border-radius: 10px;">
-                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
-                    Tanya Stok & Penawaran via WA
+            <div style="margin-top: auto; display: flex; flex-direction: row; gap: 10px; align-items: center;">
+                <a id="modalWaBtn" href="#" target="_blank" class="btn btn-primary" style="flex: 1; text-align: center; justify-content: center; font-weight: 700; padding: 12px; border-radius: 10px; white-space: nowrap; font-size: 0.84rem;">
+                    <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
+                    Tanya Stok via WA
                 </a>
                 
-                <a id="modalTokopediaBtn" href="#" target="_blank" class="btn-online-shop" style="width: 100%; justify-content: center; text-align: center; font-weight: 700; padding: 12px; border-radius: 10px; display: none;">
+                <a id="modalTokopediaBtn" href="#" target="_blank" class="btn btn-online-shop" style="flex: 1; justify-content: center; text-align: center; font-weight: 700; padding: 12px; border-radius: 10px; display: none; white-space: nowrap; font-size: 0.84rem;">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
-                    Beli di Online Shop (Tokopedia)
+                    Online Shop
                 </a>
             </div>
         </div>
@@ -555,7 +551,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // WA Link
             const waText = `Halo Klinik Komputer, saya berminat dan ingin bertanya lebih lanjut mengenai laptop Axioo: ${product.name} (Harga: ${formattedPrice})`;
-            document.getElementById('modalWaBtn').href = `https://wa.me/6281390727420?text=${encodeURIComponent(waText)}`;
+            document.getElementById('modalWaBtn').href = `https://wa.me/6285103051000?text=${encodeURIComponent(waText)}`;
 
             // Tokopedia / Online Shop Link
             const tokoBtn = document.getElementById('modalTokopediaBtn');

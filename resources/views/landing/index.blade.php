@@ -74,7 +74,7 @@
                     <h1>Layanan E-Katalog</h1>
                     <p>Kami melayani pengadaan laptop berkualitas TKDN tinggi untuk institusi pendidikan, sekolah, dan perkantoran secara aman dan terpercaya.</p>
                     <div class="slide-cta">
-                        <a href="https://wa.me/6281390727420" target="_blank" class="btn btn-primary btn-lg">Hubungi Sales</a>
+                        <a href="https://wa.me/6285103051000" target="_blank" class="btn btn-primary btn-lg">Hubungi Sales</a>
                         <a href="#layanan" class="btn btn-outline btn-lg">Pelajari Layanan</a>
                     </div>
                 </div>
@@ -173,10 +173,29 @@
             </table>
         </div>
         @else
-        <div class="empty-state" style="border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--bg-alt);">
-            <h3>Belum Ada Antrian Aktif</h3>
-            <p>Saat ini tidak ada unit komputer dalam antrian berjalan.</p>
-            <a href="{{ route('service.booking') }}" class="btn btn-primary mt-3">Booking Servis Baru</a>
+        <div style="text-align: center; padding: 48px 24px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; box-shadow: 0 6px 24px rgba(0,0,0,0.03); max-width: 580px; margin: 10px auto 20px auto;">
+            <div style="width: 72px; height: 72px; background: rgba(95, 138, 99, 0.08); border: 1px solid rgba(95, 138, 99, 0.18); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary);">
+                <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 10px 0; letter-spacing: -0.02em;">
+                Belum Ada Antrian Aktif
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
+                Saat ini tidak ada unit komputer dalam antrian pengerjaan. Daftarkan servis Anda secara online untuk langsung mendapatkan nomor antrian digital.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ route('service.booking') }}" class="btn btn-primary" style="padding: 10px 24px; font-weight: 700; font-size: 0.8rem; border-radius: 8px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Booking Servis Baru
+                </a>
+                <a href="{{ route('service.track') }}" class="btn btn-outline" style="padding: 10px 20px; font-weight: 700; font-size: 0.8rem; border-radius: 8px;">
+                    Cek Status Servis
+                </a>
+            </div>
         </div>
         @endif
     </div>
@@ -326,7 +345,7 @@
                         {{ $product->formatted_price }}
                         <small>Harga sewaktu-waktu dapat berubah</small>
                     </div>
-                    <a href="https://wa.me/6281390727420?text=Halo, saya ingin bertanya mengenai laptop {{ urlencode($product->name) }}"
+                    <a href="https://wa.me/6285103051000?text=Halo, saya ingin bertanya mengenai laptop {{ urlencode($product->name) }}"
                        target="_blank" class="btn btn-primary btn-block">Tanya Penawaran</a>
                 </div>
             </div>
@@ -394,7 +413,7 @@
                     </div>
                     <div>
                         <div style="font-weight: 700; font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 4px;">WhatsApp</div>
-                        <a href="https://wa.me/6281390727420" target="_blank" style="color: var(--primary); font-size: 0.95rem; font-weight: 700;">081390727420</a>
+                        <a href="https://wa.me/6285103051000" target="_blank" style="color: var(--primary); font-size: 0.95rem; font-weight: 700;">085103051000</a>
                     </div>
                 </div>
                 <div class="contact-item">

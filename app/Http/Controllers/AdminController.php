@@ -23,6 +23,7 @@ class AdminController extends Controller
             'booking_tickets'     => Ticket::where('status', 'waiting')->count(),
             'active_tickets'      => Ticket::whereIn('status', ['checking', 'checked', 'konfirmasi_user', 'rma', 'proses_service'])->count(),
             'done_tickets'        => Ticket::whereIn('status', ['done', 'siap_diambil'])->count(),
+            'taken_tickets'       => Ticket::whereIn('status', ['sudah_diambil', 'taken'])->count(),
             'total_products'      => Product::count(),
             
             // Procurement Stats
@@ -53,7 +54,8 @@ class AdminController extends Controller
             'checking'   => Ticket::where('status', 'checking')->count(),
             'confirmed'  => Ticket::whereIn('status', ['checked', 'konfirmasi_user'])->count(),
             'in_service' => Ticket::whereIn('status', ['rma', 'proses_service'])->count(),
-            'done'       => Ticket::whereIn('status', ['done', 'siap_diambil'])->count(),
+            'done'          => Ticket::whereIn('status', ['done', 'siap_diambil'])->count(),
+            'sudah_diambil' => Ticket::whereIn('status', ['sudah_diambil', 'taken'])->count(),
         ];
 
         return view('dashboard.superadmin.index', compact(

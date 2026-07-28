@@ -222,7 +222,7 @@
             {{-- Hubungi Kami --}}
             <div class="card" style="background:var(--bg-alt); text-align:center;">
                 <div style="font-size:0.75rem; color:var(--text-muted); margin-bottom:10px;">Ada pertanyaan mengenai pengadaan ini?</div>
-                <a href="https://wa.me/6281390727420?text={{ urlencode('Halo Klinik Komputer, saya ingin menanyakan status pengajuan pengadaan dengan nomor referensi ' . $order->order_number . ' dari ' . $order->school_name) }}"
+                <a href="https://wa.me/6285103051000?text={{ urlencode('Halo Klinik Komputer, saya ingin menanyakan status pengajuan pengadaan dengan nomor referensi ' . $order->order_number . ' dari ' . $order->school_name) }}"
                    target="_blank"
                    class="btn btn-primary btn-sm" style="margin-right:8px;">
                     Tanya via WhatsApp

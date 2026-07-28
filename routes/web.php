@@ -73,6 +73,7 @@ Route::middleware(['auth', 'role:cs'])->prefix('dashboard/cs')->group(function (
     Route::post('/tickets', [TicketController::class, 'store'])->name('dashboard.cs.store');
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('dashboard.cs.show');
     Route::post('/tickets/{ticket}/status', [TicketController::class, 'updateTicketStatus'])->name('dashboard.cs.tickets.update_status');
+    Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('dashboard.cs.tickets.destroy');
     Route::get('/procurement/{order}', [TicketController::class, 'showProcurement'])->name('dashboard.cs.procurement.show');
     Route::post('/procurement/{order}/update', [TicketController::class, 'updateProcurement'])->name('dashboard.cs.procurement.update');
 
@@ -107,6 +108,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('dashboard/admin')->group
 
     // Ticket management
     Route::get('/tickets', [AdminController::class, 'tickets'])->name('admin.tickets');
+    Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('admin.tickets.destroy');
 
     // Product management
     Route::get('/products', [AdminController::class, 'products'])->name('admin.products');

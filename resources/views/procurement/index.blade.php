@@ -360,7 +360,7 @@
                     <div class="card" style="background: var(--bg-alt);">
                         <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); margin-bottom: 12px;">Pertanyaan Cepat?</div>
                         <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 12px;">Hubungi langsung tim pengadaan kami untuk konsultasi lebih lanjut.</p>
-                        <a href="https://wa.me/6281390727420?text=Halo, saya ingin bertanya mengenai pengadaan laptop Axioo untuk sekolah"
+                        <a href="https://wa.me/6285103051000?text=Halo, saya ingin bertanya mengenai pengadaan laptop Axioo untuk sekolah"
                            target="_blank" class="btn btn-primary btn-block" style="font-size: 0.78rem;">
                             Hubungi via WhatsApp
                         </a>
@@ -595,7 +595,7 @@
             </div>
 
             <div style="text-align:center;">
-                <a href="https://wa.me/6281390727420?text={{ urlencode('Halo Klinik Komputer, saya ingin menanyakan status pengajuan pengadaan nomor ' . $o->order_number . ' dari ' . $o->school_name) }}"
+                <a href="https://wa.me/6285103051000?text={{ urlencode('Halo Klinik Komputer, saya ingin menanyakan status pengajuan pengadaan nomor ' . $o->order_number . ' dari ' . $o->school_name) }}"
                    target="_blank" class="btn btn-primary btn-sm">Tanya via WhatsApp</a>
             </div>
             @endisset

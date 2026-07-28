@@ -11,8 +11,15 @@
 <div style="max-width:800px;">
     <div style="display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
         <a href="{{ route('dashboard.cs') }}" class="btn btn-outline btn-sm">Kembali</a>
-        <a href="{{ route('service.track') }}?ticket_number={{ $ticket->ticket_number }}"
-           target="_blank" class="btn btn-outline btn-sm">Lihat Tracking Publik</a>
+        <div style="display:flex; gap:8px; align-items:center;">
+            <a href="{{ route('service.track') }}?ticket_number={{ $ticket->ticket_number }}"
+               target="_blank" class="btn btn-outline btn-sm">Lihat Tracking Publik</a>
+            <form action="{{ route('dashboard.cs.tickets.destroy', $ticket) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tiket {{ $ticket->ticket_number }} ini secara permanen dari database?');" style="margin:0;">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-danger btn-sm" style="padding: 6px 12px; font-weight:700;">Hapus Tiket</button>
+            </form>
+        </div>
     </div>
 
     <!-- Ticket Header -->
@@ -122,6 +129,7 @@
                             <option value="checked"   {{ in_array($ticket->status, ['checked','konfirmasi_user']) ? 'selected':'' }}>Konfirmasi User</option>
                             <option value="rma"       {{ in_array($ticket->status, ['rma','proses_service'])     ? 'selected':'' }}>Proses Service</option>
                             <option value="done"      {{ in_array($ticket->status, ['done','siap_diambil'])     ? 'selected':'' }}>Siap Diambil</option>
+                            <option value="sudah_diambil" {{ in_array($ticket->status, ['sudah_diambil','taken']) ? 'selected':'' }}>Sudah Diambil</option>
                             <option value="cancelled" {{ $ticket->status === 'cancelled' ? 'selected':'' }}>Dibatalkan</option>
                         </select>
                     </div>

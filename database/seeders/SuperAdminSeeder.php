@@ -18,7 +18,7 @@ class SuperAdminSeeder extends Seeder
                 'password' => Hash::make('superaxioo'),
                 'role'     => 'superadmin',
                 'status'   => 'active',
-                'phone'    => '081390727420',
+                'phone'    => '085103051000',
             ]
         );
 

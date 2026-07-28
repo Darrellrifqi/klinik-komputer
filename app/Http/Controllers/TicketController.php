@@ -14,6 +14,7 @@ class TicketController extends Controller
     public function index()
     {
         $tickets = Ticket::with(['customer', 'technician', 'creator'])
+            ->whereNotIn('status', ['sudah_diambil', 'taken'])
             ->orderBy('created_at', 'desc')
             ->paginate(15);
 
@@ -157,7 +158,7 @@ class TicketController extends Controller
     public function updateTicketStatus(Request $request, Ticket $ticket)
     {
         $request->validate([
-            'status'                  => 'required|in:waiting,checking,checked,konfirmasi_user,proses_service,rma,done,siap_diambil,cancelled',
+            'status'                  => 'required|in:waiting,checking,checked,konfirmasi_user,proses_service,rma,done,siap_diambil,sudah_diambil,taken,cancelled',
             'airtable_service_number' => 'nullable|string|max:100',
             'pic_name'                => 'nullable|string|max:255',
             'start_check_date'        => 'nullable|date',
@@ -258,5 +259,14 @@ class TicketController extends Controller
             'tickets', 'kits',
             'tuneUpCount', 'tuneUpRemaining', 'tuneUpResetDate'
         ));
+    }
+
+    public function destroy(Ticket $ticket)
+    {
+        $ticketNumber = $ticket->ticket_number;
+        $ticket->histories()->delete();
+        $ticket->delete();
+
+        return redirect()->route('dashboard.cs')->with('success', "Tiket {$ticketNumber} berhasil dihapus secara permanen dari database.");
     }
 }

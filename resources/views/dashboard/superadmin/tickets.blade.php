@@ -19,7 +19,8 @@
                 <option value="checking" {{ request('status')==='checking' ? 'selected':'' }}>Pengecekan</option>
                 <option value="checked"  {{ request('status')==='checked'  ? 'selected':'' }}>Selesai Cek</option>
                 <option value="rma"      {{ request('status')==='rma'      ? 'selected':'' }}>Proses RMA</option>
-                <option value="done"     {{ request('status')==='done'     ? 'selected':'' }}>Selesai</option>
+                <option value="done"     {{ in_array(request('status'), ['done','siap_diambil']) ? 'selected':'' }}>Siap Diambil</option>
+                <option value="sudah_diambil" {{ in_array(request('status'), ['sudah_diambil','taken']) ? 'selected':'' }}>Sudah Diambil</option>
                 <option value="cancelled"{{ request('status')==='cancelled'? 'selected':'' }}>Dibatalkan</option>
             </select>
             <button type="submit" class="btn btn-primary btn-sm">Filter</button>
@@ -71,9 +72,16 @@
                             </div>
                         </td>
                         <td style="font-size:0.78rem; color:var(--text-muted);">{{ $ticket->created_at->format('d M Y') }}</td>
-                        <td>
-                            <a href="{{ route('service.track') }}?ticket_number={{ $ticket->ticket_number }}"
-                               target="_blank" class="btn btn-outline btn-sm" style="padding:4px 8px;">Lacak</a>
+                        <td style="white-space: nowrap;">
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <a href="{{ route('service.track') }}?ticket_number={{ $ticket->ticket_number }}"
+                                   target="_blank" class="btn btn-outline btn-sm" style="padding:4px 8px;">Lacak</a>
+                                <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tiket {{ $ticket->ticket_number }} ini secara permanen dari database?');" style="margin: 0;">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-danger btn-sm" style="padding:4px 8px; font-size:0.72rem;">Hapus</button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                     @empty

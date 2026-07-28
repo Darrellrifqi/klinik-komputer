@@ -84,7 +84,7 @@
             <div class="footer-col">
                 <h4>Kontak</h4>
                 <ul>
-                    <li><a href="https://wa.me/6281390727420" target="_blank">081390727420</a></li>
+                    <li><a href="https://wa.me/6285103051000" target="_blank">085103051000</a></li>
                     <li><a href="#">Jl. A. Yani Blok E8, Bandung</a></li>
                     <li><a href="#" onclick="return false;" style="cursor: default;">Senin–Jumat 09.00–17.00</a></li>
                     <li><a href="#" onclick="return false;" style="cursor: default;">Sabtu 09.00–14.00</a></li>

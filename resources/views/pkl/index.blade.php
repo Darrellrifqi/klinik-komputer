@@ -102,7 +102,7 @@
                             <p style="font-size: 0.85rem; color: #9f1239; margin: 6px 0 12px 0; line-height: 1.5;">
                                 Mohon maaf, Klinik Komputer saat ini membuka pendaftaran Internship & Prakerin khusus untuk Sekolah/Instansi Mitra Axioo Class Program (ACP).
                             </p>
-                            <a href="https://wa.me/6281390727420?text=Halo%20Klinik%20Komputer,%20sekolah%20kami%20tertarik%20untuk%20bermitra%20dengan%20Axioo%20Class%20Program%20(ACP)%20dan%20Internship" 
+                            <a href="https://wa.me/6285103051000?text=Halo%20Klinik%20Komputer,%20sekolah%20kami%20tertarik%20untuk%20bermitra%20dengan%20Axioo%20Class%20Program%20(ACP)%20dan%20Internship" 
                                target="_blank" class="btn" style="background: #be123c; color: #ffffff; font-size: 0.82rem; padding: 8px 18px; border-radius: 6px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
                                 Hubungi Tim ACP via WhatsApp
                             </a>

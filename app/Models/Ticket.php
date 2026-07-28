@@ -52,6 +52,7 @@ class Ticket extends Model
             'konfirmasi_user', 'checked'            => 'Konfirmasi User',
             'proses_service', 'rma', 'in_service'   => 'Proses Service',
             'done', 'siap_diambil'                  => 'Siap Diambil',
+            'sudah_diambil', 'taken'                => 'Sudah Diambil',
             'cancelled'                             => 'Dibatalkan',
             default                                 => ucfirst($this->status),
         };
@@ -64,7 +65,8 @@ class Ticket extends Model
             'checking'                              => 'info',
             'konfirmasi_user', 'checked'            => 'primary',
             'proses_service', 'rma', 'in_service'   => 'secondary',
-            'done', 'siap_diambil'                  => 'success',
+            'done', 'siap_diambil'                  => 'info',
+            'sudah_diambil', 'taken'                => 'success',
             'cancelled'                             => 'danger',
             default                                 => 'secondary',
         };
@@ -78,6 +80,7 @@ class Ticket extends Model
             'konfirmasi_user', 'checked'            => 3,
             'proses_service', 'rma', 'in_service'   => 4,
             'done', 'siap_diambil'                  => 5,
+            'sudah_diambil', 'taken'                => 6,
             'cancelled'                             => 0,
             default                                 => 1,
         };
