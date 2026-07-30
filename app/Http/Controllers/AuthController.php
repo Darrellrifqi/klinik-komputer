@@ -61,7 +61,6 @@ class AuthController extends Controller
             'email'    => 'required|email|unique:users',
             'password' => 'required|min:8|confirmed',
             'phone'    => 'required|string|max:20',
-            'role'     => 'required|in:customer,cs,teknisi,produksi',
         ], [
             'name.required'      => 'Nama wajib diisi.',
             'email.required'     => 'Email wajib diisi.',
@@ -70,26 +69,19 @@ class AuthController extends Controller
             'password.min'       => 'Password minimal 8 karakter.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.',
             'phone.required'     => 'Nomor HP wajib diisi.',
-            'role.required'      => 'Pilih role akun.',
         ]);
-
-        $status = $request->role === 'customer' ? 'active' : 'pending';
 
         $user = User::create([
             'name'     => $request->name,
             'email'    => $request->email,
             'password' => Hash::make($request->password),
             'phone'    => $request->phone,
-            'role'     => $request->role,
-            'status'   => $status,
+            'role'     => 'customer',
+            'status'   => 'active',
         ]);
 
-        if ($request->role === 'customer') {
-            Auth::login($user);
-            return redirect()->route('home')->with('success', 'Selamat datang, ' . $user->name . '!');
-        }
-
-        return redirect()->route('login')->with('success', 'Akun berhasil dibuat! Silakan tunggu persetujuan admin sebelum dapat login.');
+        Auth::login($user);
+        return redirect()->route('home')->with('success', 'Selamat datang, ' . $user->name . '! Akun Anda berhasil dibuat.');
     }
 
     public function logout(Request $request)

@@ -141,10 +141,24 @@
         </div>
         <div style="padding:12px 20px;">{{ $tickets->links() }}</div>
         @else
-        <div class="empty-state">
-            <h3>Belum ada tiket</h3>
-            <p>Buat tiket baru untuk customer yang datang langsung.</p>
-            <a href="{{ route('dashboard.cs.create') }}" class="btn btn-primary" style="margin-top:16px;">Buat Tiket Pertama</a>
+        <div style="padding: 56px 24px; text-align: center; background: #ffffff; border-radius: var(--radius-sm);">
+            <div style="width: 76px; height: 76px; background: rgba(95, 138, 99, 0.08); border: 1.5px solid rgba(95, 138, 99, 0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary); box-shadow: 0 4px 16px rgba(95, 138, 99, 0.1);">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="3" ry="3"></rect>
+                    <path d="M12 9v6"></path>
+                    <path d="M9 12h6"></path>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.3rem; font-weight: 800; color: var(--text-primary); margin: 0 0 10px 0; letter-spacing: -0.02em;">
+                Belum Ada Tiket Servis
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 460px; margin: 0 auto 24px auto; line-height: 1.6;">
+                Saat ini belum ada tiket perbaikan yang terdaftar dalam sistem. Klik tombol di bawah ini untuk membuat tiket servis baru bagi customer yang datang langsung.
+            </p>
+            <a href="{{ route('dashboard.cs.create') }}" class="btn btn-primary btn-lg" style="font-weight: 700; padding: 12px 28px; border-radius: 8px; display: inline-flex; align-items: center; gap: 8px; box-shadow: 0 4px 14px rgba(95, 138, 99, 0.25);">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Buat Tiket Walk-in Pertama
+            </a>
         </div>
         @endif
     </div>
@@ -240,9 +254,18 @@
         </div>
         <div style="padding:12px 20px;">{{ $procurementOrders->links() }}</div>
         @else
-        <div class="empty-state">
-            <h3>Belum ada pengajuan pengadaan</h3>
-            <p>Pengajuan dari sekolah / institusi akan muncul di sini.</p>
+        <div style="padding: 48px 24px; text-align: center; background: #ffffff; border-radius: var(--radius-sm);">
+            <div style="width: 68px; height: 68px; background: rgba(95, 138, 99, 0.08); border: 1.5px solid rgba(95, 138, 99, 0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 16px; color: var(--primary);">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); margin: 0 0 8px 0;">
+                Belum Ada Pengajuan Pengadaan
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.88rem; max-width: 420px; margin: 0 auto; line-height: 1.6;">
+                Pengajuan pengadaan unit dari sekolah atau instansi pendidikan akan muncul secara otomatis di sini.
+            </p>
         </div>
         @endif
     </div>

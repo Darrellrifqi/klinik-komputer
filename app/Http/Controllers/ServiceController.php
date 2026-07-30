@@ -69,8 +69,10 @@ class ServiceController extends Controller
         $ticketNumber = trim($request->ticket_number);
         $trackError = null;
 
+        $officialTicketNumber = null;
+
         if ($ticketNumber) {
-            // First check if searched string matches airtable_service_number
+            // Check first by airtable_service_number
             $ticket = Ticket::with(['histories.user', 'technician'])
                 ->where('airtable_service_number', $ticketNumber)
                 ->first();
@@ -84,8 +86,7 @@ class ServiceController extends Controller
                 if ($candidate) {
                     if (!empty($candidate->airtable_service_number)) {
                         // Ticket has already been assigned an Airtable Service Number!
-                        // Block tracking via original ticket_number and inform the customer
-                        $trackError = "Nomor booking '{$ticketNumber}' telah diperbarui ke Nomor Tiket Servis resmi: {$candidate->airtable_service_number}. Silakan gunakan Nomor Tiket Servis tersebut untuk melacak.";
+                        $officialTicketNumber = $candidate->airtable_service_number;
                     } else {
                         $ticket = $candidate;
                     }
@@ -93,6 +94,6 @@ class ServiceController extends Controller
             }
         }
 
-        return view('service.track', compact('ticket', 'ticketNumber', 'trackError'));
+        return view('service.track', compact('ticket', 'ticketNumber', 'trackError', 'officialTicketNumber'));
     }
 }

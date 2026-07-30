@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Kelola Token PKL — Superadmin')
+@section('title', 'Kelola Token PKL | Superadmin')
 @section('page_title', 'Kelola Token Registrasi PKL')
 @section('page_subtitle', 'Kelola kuartal aktif dan token pendaftaran mandiri siswa PKL')
 

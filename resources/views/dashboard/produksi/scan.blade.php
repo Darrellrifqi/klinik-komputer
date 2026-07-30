@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Scan Serial Number — Produksi')
+@section('title', 'Scan Serial Number | Produksi')
 @section('page_title', 'Scan Serial Number')
 @section('page_subtitle', $order->order_number . ' | ' . $order->school_name)
 

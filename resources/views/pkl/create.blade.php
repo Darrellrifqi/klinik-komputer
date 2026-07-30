@@ -2,7 +2,7 @@
 @section('title', 'Input Data History PKL')
 
 @section('content')
-<div style="background: linear-gradient(135deg, rgba(95, 138, 99, 0.05) 0%, rgba(59, 142, 202, 0.05) 100%); min-height: 100vh; padding: 60px 20px;">
+<div style="background: linear-gradient(135deg, rgba(95, 138, 99, 0.05) 0%, rgba(59, 142, 202, 0.05) 100%); min-height: 100vh; padding: 110px 20px 60px; box-sizing: border-box;">
     <div style="max-width: 600px; margin: 0 auto;">
         
         <!-- Header -->
@@ -68,13 +68,8 @@
                             <select name="division" class="form-control" required style="padding: 12px; border-radius: 8px; height: auto;">
                                 <option value="" disabled selected>Pilih Divisi Magang</option>
                                 <option value="Teknisi" {{ old('division') === 'Teknisi' ? 'selected' : '' }}>Teknisi</option>
-                                <option value="Produksi" {{ old('division') === 'Produksi' ? 'selected' : '' }}>Produksi</option>
                                 <option value="CS" {{ old('division') === 'CS' ? 'selected' : '' }}>CS</option>
-                                <option value="Education Trainer" {{ old('division') === 'Education Trainer' ? 'selected' : '' }}>Education Trainer</option>
-                                <option value="Education Mentor" {{ old('division') === 'Education Mentor' ? 'selected' : '' }}>Education Mentor</option>
-                                <option value="Marketing Komunikasi" {{ old('division') === 'Marketing Komunikasi' ? 'selected' : '' }}>Marketing Komunikasi</option>
-                                <option value="Sales & Marketing" {{ old('division') === 'Sales & Marketing' ? 'selected' : '' }}>Sales & Marketing</option>
-                                <option value="EPR" {{ old('division') === 'EPR' ? 'selected' : '' }}>EPR</option>
+                                <option value="Produksi" {{ old('division') === 'Produksi' ? 'selected' : '' }}>Produksi</option>
                             </select>
                         </div>
 

@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Kelola Produk — Super Admin')
+@section('title', 'Kelola Produk | Super Admin')
 @section('page_title', 'Kelola Produk')
 @section('page_subtitle', 'Manajemen katalog laptop Axioo')
 

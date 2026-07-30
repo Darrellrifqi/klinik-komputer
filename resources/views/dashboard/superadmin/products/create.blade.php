@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Tambah Produk — Super Admin')
+@section('title', 'Tambah Produk | Super Admin')
 @section('page_title', 'Tambah Produk Baru')
 @section('page_subtitle', 'Tambahkan laptop Axioo ke katalog')
 

@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Tiket Servis — Super Admin')
+@section('title', 'Tiket Servis | Super Admin')
 @section('page_title', 'Tiket Servis')
 @section('page_subtitle', 'Pantau tiket servis di sistem')
 
@@ -85,7 +85,21 @@
                         </td>
                     </tr>
                     @empty
-                    <tr><td colspan="8"><div class="empty-state"><p>Tidak ada tiket perbaikan.</p></div></td></tr>
+                    <tr>
+                        <td colspan="8">
+                            <div style="padding: 48px 24px; text-align: center;">
+                                <div style="width: 64px; height: 64px; background: rgba(95, 138, 99, 0.08); border: 1.5px solid rgba(95, 138, 99, 0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; color: var(--primary);">
+                                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                        <rect x="2" y="4" width="20" height="16" rx="3" ry="3"></rect>
+                                        <path d="M12 9v6"></path>
+                                        <path d="M9 12h6"></path>
+                                    </svg>
+                                </div>
+                                <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0;">Tidak Ada Tiket Perbaikan</h4>
+                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Belum ada data tiket perbaikan yang sesuai dengan kriteria pencarian.</p>
+                            </div>
+                        </td>
+                    </tr>
                     @endforelse
                 </tbody>
             </table>

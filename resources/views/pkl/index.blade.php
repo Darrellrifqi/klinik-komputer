@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Internship & Program ACP — Klinik Komputer')
+@section('title', 'Internship | Klinik Komputer')
 
 @section('content')
 @php
@@ -23,11 +23,11 @@
             Bangun karier cemerlang di industri teknologi. Kembangkan potensi, asah keterampilan praktis, dan rasakan pengalaman kerja nyata bersama tim ahli Klinik Komputer melalui program kemitraan resmi Axioo Class Program (ACP).
         </p>
         <div style="margin-top: 26px; display: flex; justify-content: center; gap: 14px; flex-wrap: wrap;">
-            <a href="#form-internship" class="btn" style="background: #a3e635; color: #142c16; border-color: #a3e635; font-weight: 700; border-radius: 6px; padding: 11px 28px; box-shadow: 0 4px 14px rgba(163, 230, 53, 0.3); transition: all 0.2s;">
-                Form Pendaftaran Internship
+            <a href="#form-internship" class="btn" style="background: #a3e635; color: #142c16; border-color: #a3e635; font-weight: 700; border-radius: 6px; padding: 11px 24px; box-shadow: 0 4px 14px rgba(163, 230, 53, 0.3); transition: all 0.2s;">
+                Form Pengajuan Sekolah
             </a>
-            <a href="#galeri-pkl" class="btn btn-outline" style="color: #fff; border-color: rgba(255,255,255,0.4); font-weight: 600; border-radius: 6px; padding: 11px 24px;">
-                Riwayat Anak PKL
+            <a href="{{ route('pkl.create') }}" class="btn" style="background: rgba(255, 255, 255, 0.14); color: #ffffff; border: 1.5px solid rgba(255, 255, 255, 0.45); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); font-weight: 700; border-radius: 6px; padding: 11px 24px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.12);">
+                Form PKL
             </a>
         </div>
     </div>

@@ -3,15 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="@yield('meta_description', 'Klinik Komputer — Mitra Resmi Axioo di Bandung. Penjualan laptop Axioo, service komputer, dan pengadaan laptop untuk sekolah.')">
+    <meta name="description" content="@yield('meta_description', 'Klinik Komputer | Mitra Resmi Axioo di Bandung. Penjualan laptop Axioo, service komputer, dan pengadaan laptop untuk sekolah.')">
     <meta name="keywords" content="klinik komputer, axioo bandung, service laptop bandung, pengadaan laptop sekolah">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Klinik Komputer') — Mitra Resmi Axioo Bandung</title>
-    <link class="favicon" rel="icon" type="image/png" href="/favicon-kk.png">
+    <title>@yield('title', 'Klinik Komputer') | Mitra Resmi Axioo Bandung</title>
+    <link class="favicon" rel="icon" type="image/png" href="/favicon-kk.png?v=5">
     <link rel="stylesheet" href="/css/main.css">
     @stack('styles')
 </head>
 <body>
+    <!-- Mobile Backdrop Overlay -->
+    <div class="nav-overlay" id="navOverlay" onclick="closeMobileMenu()"></div>
+
     <!-- Navbar -->
     <nav class="navbar" id="navbar">
         <div class="nav-inner">
@@ -26,7 +29,7 @@
                 <li><a href="{{ route('kit.activation') }}" class="{{ request()->routeIs('kit.activation') ? 'active' : '' }}">Membership</a></li>
                 <li><a href="{{ route('service.booking') }}" class="{{ request()->routeIs('service.booking') ? 'active' : '' }}">Booking Servis</a></li>
                 <li><a href="{{ route('service.track') }}" class="{{ request()->routeIs('service.track') ? 'active' : '' }}">Cek Status Servis</a></li>
-                <li><a href="{{ route('pkl.index') }}" class="{{ request()->routeIs('pkl.*') ? 'active' : '' }}">INTERNSHIP</a></li>
+                <li><a href="{{ route('pkl.index') }}" class="{{ request()->routeIs('pkl.*') ? 'active' : '' }}">Internship</a></li>
             </ul>
 
             <div class="nav-actions">
@@ -78,7 +81,7 @@
                     <li><a href="{{ route('kit.activation') }}">Membership</a></li>
                     <li><a href="{{ route('service.booking') }}">Booking Servis</a></li>
                     <li><a href="{{ route('service.track') }}">Cek Status Servis</a></li>
-                    <li><a href="{{ route('pkl.index') }}">Internship & PKL</a></li>
+                    <li><a href="{{ route('pkl.index') }}">Internship</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -92,7 +95,7 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <span>&copy; {{ date('Y') }} Klinik Komputer — PT Mabito Karya. All rights reserved.</span>
+            <span>&copy; {{ date('Y') }} Klinik Komputer | PT Mabito Karya. All rights reserved.</span>
             <span style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Mitra Resmi Axioo</span>
         </div>
     </footer>
@@ -105,7 +108,25 @@
 
         // Mobile menu
         function toggleMobileMenu() {
-            document.getElementById('navLinks').classList.toggle('open');
+            const navLinks = document.getElementById('navLinks');
+            const navOverlay = document.getElementById('navOverlay');
+            const isOpen = navLinks.classList.contains('open');
+
+            if (isOpen) {
+                closeMobileMenu();
+            } else {
+                navLinks.classList.add('open');
+                if (navOverlay) navOverlay.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeMobileMenu() {
+            const navLinks = document.getElementById('navLinks');
+            const navOverlay = document.getElementById('navOverlay');
+            if (navLinks) navLinks.classList.remove('open');
+            if (navOverlay) navOverlay.classList.remove('open');
+            document.body.style.overflow = '';
         }
 
         // Auto-hide flash messages

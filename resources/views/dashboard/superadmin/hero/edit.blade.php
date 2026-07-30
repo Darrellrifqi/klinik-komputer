@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Edit Cover — Super Admin')
+@section('title', 'Edit Cover | Super Admin')
 @section('page_title', 'Edit Cover')
 @section('page_subtitle', 'Sesuaikan slide kustom beranda')
 

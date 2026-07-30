@@ -102,8 +102,10 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('dashboard/admin')->group
 
     // User management
     Route::get('/users', [AdminController::class, 'users'])->name('admin.users');
+    Route::post('/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
     Route::post('/users/{user}/approve', [AdminController::class, 'approveUser'])->name('admin.users.approve');
     Route::post('/users/{user}/reject', [AdminController::class, 'rejectUser'])->name('admin.users.reject');
+    Route::post('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.role');
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
 
     // Ticket management
@@ -152,6 +154,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('dashboard/admin')->group
 
     // SN Pengadaan management
     Route::get('/procurement-kits', [AdminController::class, 'procurementKits'])->name('admin.procurement-kits');
+    Route::get('/procurement-kits/template', [AdminController::class, 'downloadProcurementKitTemplate'])->name('admin.procurement-kits.template');
     Route::post('/procurement-kits/import', [AdminController::class, 'importProcurementKits'])->name('admin.procurement-kits.import');
     Route::delete('/procurement-kits/delete-all', [AdminController::class, 'deleteAllProcurementKits'])->name('admin.procurement-kits.delete_all');
     Route::delete('/procurement-kits/{kit}', [AdminController::class, 'destroyProcurementKit'])->name('admin.procurement-kits.destroy');

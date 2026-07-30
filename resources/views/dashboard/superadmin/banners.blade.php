@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Kelola Banner Halaman — Super Admin')
+@section('title', 'Kelola Banner Halaman | Super Admin')
 @section('page_title', 'Kelola Banner Halaman')
 @section('page_subtitle', 'Sesuaikan gambar latar belakang banner / cover halaman utama publik')
 

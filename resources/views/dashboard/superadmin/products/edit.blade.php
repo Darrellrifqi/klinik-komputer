@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Edit Produk — Super Admin')
+@section('title', 'Edit Produk | Super Admin')
 @section('page_title', 'Edit Produk')
 @section('page_subtitle', $product->name)
 

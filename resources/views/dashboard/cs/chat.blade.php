@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Konsultasi Member — Panel CS')
+@section('title', 'Konsultasi Member | Panel CS')
 @section('page_title', 'Konsultasi Member')
 @section('page_subtitle', 'Tanggapi pesan masuk dan konsultasi teknis dari member Klinik Komputer')
 

@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Cek Status Pengadaan — Klinik Komputer')
+@section('title', 'Cek Status Pengadaan | Klinik Komputer')
 @section('meta_description', 'Lacak status pengajuan pengadaan laptop Axioo untuk sekolah Anda menggunakan nomor referensi pengajuan.')
 
 @section('content')

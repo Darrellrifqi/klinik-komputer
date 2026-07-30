@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Detail Pengadaan — CS')
+@section('title', 'Detail Pengadaan | CS')
 @section('page_title', 'Detail Pengadaan')
 @section('page_subtitle', $order->order_number . ' | ' . $order->school_name)
 
@@ -84,8 +84,8 @@
                 </a>
 
                 @php
-                $emailSubject = 'Konfirmasi Pengajuan Pengadaan Laptop Axioo — ' . $order->order_number;
-                $emailBody  = 'Yth. ' . $order->pic_name . ',' . "\n" . $order->pic_position . ' — ' . $order->school_name . "\n\n" . 'Saya ' . auth()->user()->name . ' dari Klinik Komputer Bandung.' . "\n\n" . 'Kami menerima pengajuan pengadaan laptop dari institusi Anda dengan detail sebagai berikut:' . "\n\n" . '  No. Referensi : ' . $order->order_number . "\n" . '  Institusi     : ' . $order->school_name . ' (' . $order->school_type_label . ')' . "\n" . '  Kota          : ' . $order->school_city . "\n" . '  Laptop        : ' . $order->axioo_model . "\n" . '  Jumlah        : ' . $order->total_units . ' unit' . "\n" . '  Tujuan        : ' . $order->usage_purpose_label . "\n\n" . 'Mohon konfirmasi apakah pengajuan ini benar dari Anda, agar kami dapat segera memproses lebih lanjut dan menyiapkan surat penawaran harga resmi.' . "\n\n" . 'Apabila ada pertanyaan, Anda dapat menghubungi kami melalui:' . "\n" . '  WhatsApp : 085103051000' . "\n" . '  Alamat   : Komplek Ruko Segitiga Emas Kosambi, Jl. A. Yani Blok E8, Kota Bandung' . "\n\n" . 'Terima kasih atas kepercayaan Anda.' . "\n\n" . 'Hormat kami,' . "\n" . auth()->user()->name . "\n" . 'Customer Service — Klinik Komputer Bandung';
+                $emailSubject = 'Konfirmasi Pengajuan Pengadaan Laptop Axioo | ' . $order->order_number;
+                $emailBody  = 'Yth. ' . $order->pic_name . ',' . "\n" . $order->pic_position . ' | ' . $order->school_name . "\n\n" . 'Saya ' . auth()->user()->name . ' dari Klinik Komputer Bandung.' . "\n\n" . 'Kami menerima pengajuan pengadaan laptop dari institusi Anda dengan detail sebagai berikut:' . "\n\n" . '  No. Referensi : ' . $order->order_number . "\n" . '  Institusi     : ' . $order->school_name . ' (' . $order->school_type_label . ')' . "\n" . '  Kota          : ' . $order->school_city . "\n" . '  Laptop        : ' . $order->axioo_model . "\n" . '  Jumlah        : ' . $order->total_units . ' unit' . "\n" . '  Tujuan        : ' . $order->usage_purpose_label . "\n\n" . 'Mohon konfirmasi apakah pengajuan ini benar dari Anda, agar kami dapat segera memproses lebih lanjut dan menyiapkan surat penawaran harga resmi.' . "\n\n" . 'Apabila ada pertanyaan, Anda dapat menghubungi kami melalui:' . "\n" . '  WhatsApp : 085103051000' . "\n" . '  Alamat   : Komplek Ruko Segitiga Emas Kosambi, Jl. A. Yani Blok E8, Kota Bandung' . "\n\n" . 'Terima kasih atas kepercayaan Anda.' . "\n\n" . 'Hormat kami,' . "\n" . auth()->user()->name . "\n" . 'Customer Service | Klinik Komputer Bandung';
                 @endphp
                 <a href="https://mail.google.com/mail/?view=cm&fs=1&to={{ urlencode($order->pic_email) }}&su={{ urlencode($emailSubject) }}&body={{ urlencode($emailBody) }}"
                    target="_blank"
@@ -269,10 +269,10 @@
             Panduan Alur Tindak Lanjut CS
         </div>
         <ol style="font-size:0.85rem; color:var(--text-secondary); line-height:1.8; padding-left:18px; margin:0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px 24px;">
-            <li><strong>Menunggu Konfirmasi</strong> — Hubungi PIC via WA/Gmail untuk memverifikasi pesanan.</li>
-            <li><strong>Unit Diproses</strong> — Perbarui status setelah harga disepakati & perakitan dimulai.</li>
-            <li><strong>Unit Siap Dikirim</strong> — Hubungi PIC untuk konfirmasi jadwal & alamat pengiriman.</li>
-            <li><strong>Unit Dikirim</strong> — Perbarui setelah barang diserahterimakan ke sekolah.</li>
+            <li><strong>Menunggu Konfirmasi</strong> | Hubungi PIC via WA/Gmail untuk memverifikasi pesanan.</li>
+            <li><strong>Unit Diproses</strong> | Perbarui status setelah harga disepakati & perakitan dimulai.</li>
+            <li><strong>Unit Siap Dikirim</strong> | Hubungi PIC untuk konfirmasi jadwal & alamat pengiriman.</li>
+            <li><strong>Unit Dikirim</strong> | Perbarui setelah barang diserahterimakan ke sekolah.</li>
         </ol>
     </div>
 

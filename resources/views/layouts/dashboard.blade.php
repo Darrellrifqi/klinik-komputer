@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Dashboard') — Klinik Komputer</title>
-    <link rel="icon" type="image/png" href="/favicon-kk.png">
+    <title>@yield('title', 'Dashboard') | Klinik Komputer</title>
+    <link rel="icon" type="image/png" href="/favicon-kk.png?v=5">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/dashboard.css">
     @stack('styles')

@@ -17,7 +17,7 @@
         $subtitle  = 'Pantau status servis unit Anda';
     }
 @endphp
-@section('title', $titleName . ' — Klinik Komputer')
+@section('title', $titleName . ' | Klinik Komputer')
 @section('page_title', 'Dashboard Saya')
 @section('page_subtitle', $subtitle)
 
@@ -115,7 +115,7 @@
 </div>
 
 @if($isPengadaan || $isUmum)
-{{-- Member Tune-Up Benefit Card — Game Goals Style (Light) --}}
+{{-- Member Tune-Up Benefit Card | Game Goals Style (Light) --}}
 @php
     $tuneQuotaFull = $tuneUpCount >= 2;
     $slot1Done     = $tuneUpCount >= 1;
@@ -201,22 +201,22 @@
 
     @if($tuneQuotaFull)
     <div style="margin-top: 10px; text-align:center; font-size: 0.72rem; color: #dc2626; font-weight: 700; padding: 6px 10px; background: rgba(220,38,38,0.05); border-radius: 6px; border: 1px solid rgba(220,38,38,0.15);">
-        ⚠ Kuota Tune-Up Gratis periode ini telah habis — Tune-Up selanjutnya berbayar
+        ⚠ Kuota Tune-Up Gratis periode ini telah habis | Tune-Up selanjutnya berbayar
     </div>
     @endif
 </div>
 @else
-<div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
-    <div style="display: flex; align-items: center; gap: 12px;">
-        <div style="width: 40px; height: 40px; background: rgba(95, 138, 99, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
+<div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 16px 22px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+    <div style="display: flex; align-items: center; gap: 14px;">
+        <div style="width: 40px; height: 40px; background: rgba(95, 138, 99, 0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
             <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
         </div>
         <div>
-            <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">Ingin Menjadi Member Umum Klinik Komputer?</div>
-            <div style="font-size: 0.78rem; color: var(--text-secondary);">Dapatkan benefit 2x Tune-Up unit gratis per tahun. Silakan datang langsung ke kantor atau hubungi CS via WhatsApp.</div>
+            <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary); margin-bottom: 2px;">Ingin Menjadi Member Umum Klinik Komputer?</div>
+            <div style="font-size: 0.78rem; color: var(--text-secondary);">Dapatkan benefit 2x Tune-Up unit gratis per tahun & Onsite Servis Bandung Raya. Hubungi CS via WhatsApp.</div>
         </div>
     </div>
-    <a href="https://wa.me/6285103051000?text=Halo%20Klinik%20Komputer,%20saya%20tertarik%20menjadi%20Member%20Umum" target="_blank" class="btn btn-primary btn-sm" style="padding: 7px 16px; font-weight: 700; font-size: 0.76rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;">
+    <a href="https://wa.me/6285103051000?text=Halo%20Klinik%20Komputer,%20saya%20tertarik%20menjadi%20Member%20Umum" target="_blank" class="btn btn-primary btn-sm" style="padding: 8px 18px; font-weight: 700; font-size: 0.78rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
         Tanya via WA
     </a>

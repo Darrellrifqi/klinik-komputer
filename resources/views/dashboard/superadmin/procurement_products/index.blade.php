@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Excel Unit Pengadaan — Super Admin')
+@section('title', 'Excel Unit Pengadaan | Super Admin')
 @section('page_title', 'Master Unit Pengadaan')
 @section('page_subtitle', 'Kelola daftar unit laptop khusus pengadaan Retail dan TKDN.')
 
@@ -132,7 +132,7 @@
     <div class="card" style="background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 24px;">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px;">
             <div style="font-size: 0.9rem; font-weight: 700; color: var(--text-primary); display: flex; align-items: center; gap: 8px;">
-                <span>Daftar Unit Terdaftar (Kategori: <strong style="color: var(--primary);">{{ strtoupper($activeCategory) }}</strong> — Total: {{ number_format($products->total()) }} Data)</span>
+                <span>Daftar Unit Terdaftar (Kategori: <strong style="color: var(--primary);">{{ strtoupper($activeCategory) }}</strong> | Total: {{ number_format($products->total()) }} Data)</span>
             </div>
             
             <div style="display: flex; gap: 10px; align-items: center;">

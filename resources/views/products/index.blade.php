@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Katalog Laptop Axioo — Klinik Komputer')
+@section('title', 'Katalog Laptop Axioo | Klinik Komputer')
 @section('meta_description', 'Temukan laptop Axioo original dengan garansi resmi di Klinik Komputer Bandung. Seri Hype untuk produktivitas dan Pongo untuk gaming.')
 
 @section('content')

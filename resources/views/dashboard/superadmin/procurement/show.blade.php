@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Detail Pengadaan — Super Admin')
+@section('title', 'Detail Pengadaan | Super Admin')
 @section('page_title', 'Detail Pengadaan')
 @section('page_subtitle', $order->order_number)
 

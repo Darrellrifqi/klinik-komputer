@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Booking Servis — Klinik Komputer')
+@section('title', 'Booking Servis | Klinik Komputer')
 @section('meta_description', 'Book layanan servis komputer dan laptop Anda secara online. Dapatkan nomor antrian dan pantau progress perbaikan secara real-time.')
 
 @section('content')

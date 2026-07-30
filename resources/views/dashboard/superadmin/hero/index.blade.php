@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Kelola Cover — Super Admin')
+@section('title', 'Kelola Cover | Super Admin')
 @section('page_title', 'Kelola Cover')
 @section('page_subtitle', 'Manajemen slide cover latar belakang dan teks di halaman beranda')
 

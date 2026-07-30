@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Hubungi CS — Panel ' . (auth()->user()->laptopKits()->exists() ? 'Member' : 'Customer'))
+@section('title', 'Hubungi CS | Panel ' . (auth()->user()->laptopKits()->exists() ? 'Member' : 'Customer'))
 @section('page_title', 'Hubungi CS (Chat Support)')
 @section('page_subtitle', 'Tanyakan kendala perangkat Anda langsung ke Customer Service kami')
 

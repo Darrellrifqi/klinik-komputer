@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Klinik Komputer — Mitra Resmi Axioo Bandung')
+@section('title', 'Klinik Komputer | Mitra Resmi Axioo Bandung')
 @section('meta_description', 'Klinik Komputer hadir untuk kebutuhan IT Anda: penjualan laptop Axioo resmi, service komputer profesional, dan pengadaan laptop untuk sekolah.')
 
 @section('content')
@@ -40,9 +40,9 @@
                 <div class="slide-bg-fallback" style="background-color: #E2E7E2;"></div>
                 <div class="slide-overlay"></div>
                 <div class="slide-content">
-                    <div class="slide-tag">Mitra Resmi Axioo</div>
-                    <h1>Solusi IT Terpercaya</h1>
-                    <p>Klinik Komputer melayani penjualan resmi laptop Axioo, perbaikan komputer profesional, serta pengadaan perangkat teknologi untuk sekolah.</p>
+                    <div class="slide-tag">Mitra Resmi Axioo Bandung</div>
+                    <h1>Klinik Komputer Bandung</h1>
+                    <p>Solusi IT terpercaya sejak 2001 di Kota Bandung. Melayani perbaikan laptop profesional sebagai Official Partner Axioo, sparepart orisinal, serta pengadaan perangkat IT sekolah &amp; instansi.</p>
                     <div class="slide-cta">
                         <a href="{{ route('service.booking') }}" class="btn btn-primary btn-lg">Booking Servis</a>
                         <a href="{{ route('products') }}" class="btn btn-outline btn-lg">Katalog Axioo</a>
@@ -107,99 +107,22 @@
 <!-- ── STATS BAR ─────────────────────────────────────────────────── -->
 <div class="stats-bar">
     <div class="stats-bar-item">
-        <div class="num">500+</div>
+        <div class="num">900+</div>
         <div class="label">Case Service</div>
     </div>
     <div class="stats-bar-item">
-        <div class="num">5+</div>
-        <div class="label">Tahun Pengalaman</div>
+        <div class="num">2001</div>
+        <div class="label">Berdiri Sejak Tahun</div>
     </div>
     <div class="stats-bar-item">
-        <div class="num">98%</div>
+        <div class="num">94%</div>
         <div class="label">Tingkat Kepuasan</div>
     </div>
-</div>
-
-<!-- ── LIVE ANTRIAN TABLE ─────────────────────────────────────────── -->
-<section class="section" id="antrian-live">
-    <div class="section-inner">
-        <div class="section-header center">
-            <div class="label-line">Status Terkini</div>
-            <h2>Antrian Servis Aktif</h2>
-            <p>Daftar unit yang sedang dalam proses pengecekan dan perbaikan di workshop kami secara live.</p>
-        </div>
-
-        @if($activeQueue->count() > 0)
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="width: 15%;">No. Tiket</th>
-                        <th style="width: 10%;">No. Antrian</th>
-                        <th style="width: 25%;">Unit Perangkat</th>
-                        <th style="width: 20%;">Teknisi PJ</th>
-                        <th style="width: 15%;">Status Kerja</th>
-                        <th style="width: 15%;">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($activeQueue as $ticket)
-                    <tr>
-                        <td style="font-family: monospace; font-weight: 700; color: var(--primary);">
-                            {{ $ticket->ticket_number }}
-                        </td>
-                        <td style="font-weight: 600;">
-                            #{{ $ticket->queue_number }}
-                        </td>
-                        <td>
-                            <div style="font-weight: 600;">{{ $ticket->brand }} {{ $ticket->model }}</div>
-                            <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase;">{{ $ticket->unit_type }}</div>
-                        </td>
-                        <td>
-                            {{ $ticket->pic_name ?? 'Alokasi Teknisi' }}
-                        </td>
-                        <td>
-                            <div style="display: flex; align-items: center; gap: 6px;">
-                                <span class="status-dot {{ $ticket->status }}"></span>
-                                <span class="badge badge-{{ $ticket->status_color }}">{{ $ticket->status_label }}</span>
-                            </div>
-                        </td>
-                        <td>
-                            <a href="{{ route('service.track') }}?ticket_number={{ $ticket->ticket_number }}" class="btn btn-outline btn-sm">Lacak Detail</a>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        @else
-        <div style="text-align: center; padding: 48px 24px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; box-shadow: 0 6px 24px rgba(0,0,0,0.03); max-width: 580px; margin: 10px auto 20px auto;">
-            <div style="width: 72px; height: 72px; background: rgba(95, 138, 99, 0.08); border: 1px solid rgba(95, 138, 99, 0.18); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary);">
-                <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-                    <line x1="8" y1="21" x2="16" y2="21"></line>
-                    <line x1="12" y1="17" x2="12" y2="21"></line>
-                </svg>
-            </div>
-            <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 10px 0; letter-spacing: -0.02em;">
-                Belum Ada Antrian Aktif
-            </h3>
-            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
-                Saat ini tidak ada unit komputer dalam antrian pengerjaan. Daftarkan servis Anda secara online untuk langsung mendapatkan nomor antrian digital.
-            </p>
-            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                <a href="{{ route('service.booking') }}" class="btn btn-primary" style="padding: 10px 24px; font-weight: 700; font-size: 0.8rem; border-radius: 8px;">
-                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                    Booking Servis Baru
-                </a>
-                <a href="{{ route('service.track') }}" class="btn btn-outline" style="padding: 10px 20px; font-weight: 700; font-size: 0.8rem; border-radius: 8px;">
-                    Cek Status Servis
-                </a>
-            </div>
-        </div>
-        @endif
+    <div class="stats-bar-item">
+        <div class="num">100%</div>
+        <div class="label">Sparepart Original & Garansi Resmi</div>
     </div>
-</section>
+</div>
 
 <!-- ── ABOUT ─────────────────────────────────────────────────────── -->
 <section class="section section-alt" id="tentang">
@@ -208,15 +131,18 @@
             <div>
                 <div class="label-line">Profil Perusahaan</div>
                 <h2 style="margin-bottom: 20px;">Klinik Komputer</h2>
-                <p style="color: var(--text-secondary); margin-bottom: 16px;">
-                    Mitra Abadi Computer System berdiri pada tahun 2001 di Kota Bandung dan merupakan suatu perusahaan yang bergerak pada bidang penjualan dan service notebook AXIOO dan lainya.
+                <p style="color: var(--text-secondary); margin-bottom: 14px; line-height: 1.6;">
+                    Mitra Abadi Computer System berdiri pada tahun 2001 di Kota Bandung dan merupakan suatu perusahaan yang bergerak pada bidang penjualan dan service notebook AXIOO dan lainnya.
                 </p>
-                <p style="color: var(--text-secondary); margin-bottom: 24px;">
-                    Pada tahun 2009 Mitra Abadi Computer System bertransformasi menjadi PT Mabito Karya (MK), sebagai perusahaan yang bergerak di bidang Pendidikan, jasa, retail IT, dan Klinik Komputer adalah bagian dari Mitra Abadi Computer pada bagian Retail IT.
+                <p style="color: var(--text-secondary); margin-bottom: 14px; line-height: 1.6;">
+                    Pada tahun 2009 Mitra Abadi Computer System bertransformasi menjadi PT Mabito Karya (MK) sebagai perusahaan yang bergerak di bidang Pendidikan, jasa, dan retail IT.
+                </p>
+                <p style="color: var(--text-secondary); margin-bottom: 24px; line-height: 1.6;">
+                    Klinik-Komputer merupakan bagian dari PT Mabito Karya (MK) pada pelayanan Retail IT yang berdedikasi memberikan layanan perbaikan laptop profesional, penyediaan produk resmi Axioo, serta solusi pengadaan teknologi terpadu untuk instansi pendidikan dan perkantoran.
                 </p>
                 <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                     <div style="font-weight: 600; font-size: 0.82rem; text-transform: uppercase; color: var(--primary);">
-                        Garansi Resmi Axioo
+                        Official Partner Axioo
                     </div>
                     <div style="font-weight: 600; font-size: 0.82rem; text-transform: uppercase; color: var(--primary);">
                         Teknisi Profesional
@@ -255,38 +181,140 @@
             <p>Tiga solusi utama untuk menjawab berbagai kebutuhan operasional dan personal IT Anda.</p>
         </div>
         <div class="services-grid">
-            <div class="service-card">
+            <a href="{{ route('procurement.index') }}" class="service-card" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
                 <div class="service-icon-wrap">
                     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path></svg>
                 </div>
-                <h3>Pengadaan Unit</h3>
-                <p>Penyediaan unit laptop sekolah melalui LKPP e-katalog resmi. Produk berspesifikasi TKDN tinggi untuk menunjang ujian sekolah dan laboratorium kejuruan.</p>
+                <h3>Pengadaan IT &amp; E-Katalog Sekolah</h3>
+                <p>Penyediaan unit laptop ber-TKDN &amp; Non TKDN untuk sekolah dan kantor. Dilengkapi Perlindungan +3 Tahun ADP &amp; Garansi Service Klinik Komputer up to 3 Tahun.</p>
                 <div class="service-tags">
                     <span class="badge badge-primary">E-Katalog</span>
-                    <span class="badge badge-primary">TKDN</span>
+                    <span class="badge badge-primary">TKDN &amp; Non TKDN</span>
+                    <span class="badge badge-primary">ADP 3 Tahun</span>
                 </div>
-            </div>
-            <div class="service-card">
+            </a>
+            <a href="{{ route('service.booking') }}" class="service-card" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
                 <div class="service-icon-wrap">
                     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
                 </div>
-                <h3>Reparasi Laptop</h3>
-                <p>Servis kerusakan laptop oleh tim teknisi berpengalaman. Penanganan transparan dari pengecekan awal hingga penggantian komponen dengan estimasi biaya presisi.</p>
+                <h3>Servis &amp; Reparasi Laptop Transparan</h3>
+                <p>Penanganan kerusakan oleh teknisi ahli dengan estimasi biaya yang presisi. Pantau proses pengerjaan unit Anda secara real-time via website.</p>
                 <div class="service-tags">
                     <span class="badge badge-primary">Lacak Online</span>
                     <span class="badge badge-primary">Garansi Servis</span>
                 </div>
-            </div>
-            <div class="service-card">
+            </a>
+            <a href="{{ route('products') }}" class="service-card" style="text-decoration: none; color: inherit; display: block; cursor: pointer;">
                 <div class="service-icon-wrap">
                     <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><rect x="7" y="7" width="3" height="9"></rect><rect x="14" y="7" width="3" height="5"></rect></svg>
                 </div>
-                <h3>Dealer Resmi Axioo</h3>
-                <p>Dapatkan lini produk laptop Axioo orisinal bergaransi resmi. Kami menyediakan seri Hype untuk produktivitas kerja harian dan seri gaming Pongo berkemampuan tinggi.</p>
+                <h3>Pusat Penjualan Resmi Axioo</h3>
+                <p>Unit 100% orisinal bergaransi resmi. Tersedia berbagai seri Unit Axioo untuk kerja harian hingga performa gaming &amp; design.</p>
                 <div class="service-tags">
-                    <span class="badge badge-primary">Orisinal</span>
+                    <span class="badge badge-primary">100% Orisinal</span>
                     <span class="badge badge-primary">Garansi Axioo</span>
                 </div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ── WHY CHOOSE US ────────────────────────────────────────────── -->
+<section class="section section-alt" id="kenapa-kami">
+    <div class="section-inner">
+        <div class="section-header center">
+            <div class="label-line">Keunggulan Utama</div>
+            <h2>Kenapa Harus Klinik Komputer?</h2>
+            <p>Standar pelayanan perbaikan &amp; pengadaan perangkat IT terbaik dengan jaminan keunggulan eksklusif untuk Anda.</p>
+        </div>
+
+        <div class="why-us-grid-wrapper" style="display: grid; grid-template-columns: 1fr 1.25fr; gap: 24px; align-items: stretch;">
+
+            {{-- LEFT HERO FEATURE CARD: Perlindungan Extra 3 Tahun --}}
+            <div style="background: linear-gradient(145deg, #ffffff 0%, rgba(95, 138, 99, 0.05) 100%); border: 1.5px solid var(--primary); border-radius: 20px; padding: 36px 30px; box-shadow: 0 10px 30px rgba(95,138,99,0.08); position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+                {{-- Subtle background glow decoration --}}
+                <div style="position: absolute; top: -30px; right: -30px; width: 140px; height: 140px; background: rgba(95,138,99,0.08); border-radius: 50%; pointer-events: none;"></div>
+
+                <div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+                        <div style="width: 54px; height: 54px; border-radius: 14px; background: var(--primary); color: #ffffff; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 16px rgba(95,138,99,0.25);">
+                            <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                <polyline points="9 12 11 14 15 10"></polyline>
+                            </svg>
+                        </div>
+                        <span style="background: var(--primary); color: #fff; font-size: 0.68rem; font-weight: 800; padding: 5px 14px; border-radius: 99px; text-transform: uppercase; letter-spacing: 0.08em; box-shadow: 0 2px 8px rgba(95,138,99,0.2);">
+                            Eksklusif &amp; Terjamin
+                        </span>
+                    </div>
+
+                    <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin-bottom: 14px; line-height: 1.3;">
+                        Perlindungan Extra 3 Tahun
+                    </h3>
+                    
+                    <p style="color: var(--text-secondary); font-size: 0.9rem; line-height: 1.7; margin-bottom: 20px;">
+                        Bukan sekadar garansi resmi biasa. Kami memberikan jaminan perlindungan <strong>Accidental Damage Protection (ADP) hingga 3 tahun</strong> sekaligus <strong>Garansi Service Klinik-Komputer 3 Tahun</strong> secara menyeluruh.
+                    </p>
+                </div>
+
+                <div style="margin-top: 20px; padding-top: 16px; border-top: 1px dashed rgba(95,138,99,0.25); display: flex; align-items: center; gap: 8px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    <span style="font-size: 0.78rem; font-weight: 700; color: var(--primary);">*Khusus Pengadaan Perangkat IT Axioo</span>
+                </div>
+            </div>
+
+            {{-- RIGHT COLUMN: 2x2 GRID FOR OTHER 4 CARDS --}}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;" class="why-us-subgrid">
+                
+                {{-- Card 1: Pengecekan & Antrian Transparan --}}
+                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; box-shadow: 0 4px 18px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: flex-start;">
+                    <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(95, 138, 99, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; flex-shrink: 0;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </div>
+                    <h4 style="font-size: 1.02rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.35;">Pengecekan &amp; Antrian Transparan</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.83rem; line-height: 1.6; margin: 0;">Status servis unit bisa dipantau secara real-time langsung melalui website kami.</p>
+                </div>
+
+                {{-- Card 2: Mitra Resmi Axioo --}}
+                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; box-shadow: 0 4px 18px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: flex-start;">
+                    <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(95, 138, 99, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; flex-shrink: 0;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="8" r="7"></circle>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                        </svg>
+                    </div>
+                    <h4 style="font-size: 1.02rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.35;">Mitra Resmi Axioo</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.83rem; line-height: 1.6; margin: 0;">Jaminan garansi resmi dan sparepart 100% orisinal langsung dari pabrikan Axioo.</p>
+                </div>
+
+                {{-- Card 3: Pengalaman 20+ Tahun --}}
+                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; box-shadow: 0 4px 18px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: flex-start;">
+                    <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(95, 138, 99, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; flex-shrink: 0;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                    </div>
+                    <h4 style="font-size: 1.02rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.35;">Pengalaman 20+ Tahun</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.83rem; line-height: 1.6; margin: 0;">Didukung oleh teknisi profesional tersertifikasi dan legalitas resmi PT Mabito Karya.</p>
+                </div>
+
+                {{-- Card 4: Resmi E-Katalog & TKDN --}}
+                <div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; padding: 24px; box-shadow: 0 4px 18px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: flex-start;">
+                    <div style="width: 44px; height: 44px; border-radius: 10px; background: rgba(95, 138, 99, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; flex-shrink: 0;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <path d="M9 15l2 2 4-4"></path>
+                        </svg>
+                    </div>
+                    <h4 style="font-size: 1.02rem; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; line-height: 1.35;">Resmi E-Katalog &amp; TKDN</h4>
+                    <p style="color: var(--text-secondary); font-size: 0.83rem; line-height: 1.6; margin: 0;">Terdaftar resmi di E-Katalog &amp; TKDN untuk pengadaan sekolah dan instansi pemerintah.</p>
+                </div>
+
             </div>
         </div>
     </div>
@@ -294,7 +322,7 @@
 
 <!-- ── FEATURED PRODUCTS ─────────────────────────────────────────── -->
 @if($featuredProducts->count() > 0)
-<section class="section section-alt">
+<section class="section">
     <div class="section-inner">
         <div class="section-header center">
             <div class="label-line">Produk Pilihan</div>
@@ -359,7 +387,7 @@
 @endif
 
 <!-- ── HOW IT WORKS ──────────────────────────────────────────────── -->
-<section class="section">
+<section class="section section-alt">
     <div class="section-inner">
         <div class="section-header center">
             <div class="label-line">Alur Kerja</div>
@@ -369,10 +397,10 @@
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 24px;">
             @php
             $steps = [
-                ['title'=>'Pendaftaran Online','desc'=>'Tulis deskripsi unit dan keluhan perangkat melalui formulir booking online.'],
-                ['title'=>'Nomor Antrian','desc'=>'Dapatkan nomor antrian digital unik untuk mempercepat proses penyerahan unit.'],
-                ['title'=>'Penyerahan Unit','desc'=>'Bawa unit ke workshop kami dan tunjukkan nomor antrian kepada petugas.'],
-                ['title'=>'Pemantauan Real-Time','desc'=>'Pantau status pengerjaan perangkat Anda secara online langsung dari web.'],
+                ['title'=>'Isikan Form Booking','desc'=>'Tuliskan keluhan unit Anda secara online dari mana saja.'],
+                ['title'=>'Dapatkan Kode Antrian','desc'=>'Terima kode unik untuk mempercepat proses pendaftaran di toko.'],
+                ['title'=>'Serahkan Unit','desc'=>'Bawa laptop ke toko kami tanpa perlu mengantre lama.'],
+                ['title'=>'Pantau Progres Online','desc'=>'Cek status perbaikan dan estimasi pengerjaan secara real-time.'],
             ];
             @endphp
             @foreach($steps as $i => $step)
@@ -383,6 +411,85 @@
             </div>
             @endforeach
         </div>
+    </div>
+</section>
+
+<!-- ── LIVE ANTRIAN TABLE ─────────────────────────────────────────── -->
+<section class="section" id="antrian-live" style="background: #ffffff;">
+    <div class="section-inner">
+        <div class="section-header center">
+            <div class="label-line">Status Terkini</div>
+            <h2>Antrian Servis Aktif</h2>
+            <p>Daftar unit yang sedang dalam proses pengecekan dan perbaikan di workshop kami secara live.</p>
+        </div>
+
+        @if($activeQueue->count() > 0)
+        <div style="max-width: 920px; margin: 0 auto;">
+            <div class="table-wrap" style="border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.03);">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 22%; padding: 10px 14px; font-size: 0.72rem;">No. Tiket</th>
+                            <th style="width: 14%; padding: 10px 14px; font-size: 0.72rem;">No. Antrian</th>
+                            <th style="width: 28%; padding: 10px 14px; font-size: 0.72rem;">Unit Perangkat</th>
+                            <th style="width: 20%; padding: 10px 14px; font-size: 0.72rem;">Teknisi PJ</th>
+                            <th style="width: 16%; padding: 10px 14px; font-size: 0.72rem;">Status Kerja</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($activeQueue as $ticket)
+                        <tr>
+                            <td style="padding: 10px 14px; font-family: monospace; font-weight: 700; color: var(--primary); font-size: 0.88rem;">
+                                {{ $ticket->ticket_number }}
+                            </td>
+                            <td style="padding: 10px 14px; font-weight: 600; font-size: 0.85rem;">
+                                #{{ $ticket->queue_number }}
+                            </td>
+                            <td style="padding: 10px 14px;">
+                                <div style="font-weight: 600; font-size: 0.85rem;">{{ $ticket->brand }} {{ $ticket->model }}</div>
+                                <div style="font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase;">{{ $ticket->unit_type }}</div>
+                            </td>
+                            <td style="padding: 10px 14px; font-size: 0.85rem;">
+                                {{ $ticket->pic_name ?? 'Alokasi Teknisi' }}
+                            </td>
+                            <td style="padding: 10px 14px;">
+                                <div style="display: flex; align-items: center; gap: 6px;">
+                                    <span class="status-dot {{ $ticket->status }}"></span>
+                                    <span class="badge badge-{{ $ticket->status_color }}" style="font-size: 0.7rem; padding: 3px 8px;">{{ $ticket->status_label }}</span>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        @else
+        <div style="text-align: center; padding: 48px 24px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; box-shadow: 0 4px 24px rgba(0,0,0,0.04); max-width: 580px; margin: 10px auto 20px auto;">
+            <div style="width: 72px; height: 72px; background: rgba(95, 138, 99, 0.08); border: 1px solid rgba(95, 138, 99, 0.18); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; color: var(--primary);">
+                <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+                    <line x1="8" y1="21" x2="16" y2="21"></line>
+                    <line x1="12" y1="17" x2="12" y2="21"></line>
+                </svg>
+            </div>
+            <h3 style="font-size: 1.35rem; font-weight: 800; color: var(--text-primary); margin: 0 0 10px 0; letter-spacing: -0.02em;">
+                Belum Ada Antrian Aktif
+            </h3>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; max-width: 440px; margin: 0 auto 24px auto; line-height: 1.6;">
+                Saat ini tidak ada unit komputer dalam antrian pengerjaan. Daftarkan servis Anda secara online untuk langsung mendapatkan nomor antrian digital.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                <a href="{{ route('service.booking') }}" class="btn btn-primary" style="padding: 10px 24px; font-weight: 700; font-size: 0.8rem; border-radius: 8px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Booking Servis Baru
+                </a>
+                <a href="{{ route('service.track') }}" class="btn btn-outline" style="padding: 10px 20px; font-weight: 700; font-size: 0.8rem; border-radius: 8px;">
+                    Cek Status Servis
+                </a>
+            </div>
+        </div>
+        @endif
     </div>
 </section>
 
@@ -453,6 +560,7 @@
     const slides = document.querySelectorAll('.carousel-slide');
     const dots = document.querySelectorAll('.dot');
     const track = document.getElementById('carouselTrack');
+    const heroEl = document.getElementById('homeHero');
 
     function updateCarousel() {
         track.style.transform = `translateX(-${currentSlide * 100}%)`;
@@ -469,6 +577,32 @@
     function setSlide(index) {
         currentSlide = index;
         updateCarousel();
+    }
+
+    // Touch Swipe Support for Mobile Banner
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    if (heroEl) {
+        heroEl.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+
+        heroEl.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, { passive: true });
+    }
+
+    function handleSwipe() {
+        const swipeThreshold = 40; // minimum 40px swipe distance
+        if (touchEndX < touchStartX - swipeThreshold) {
+            // Swiped Left -> Go to Next Slide
+            moveSlide(1);
+        } else if (touchEndX > touchStartX + swipeThreshold) {
+            // Swiped Right -> Go to Previous Slide
+            moveSlide(-1);
+        }
     }
 
     // Auto play carousel

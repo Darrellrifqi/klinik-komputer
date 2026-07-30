@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Booking Berhasil — Klinik Komputer')
+@section('title', 'Booking Berhasil | Klinik Komputer')
 
 @section('content')
 <div style="padding-top: 64px;">

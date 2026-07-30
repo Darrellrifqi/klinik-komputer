@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Detail Tiket — Teknisi')
+@section('title', 'Detail Tiket | Teknisi')
 @section('page_title', 'Detail Tiket')
 @section('page_subtitle', $ticket->ticket_number)
 

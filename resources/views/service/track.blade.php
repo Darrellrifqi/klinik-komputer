@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Cek Status Servis — Klinik Komputer')
+@section('title', 'Cek Status Servis | Klinik Komputer')
 
 @section('content')
 <div style="padding-top: 64px;">
@@ -22,7 +22,23 @@
             </div>
         </form>
 
-        @if(isset($trackError))
+        @if(isset($officialTicketNumber))
+            <!-- Clean Official Ticket Notice Card -->
+            <div class="card" style="margin-bottom: 24px; background: #ffffff; border: 1.5px solid var(--primary); padding: 20px 24px; box-shadow: var(--shadow-lg); border-radius: 12px;">
+                <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 10px; flex-wrap: wrap;">
+                    <div style="width: 44px; height: 44px; border-radius: 50%; background: rgba(95, 138, 99, 0.12); color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+                        <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">Nomor Tiket Servis Resmi Terbit</div>
+                        <div style="font-size: 1.3rem; font-weight: 800; font-family: monospace; color: var(--text-primary); margin-top: 2px;">{{ $officialTicketNumber }}</div>
+                    </div>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
+                    Kode booking <code style="font-family: monospace; background: var(--bg-alt); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border);">{{ $ticketNumber }}</code> telah diperbarui ke Nomor Tiket Servis resmi <strong>{{ $officialTicketNumber }}</strong>. Silakan gunakan nomor tersebut untuk melacak.
+                </p>
+            </div>
+        @elseif(isset($trackError))
             <div class="alert alert-error" style="margin-bottom: 20px;">
                 <span>{{ $trackError }}</span>
             </div>

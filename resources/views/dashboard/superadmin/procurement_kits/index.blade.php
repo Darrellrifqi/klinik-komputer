@@ -116,16 +116,23 @@
         {{-- Excel Import Card --}}
         <div class="dash-card" style="margin-bottom: 20px; border-left: 4px solid var(--success);">
             <div class="dash-card-header">
-                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--success);">Import Excel SN Pengadaan</h3>
+                <h3 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--success); white-space: nowrap;">Import Excel SN Pengadaan</h3>
             </div>
             <div class="dash-card-body">
+                <div style="margin-bottom: 16px;">
+                    <a href="{{ route('admin.procurement-kits.template') }}" class="btn-dl-template" style="width: 100%;">
+                        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Download Template Excel (.csv)
+                    </a>
+                </div>
+
                 <form action="{{ route('admin.procurement-kits.import') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div style="margin-bottom: 14px;">
-                        <label class="form-label" style="font-size: 0.8rem; font-weight: 700;">Pilih File Excel/CSV</label>
+                        <label class="form-label" style="font-size: 0.8rem; font-weight: 700;">Upload File Excel/CSV Yang Sudah Diisi</label>
                         <input type="file" name="file" class="form-control" required accept=".xlsx,.xls,.csv" style="padding: 8px 12px; font-size: 0.85rem;">
                         <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 4px;">
-                            Format file: .xlsx, .xls, .csv.
+                            Format file didukung: .xlsx, .xls, .csv
                         </div>
                     </div>
 
@@ -138,7 +145,12 @@
 
         {{-- Excel Info Card --}}
         <div class="card" style="padding: 18px; border: 1px dashed var(--primary); background: rgba(95, 138, 99, 0.05); border-radius: 10px;">
-            <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary); margin-bottom: 6px;">Petunjuk Kolom Excel</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary);">Petunjuk Kolom Excel</div>
+                <a href="{{ route('admin.procurement-kits.template') }}" class="btn-dl-template" style="font-size: 0.7rem; padding: 3px 8px;">
+                    Download Template
+                </a>
+            </div>
             <div style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.5;">
                 Struktur kolom file Excel:
                 <ul style="margin: 4px 0 0 0; padding-left: 20px;">
@@ -157,6 +169,30 @@
 </div>
 
 <style>
+.btn-dl-template {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--primary);
+    background: #ffffff;
+    border: 1.5px solid var(--primary);
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+}
+.btn-dl-template:hover {
+    background: var(--primary) !important;
+    color: #ffffff !important;
+    border-color: var(--primary) !important;
+    box-shadow: 0 4px 12px rgba(95, 138, 99, 0.25);
+}
+.btn-dl-template svg {
+    stroke: currentColor;
+}
 @media (max-width: 1200px) {
     .procurement-kits-grid {
         grid-template-columns: 1fr !important;

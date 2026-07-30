@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Pengadaan Unit Laptop — Klinik Komputer')
+@section('title', 'Pengadaan Unit Laptop | Klinik Komputer')
 @section('meta_description', 'Layanan pengadaan laptop Axioo untuk sekolah, madrasah, dan institusi pendidikan. Produk TKDN tinggi, harga resmi, proses mudah melalui e-katalog.')
 @section('content')
 <div style="padding-top: 64px;">
@@ -16,9 +16,9 @@
         <div class="section-inner" style="max-width: 900px;">
             <div class="label-line" style="color: {{ $procHeroUrl ? '#a3e635' : 'var(--primary)' }};">Layanan Institusi</div>
             <h1 style="margin-bottom: 14px; color: {{ $procHeroUrl ? '#fff' : 'inherit' }};">Pengadaan Unit Laptop Sekolah & Institusi</h1>
-            <p style="color: {{ $procHeroUrl ? 'rgba(255,255,255,0.85)' : 'var(--text-secondary)' }}; font-size: 1rem; max-width: 620px; line-height: 1.7;">
+            <p style="color: {{ $procHeroUrl ? 'rgba(255,255,255,0.85)' : 'var(--text-secondary)' }}; font-size: 1rem; max-width: 640px; line-height: 1.7;">
                 Klinik Komputer menyediakan layanan pengadaan laptop Axioo resmi untuk institusi pendidikan
-                dengan produk berspesifikasi TKDN tinggi. Cocok untuk Ujian CBT, laboratorium komputer, dan kegiatan pembelajaran.
+                dengan spesifikasi TKDN tinggi &amp; perlindungan <strong>ADP (Accidental Damage Protection) hingga 3 tahun</strong>. Cocok untuk Ujian CBT, laboratorium, dan pembelajaran.
             </p>
             <!-- Quick Stats -->
             <div style="display: flex; gap: 28px; margin-top: 28px; flex-wrap: wrap;">
@@ -28,8 +28,13 @@
                 </div>
                 <div style="width: 1px; background: {{ $procHeroUrl ? 'rgba(255,255,255,0.15)' : 'var(--border)' }};"></div>
                 <div style="font-size: 0.82rem;">
-                    <div style="font-weight: 800; font-size: 1.4rem; color: {{ $procHeroUrl ? '#a3e635' : 'var(--primary)' }};">Garansi Resmi</div>
-                    <div style="color: {{ $procHeroUrl ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)' }}; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.72rem;">Langsung dari Axioo</div>
+                    <div style="font-weight: 800; font-size: 1.4rem; color: {{ $procHeroUrl ? '#a3e635' : 'var(--primary)' }};">ADP</div>
+                    <div style="color: {{ $procHeroUrl ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)' }}; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.72rem;">Accidental Damage</div>
+                </div>
+                <div style="width: 1px; background: {{ $procHeroUrl ? 'rgba(255,255,255,0.15)' : 'var(--border)' }};"></div>
+                <div style="font-size: 0.82rem;">
+                    <div style="font-weight: 800; font-size: 1.4rem; color: {{ $procHeroUrl ? '#a3e635' : 'var(--primary)' }};">Garansi Service</div>
+                    <div style="color: {{ $procHeroUrl ? 'rgba(255,255,255,0.6)' : 'var(--text-muted)' }}; text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.72rem;">Up To 3 Tahun</div>
                 </div>
                 <div style="width: 1px; background: {{ $procHeroUrl ? 'rgba(255,255,255,0.15)' : 'var(--border)' }};"></div>
                 <div style="font-size: 0.82rem;">
@@ -210,13 +215,13 @@
                                     @endforeach
                                 @else
                                     @foreach($products as $prod)
-                                        <option value="{{ $prod->name }} — {{ $prod->processor }} ({{ $prod->ram }}/{{ $prod->storage }})"></option>
+                                        <option value="{{ $prod->name }} | {{ $prod->processor }} ({{ $prod->ram }}/{{ $prod->storage }})"></option>
                                     @endforeach
-                                    <option value="Axioo Hype 1 — Intel Celeron N100"></option>
-                                    <option value="Axioo Hype 3 — Intel Core i3-1005G1"></option>
-                                    <option value="Axioo Hype 5 — Intel Core i5-1235U"></option>
-                                    <option value="Axioo Hype 7 — AMD Ryzen 7 5700U"></option>
-                                    <option value="Axioo Pongo 7 — Intel Core i7 / RTX 4060"></option>
+                                    <option value="Axioo Hype 1 | Intel Celeron N100"></option>
+                                    <option value="Axioo Hype 3 | Intel Core i3-1005G1"></option>
+                                    <option value="Axioo Hype 5 | Intel Core i5-1235U"></option>
+                                    <option value="Axioo Hype 7 | AMD Ryzen 7 5700U"></option>
+                                    <option value="Axioo Pongo 7 | Intel Core i7 / RTX 4060"></option>
                                 @endif
                             </datalist>
 
@@ -227,10 +232,10 @@
                                         <option value="{{ $tp->full_name_label }}"></option>
                                     @endforeach
                                 @else
-                                    <option value="Axioo Chromebook TKDN — Intel Celeron N4020"></option>
-                                    <option value="Axioo Hype 3 TKDN — Intel Core i3-1005G1"></option>
-                                    <option value="Axioo Hype 5 TKDN — Intel Core i5-1235U"></option>
-                                    <option value="Axioo MyBook Pro TKDN — Intel Core i7"></option>
+                                    <option value="Axioo Chromebook TKDN | Intel Celeron N4020"></option>
+                                    <option value="Axioo Hype 3 TKDN | Intel Core i3-1005G1"></option>
+                                    <option value="Axioo Hype 5 TKDN | Intel Core i5-1235U"></option>
+                                    <option value="Axioo MyBook Pro TKDN | Intel Core i7"></option>
                                 @endif
                             </datalist>
 
@@ -333,6 +338,21 @@
 
                 <!-- Sidebar Info -->
                 <div style="position: sticky; top: 84px;">
+                    <!-- Benefit Garansi Pengadaan -->
+                    <div class="card" style="margin-bottom: 16px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+                        <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); margin-bottom: 12px;">Benefit Garansi Pengadaan</div>
+                        <ul style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 10px;">
+                            <li style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; font-weight: 700; color: var(--text-primary); line-height: 1.4;">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Garansi 3 Tahun Accidental Damage Protection (ADP)
+                            </li>
+                            <li style="display: flex; align-items: flex-start; gap: 10px; font-size: 0.8rem; font-weight: 700; color: var(--text-primary); line-height: 1.4;">
+                                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink: 0; margin-top: 1px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                Garansi Service Klinik Komputer Up To 3 Tahun
+                            </li>
+                        </ul>
+                    </div>
+
                     <!-- Process Timeline -->
                     <div class="card" style="margin-bottom: 16px;">
                         <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); margin-bottom: 16px;">Alur Proses Pengadaan</div>

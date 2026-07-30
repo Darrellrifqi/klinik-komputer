@@ -1,13 +1,13 @@
 @extends('layouts.app')
-@section('title', 'Masuk — Klinik Komputer')
+@section('title', 'Masuk | Klinik Komputer')
 
 @section('content')
-<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; background: var(--bg-alt);">
+<div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 20px 40px; background: var(--bg-alt); box-sizing: border-box;">
     <div style="width: 100%; max-width: 400px; padding: 40px 0;">
         <!-- Brand -->
         <div style="text-align: center; margin-bottom: 24px;">
-            <a href="{{ route('home') }}" style="display: inline-block; font-weight: 900; font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-primary); margin-bottom: 12px;">
-                KLINIK KOMPUTER
+            <a href="{{ route('home') }}" style="display: inline-block; margin-bottom: 12px;">
+                <img src="/images/login-logo.png" alt="Logo Klinik Komputer" style="height: 72px; width: auto; max-width: 220px; object-fit: contain; margin-left: -10px;">
             </a>
             <h1 style="font-size: 1.5rem; margin-bottom: 4px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.02em;">Masuk</h1>
             <p style="color: var(--text-secondary); font-size: 0.85rem;">Gunakan akun terdaftar Anda</p>

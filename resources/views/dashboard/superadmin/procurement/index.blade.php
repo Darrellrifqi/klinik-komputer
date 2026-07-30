@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Pengadaan Sekolah — Super Admin')
+@section('title', 'Pengadaan Sekolah | Super Admin')
 @section('page_title', 'Pengadaan Sekolah')
 @section('page_subtitle', 'Kelola order pengadaan laptop institusi pendidikan')
 

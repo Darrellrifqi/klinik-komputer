@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Buat Tiket Baru — CS')
+@section('title', 'Buat Tiket Baru | CS')
 @section('page_title', 'Buat Tiket Baru')
 @section('page_subtitle', 'Input data customer walk-in')
 

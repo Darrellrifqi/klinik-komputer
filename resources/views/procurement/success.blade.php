@@ -1,5 +1,5 @@
 @extends('layouts.app')
-@section('title', 'Pengajuan Berhasil — Klinik Komputer')
+@section('title', 'Pengajuan Berhasil | Klinik Komputer')
 
 @section('content')
 <div style="padding-top: 64px;">
@@ -89,7 +89,7 @@
         </div>
 
         <div style="margin-top: 20px; padding: 14px; background: var(--bg-alt); border-radius: 6px; border: 1px solid var(--border); font-size: 0.78rem; color: var(--text-secondary); text-align: left;">
-            <strong>Klinik Komputer</strong> — Komplek Ruko Segitiga Emas Kosambi, Jl. A. Yani Blok E8, Kota Bandung<br>
+            <strong>Klinik Komputer</strong> | Komplek Ruko Segitiga Emas Kosambi, Jl. A. Yani Blok E8, Kota Bandung<br>
             WhatsApp: 085103051000 &bull; Jam Kerja: Senin–Jumat 09.00–17.00 WIB, Sabtu 09.00–14.00 WIB
         </div>
     </div>

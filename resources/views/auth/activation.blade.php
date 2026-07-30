@@ -1,13 +1,13 @@
 @extends('layouts.app')
-@section('title', 'Aktivasi Membership & Laptop — Klinik Komputer')
+@section('title', 'Aktivasi Membership & Laptop | Klinik Komputer')
 @section('meta_description', 'Aktifkan keanggotaan member resmi Klinik Komputer melalui jalur pengadaan sekolah maupun pembelian mandiri.')
 
 @section('content')
-<div style="min-height: 100vh; padding: 120px 20px 80px; background: var(--bg-alt); display: flex; align-items: center; justify-content: center;">
-    <div style="width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1fr; gap: 30px; align-items: start;">
+<div class="activation-wrapper-container" style="min-height: 100vh; padding: 120px 20px 80px; background: var(--bg-alt); display: flex; align-items: center; justify-content: center; width: 100%; box-sizing: border-box;">
+    <div style="width: 100%; max-width: 1100px; display: grid; grid-template-columns: 1fr; gap: 30px; align-items: start; min-width: 0;">
         
         <!-- Main Grid for Premium Presentation -->
-        <div style="display: grid; grid-template-columns: 1fr; gap: 30px; width: 100%;">
+        <div style="display: grid; grid-template-columns: 1fr; gap: 30px; width: 100%; min-width: 0;">
             @if(!isset($kit))
                 <div style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 40px; width: 100%; align-items: start;" class="activation-grid-wrapper">
             @else
@@ -191,7 +191,7 @@
                                 <div id="panelRegular" style="display: none;">
                                     <div style="margin-bottom: 22px;">
                                         <h3 style="font-size: 1.15rem; color: var(--text-primary); font-weight: 800; margin-bottom: 6px;">Registrasi Member Mandiri (Umum)</h3>
-                                        <p style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4;">Daftarkan keanggotaan Member Umum Klinik Komputer untuk mendapatkan benefit 2x Tune-Up gratis per tahun. Pendaftaran keanggotaan dapat dilakukan dengan datang langsung ke kantor Klinik Komputer atau hubungi CS via WhatsApp.</p>
+                                        <p style="color: var(--text-secondary); font-size: 0.84rem; line-height: 1.5;">Daftarkan keanggotaan Member Umum Klinik Komputer untuk menikmati benefit spesial: <strong>2x Tune-Up gratis per tahun</strong> dan layanan <strong>Onsite Servis Bandung Raya</strong> (perbaikan langsung di tempat Anda). Pendaftaran keanggotaan dapat dilakukan dengan datang langsung ke kantor Klinik Komputer atau hubungi CS via WhatsApp.</p>
                                     </div>
 
                                     <form action="{{ route('kit.activate.regular') }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 14px;">

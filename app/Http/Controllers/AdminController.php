@@ -95,6 +95,51 @@ class AdminController extends Controller
         return back()->with('success', 'Akun berhasil dihapus.');
     }
 
+    public function updateUserRole(Request $request, User $user)
+    {
+        $request->validate([
+            'role' => 'required|in:customer,cs,teknisi,produksi,superadmin',
+        ]);
+
+        $user->update([
+            'role'   => $request->role,
+            'status' => 'active',
+        ]);
+
+        return back()->with('success', "Role pengguna {$user->name} berhasil diubah menjadi " . strtoupper($request->role) . ".");
+    }
+
+    public function storeUser(Request $request)
+    {
+        $request->validate([
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:users,email',
+            'phone'    => 'required|string|max:20',
+            'role'     => 'required|in:customer,cs,teknisi,produksi,superadmin',
+            'password' => 'required|string|min:8|confirmed',
+        ], [
+            'name.required'      => 'Nama lengkap wajib diisi.',
+            'email.required'     => 'Email wajib diisi.',
+            'email.unique'       => 'Email ini sudah terdaftar di sistem.',
+            'phone.required'     => 'Nomor HP/WhatsApp wajib diisi.',
+            'role.required'      => 'Role pengguna wajib dipilih.',
+            'password.required'  => 'Password wajib diisi.',
+            'password.min'       => 'Password minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+        ]);
+
+        $user = User::create([
+            'name'     => $request->name,
+            'email'    => $request->email,
+            'phone'    => $request->phone,
+            'role'     => $request->role,
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            'status'   => 'active',
+        ]);
+
+        return back()->with('success', "Akun {$user->name} dengan role " . strtoupper($user->role) . " berhasil dibuat!");
+    }
+
     // Ticket management
     public function tickets(Request $request)
     {
@@ -581,6 +626,57 @@ class AdminController extends Controller
         return view('dashboard.superadmin.procurement_kits.regular', compact('kits', 'search'));
     }
 
+    public function downloadProcurementKitTemplate()
+    {
+        $filename = "template_import_sn_pengadaan.csv";
+        $headers  = [
+            'Content-Type'        => 'text/csv; charset=UTF-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ];
+
+        $callback = function () {
+            $file = fopen('php://output', 'w');
+            // UTF-8 BOM for Excel compatibility
+            fprintf($file, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+            // Header Row
+            fputcsv($file, [
+                'No',
+                'Nama Lengkap Siswa',
+                'Instansi / Sekolah',
+                'Tahun Pengadaan',
+                'Model Unit (Laptop)',
+                'Unit Serial Number',
+                'Valid Until'
+            ]);
+
+            // Sample Rows
+            fputcsv($file, [
+                '1',
+                'Ahmad Fauzi',
+                'SMK Negeri 1 Bandung',
+                '2026',
+                'AXIOO HYPE 3 G12',
+                'SN-AXIOO-2026-001',
+                "'2029-12-31"
+            ]);
+
+            fputcsv($file, [
+                '2',
+                'Budi Santoso',
+                'SMK Negeri 1 Bandung',
+                '2026',
+                'AXIOO PONGO 760 V2',
+                'SN-AXIOO-2026-002',
+                "'2029-12-31"
+            ]);
+
+            fclose($file);
+        };
+
+        return response()->stream($callback, 200, $headers);
+    }
+
     public function importProcurementKits(Request $request)
     {
         $request->validate([
@@ -607,21 +703,23 @@ class AdminController extends Controller
                 continue;
             }
 
-            // Column A: #
-            // Column B: Name
-            // Column C: Institution
-            // Column D: Year
-            // Column E: Unit
-            // Column F: Unit Serial Number
-            // Column G: Valid Until
+            // Column A: # (0)
+            // Column B: Name (1)
+            // Column C: Institution (2)
+            // Column D: Year (3)
+            // Column E: Unit (4)
+            // Column F: Unit Serial Number (5)
+            // Column G: Valid Until (6)
             $colB = isset($row[1]) ? trim($row[1]) : '';
             $colC = isset($row[2]) ? trim($row[2]) : '';
+            $colD = isset($row[3]) ? trim($row[3]) : '';
             $colE = isset($row[4]) ? trim($row[4]) : '';
             $colF = isset($row[5]) ? trim($row[5]) : '';
+            $colG = isset($row[6]) ? trim($row[6]) : '';
 
             if (!$header) {
                 $lowerName = strtolower($colB);
-                if ($lowerName === 'name' || $lowerName === 'nama' || str_contains($lowerName, 'institusi') || $colF === 'Unit Serial Number') {
+                if ($lowerName === 'name' || $lowerName === 'nama' || str_contains($lowerName, 'nama') || $colF === 'Unit Serial Number') {
                     $header = $row;
                     continue;
                 }
@@ -631,17 +729,28 @@ class AdminController extends Controller
                 continue;
             }
 
+            // Parse Valid Until date if provided
+            $warrantyExpires = null;
+            $rawDate = ltrim($colG, "'` ");
+            if (!empty($rawDate)) {
+                try {
+                    $warrantyExpires = \Carbon\Carbon::parse($rawDate)->format('Y-m-d');
+                } catch (\Exception $e) {
+                    $warrantyExpires = null;
+                }
+            }
+
             \App\Models\ProcurementLaptopKit::updateOrCreate(
                 ['member_id' => $colF],
                 [
                     'student_name'         => $colB ?: null,
                     'institution'          => $colC ?: null,
-                    'year'                 => isset($row[3]) ? trim($row[3]) : null,
+                    'year'                 => $colD ?: null,
                     'unit_model'           => $colE ?: null,
                     'is_regular'           => false,
                     'status'               => 'assembly',
                     'warranty_start'       => null,
-                    'warranty_expires'     => null,
+                    'warranty_expires'     => $warrantyExpires,
                     'procurement_order_id' => null,
                 ]
             );

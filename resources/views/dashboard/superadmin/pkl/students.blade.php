@@ -1,5 +1,5 @@
 @extends('layouts.dashboard')
-@section('title', 'Tinjau Pendaftaran Siswa PKL — Superadmin')
+@section('title', 'Tinjau Pendaftaran Siswa PKL | Superadmin')
 @section('page_title', 'Tinjau Pendaftaran Siswa PKL')
 @section('page_subtitle', 'Review dan setujui pendaftaran mandiri siswa PKL & Magang')
 
