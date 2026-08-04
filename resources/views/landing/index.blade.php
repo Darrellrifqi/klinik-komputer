@@ -493,6 +493,106 @@
     </div>
 </section>
 
+<!-- ── PAKET CARE & SERVICE PRICELIST ────────────────────────────── -->
+<style>
+    #paket-service .card {
+        transition: all 0.25s ease-in-out;
+        border: 1px solid var(--border);
+    }
+    #paket-service .card:hover {
+        border-color: var(--primary) !important;
+        box-shadow: 0 8px 24px rgba(95, 138, 99, 0.15) !important;
+        transform: translateY(-3px);
+    }
+</style>
+
+<section class="section" id="paket-service" style="background: var(--bg-alt); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);">
+    <div class="section-inner">
+        <div class="section-header center">
+            <div class="label-line">Pricelist Transparan</div>
+            <h2>Paket Care &amp; Service Unit</h2>
+            <p>Biaya perawatan &amp; instalasi software untuk menjaga kestabilan serta performa perangkat Anda.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; align-items: stretch;">
+
+            <!-- Card 1: Paket Cleaning Unit -->
+            <div class="card" style="padding: 28px 24px; background: #ffffff; border-radius: 14px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+                <div>
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 6px;">Paket Cleaning Unit</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px;">Pembersihan debu, pelepasan kotoran heatsink, serta peremajaan pasta pendingin.</p>
+
+                    <!-- Sub-option 1: Essential Cleaning -->
+                    <div style="padding: 14px; background: var(--bg-alt); border-radius: 8px; margin-bottom: 12px; border: 1px solid var(--border-light);">
+                        <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary); margin-bottom: 4px;">1. Essential Cleaning</div>
+                        <p style="font-size: 0.76rem; color: var(--text-muted); margin: 0 0 8px 0; line-height: 1.35;">Basic fan &amp; heatsink cleaning + Repasta Standard + Konsultasi 1-on-1.</p>
+                        <div style="font-size: 0.82rem; font-weight: 800; color: var(--primary);">
+                            Laptop: Rp 166.500 &bull; PC: Rp 185.000
+                        </div>
+                    </div>
+
+                    <!-- Sub-option 2: Deep Care Cleaning -->
+                    <div style="padding: 14px; background: rgba(95, 138, 99, 0.05); border-radius: 8px; border: 1px solid rgba(95, 138, 99, 0.2);">
+                        <div style="font-size: 0.88rem; font-weight: 800; color: var(--primary); margin-bottom: 4px;">2. Deep Care Cleaning</div>
+                        <p style="font-size: 0.76rem; color: var(--text-secondary); margin: 0 0 8px 0; line-height: 1.35;">Pembersihan menyeluruh part (SOP Bongkar Total Part) + Repasta Premium + Konsultasi 1-on-1.</p>
+                        <div style="font-size: 0.82rem; font-weight: 800; color: var(--text-primary);">
+                            Laptop: Rp 200.000 &bull; PC: Rp 225.000
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: Essential Instalasi OS -->
+            <div class="card" style="padding: 28px 24px; background: #ffffff; border-radius: 14px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+                <div>
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--text-primary); margin-bottom: 6px;">Paket Instalasi OS</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 20px;">Pemasangan ulang Operating System lengkap beserta driver resmi unit perangkat Anda.</p>
+
+                    <div style="padding: 16px; background: var(--bg-alt); border-radius: 8px; border: 1px solid var(--border-light); margin-bottom: 14px;">
+                        <div style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary); margin-bottom: 6px;">Essential Instalasi OS</div>
+                        <ul style="padding-left: 18px; font-size: 0.76rem; color: var(--text-secondary); margin: 0 0 12px 0; line-height: 1.6;">
+                            <li>Instalasi OS + Driver Unit Lengkap</li>
+                            <li>Optimasi Konfigurasi Sistem</li>
+                            <li>Konsultasi 1-on-1 dengan Teknisi</li>
+                        </ul>
+                        <div style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">
+                            Rp 166.500 <span style="font-size: 0.75rem; font-weight: 600; color: var(--text-muted);">/ unit</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Fresh Package -->
+            <div class="card" style="padding: 28px 24px; background: #ffffff; border-radius: 14px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 2px 10px rgba(0,0,0,0.02);">
+                <div>
+                    <h3 style="font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 6px;">Fresh Package</h3>
+                    <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px;">Gabungan Deep Care Cleaning + Re-Install OS &amp; Driver.</p>
+
+                    <div style="padding: 14px; background: rgba(95, 138, 99, 0.04); border-radius: 8px; border: 1px solid rgba(95, 138, 99, 0.15); margin-bottom: 12px;">
+                        <ul style="padding-left: 18px; font-size: 0.76rem; color: var(--text-secondary); margin: 0 0 10px 0; line-height: 1.5;">
+                            <li>Deep Care Cleaning (SOP Bongkar Total Part)</li>
+                            <li>Repasta Thermal Paste Premium</li>
+                            <li>Instalasi OS + Driver + Basic Software</li>
+                            <li>Konsultasi 1-on-1 dengan Teknisi</li>
+                        </ul>
+                        <div style="border-top: 1px dashed var(--border); padding-top: 10px; display: flex; flex-direction: column; gap: 6px; font-size: 0.82rem;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span><strong>Laptop:</strong></span>
+                                <span style="font-weight: 800; color: var(--primary);">Rp 289.000 <small style="font-weight:600; color:var(--text-muted);">(+Backup: Rp 300rb)</small></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <span><strong>PC Desktop:</strong></span>
+                                <span style="font-weight: 800; color: var(--primary);">Rp 315.000 <small style="font-weight:600; color:var(--text-muted);">(+Backup: Rp 345rb)</small></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
 <!-- ── CONTACT ────────────────────────────────────────────────────── -->
 <section class="section section-alt" id="kontak">
     <div class="section-inner">
@@ -537,6 +637,44 @@
                     </div>
                 </div>
                 <a href="{{ route('service.booking') }}" class="btn btn-primary btn-lg" style="margin-top: 8px;">Booking Servis Sekarang</a>
+
+                {{-- Social Media Links --}}
+                <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border-light);">
+                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 10px;">Media Sosial &amp; Store</div>
+                    <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+                        {{-- TikTok --}}
+                        <a href="https://www.tiktok.com/@klinikkomp?_r=1&amp;_t=ZS-98VdwA99Nye" target="_blank" rel="noopener noreferrer" title="TikTok @klinikkomp" style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-2.85V7.59a6.34 6.34 0 0 0-5.46 6.25 6.34 6.34 0 1 0 11.45-3.8 8.28 8.28 0 0 0 4.12 1.09V7.69a4.84 4.84 0 0 1-0.07-1z"/>
+                            </svg>
+                        </a>
+
+                        {{-- Instagram --}}
+                        <a href="https://www.instagram.com/klinikkomp_id?igsh=MXYybTFnMzF1cnFoaA==" target="_blank" rel="noopener noreferrer" title="Instagram @klinikkomp_id" style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: #e1306c; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                            </svg>
+                        </a>
+
+                        {{-- YouTube --}}
+                        <a href="https://youtube.com/@kk-mediaa?si=vdpkezTBYu35niBe" target="_blank" rel="noopener noreferrer" title="YouTube @kk-mediaa" style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: #ff0000; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                            </svg>
+                        </a>
+
+                        {{-- Tokopedia --}}
+                        <a href="https://www.tokopedia.com/k-techid" target="_blank" rel="noopener noreferrer" title="Tokopedia Official Store" style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: #03ac0e; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
             <div>
                 <div style="border-radius: var(--radius-sm); overflow: hidden; border: 1px solid var(--border); height: 350px; background: #EAEAEA;">

@@ -84,20 +84,20 @@
                                     </option>
                                 @endforeach
                             </select>
-                            <span class="form-hint" style="color: var(--text-muted); font-size: 0.72rem; margin-top: 4px;">Pilih laptop member Anda untuk mengklaim kuota gratis Tune Up.</span>
+                            <span class="form-hint" style="color: var(--text-muted); font-size: 0.72rem; margin-top: 4px;">Pilih laptop member Anda untuk mengklaim kuota gratis Deep Care Cleaning.</span>
                         </div>
                     @endif
 
                     <input type="hidden" name="laptop_kit_id" id="laptop_kit_id">
 
-                    {{-- Free Tune-up Selection Box --}}
+                    {{-- Free Deep Care Cleaning Selection Box --}}
                     <div id="tune_up_box" class="form-group" style="display: none; margin-bottom: 18px; padding: 14px; background: rgba(226, 140, 59, 0.08); border: 1px solid var(--warning); border-radius: 8px;">
                         <label class="form-label" style="color: var(--warning-dark, #b45309); font-weight: 800; display: flex; align-items: center; gap: 8px;">
                             <input type="checkbox" name="is_tune_up" id="is_tune_up_checkbox" value="1" style="transform: scale(1.15);">
-                            Klaim Jatah Gratis Tune Up Unit
+                            Klaim Jatah Gratis Deep Care Cleaning Unit
                         </label>
                         <div id="tune_up_quota_text" style="font-size: 0.78rem; margin-top: 6px; color: var(--text-primary); font-weight: 600;">
-                            Sisa kuota gratis Tune Up untuk unit ini: 0/2
+                            Sisa kuota gratis Deep Care Cleaning untuk unit ini: 0/2
                         </div>
                     </div>
 
@@ -107,7 +107,6 @@
                             <option value="">-- Pilih Tipe --</option>
                             <option value="laptop"  {{ old('unit_type')==='laptop'  ? 'selected' : '' }}>Laptop</option>
                             <option value="desktop" {{ old('unit_type')==='desktop' ? 'selected' : '' }}>Desktop / PC</option>
-                            <option value="printer" {{ old('unit_type')==='printer' ? 'selected' : '' }}>Printer</option>
                             <option value="other"   {{ old('unit_type')==='other'   ? 'selected' : '' }}>Lainnya</option>
                         </select>
                         @error('unit_type') <span class="form-error">{{ $message }}</span> @enderror
@@ -140,6 +139,7 @@
                         <h3 style="font-size: 1rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">Detail Kerusakan</h3>
                         <p style="color: var(--text-muted); font-size: 0.78rem;">Informasikan sedetail mungkin masalah perangkat Anda.</p>
                     </div>
+
                     <div class="form-group">
                         <label class="form-label">Deskripsi Keluhan <span>*</span></label>
                         <textarea name="damage_description" class="form-control @error('damage_description') is-error @enderror"
@@ -149,11 +149,24 @@
 
                     <div class="form-group" style="margin-top: 14px;">
                         <label class="form-label">Kapan unit akan diserahkan ke kantor? <span>*</span></label>
-                        <input type="text" name="dropoff_schedule" class="form-control @error('dropoff_schedule') is-error @enderror"
-                               value="{{ old('dropoff_schedule') }}"
-                               placeholder="Contoh: Rabu, 22 Juli 2026 (Jam 10:00 WIB)" required>
-                        @error('dropoff_schedule') <span class="form-error">{{ $message }}</span> @enderror
-                        <span class="form-hint">Format: Hari, tanggal, bulan, tahun (Contoh: Rabu, 22 Juli 2026).</span>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 6px;">
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">Pilih Tanggal <span>*</span></label>
+                                <input type="date" name="dropoff_date" id="dropoffDateInput" class="form-control @error('dropoff_date') is-error @enderror"
+                                       value="{{ old('dropoff_date', date('Y-m-d')) }}"
+                                       min="{{ date('Y-m-d') }}" required style="padding: 10px 12px;" onchange="updateDatePreview()">
+                                @error('dropoff_date') <span class="form-error">{{ $message }}</span> @enderror
+                                <div id="dateDayPreview" style="font-size:0.78rem; color:var(--primary); font-weight:700; margin-top:6px;"></div>
+                            </div>
+                            <div>
+                                <label style="font-size:0.72rem; color:var(--text-muted); font-weight:600; margin-bottom:4px; display:block;">Jam Penyerahan (Ketik Manual) <span>*</span></label>
+                                <input type="text" name="dropoff_time" class="form-control @error('dropoff_time') is-error @enderror"
+                                       value="{{ old('dropoff_time', '10:00') }}"
+                                       placeholder="Contoh: 10:00 WIB" required style="padding: 10px 12px;">
+                                @error('dropoff_time') <span class="form-error">{{ $message }}</span> @enderror
+                                <span class="form-hint" style="font-size:0.7rem; color:var(--text-muted);">Contoh: 10:00 WIB / 14:00 WIB</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Summary Preview -->
@@ -219,11 +232,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 tuneUpBox.style.display = 'block';
                 if (remaining > 0) {
-                    tuneUpQuotaText.innerHTML = `Sisa kuota gratis Tune Up tahun ini: <strong>${remaining}/${maxFree}</strong>`;
+                    tuneUpQuotaText.innerHTML = `Sisa kuota gratis Deep Care Cleaning tahun ini: <strong>${remaining}/${maxFree}</strong>`;
                     tuneUpCheckbox.disabled = false;
                     tuneUpCheckbox.checked = false;
                 } else {
-                    tuneUpQuotaText.innerHTML = `<span style="color: var(--danger);">Kuota Tune-Up Gratis tahun ini telah habis untuk unit ini (${tuneUpsCount}/${maxFree}).</span>`;
+                    tuneUpQuotaText.innerHTML = `<span style="color: var(--danger);">Kuota Deep Care Cleaning Gratis tahun ini telah habis untuk unit ini (${tuneUpsCount}/${maxFree}).</span>`;
                     tuneUpCheckbox.disabled = true;
                     tuneUpCheckbox.checked = false;
                 }
@@ -252,7 +265,7 @@ document.addEventListener('DOMContentLoaded', function() {
             tuneUpCheckbox.addEventListener('change', function() {
                 const damageTextarea = document.querySelector('[name=damage_description]');
                 if (this.checked) {
-                    damageTextarea.value = "Klaim layanan Tune-Up gratis unit member (pemeriksaan menyeluruh, pembersihan debu, penggantian thermal paste, optimasi software).";
+                    damageTextarea.value = "Klaim layanan Deep Care Cleaning gratis unit member (pemeriksaan menyeluruh, pembersihan debu, penggantian thermal paste, optimasi software).";
                 } else {
                     damageTextarea.value = "";
                 }
@@ -323,11 +336,28 @@ function goToStep(step) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function updateDatePreview() {
+    const val = document.getElementById('dropoffDateInput')?.value;
+    const previewEl = document.getElementById('dateDayPreview');
+    if (!val || !previewEl) return;
+
+    const parts = val.split('-');
+    if (parts.length === 3) {
+        const d = new Date(parts[0], parts[1] - 1, parts[2]);
+        const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        const dayName = days[d.getDay()];
+        const monthName = months[d.getMonth()];
+        previewEl.innerHTML = '📅 ' + dayName + ', ' + d.getDate() + ' ' + monthName + ' ' + d.getFullYear();
+    }
+}
+document.addEventListener('DOMContentLoaded', updateDatePreview);
+
 // Re-populate on validation error (server side)
 @if($errors->any())
     @php $step = 1;
     if($errors->has('unit_type')||$errors->has('brand')||$errors->has('model')) $step=2;
-    if($errors->has('damage_description')) $step=3;
+    if($errors->has('damage_description')||$errors->has('dropoff_date')||$errors->has('dropoff_time')) $step=3;
     @endphp
     goToStep({{ $step }});
 @endif

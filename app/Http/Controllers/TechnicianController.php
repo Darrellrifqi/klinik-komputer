@@ -10,6 +10,10 @@ class TechnicianController extends Controller
 {
     public function index()
     {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate');
+        } catch (\Exception $e) {}
+
         $activeTickets = Ticket::with(['customer', 'creator'])
             ->whereNotIn('status', ['done', 'cancelled'])
             ->orderBy('created_at', 'asc')
@@ -25,7 +29,7 @@ class TechnicianController extends Controller
 
     public function updateStatus(Request $request, Ticket $ticket)
     {
-        $request->validate(['action' => 'required|in:start_check,finish_check,rma,done,cancel']);
+        $request->validate(['action' => 'required|in:start_check,finish_check,set_menunggu_part,set_pengerjaan_unit,rma,done,cancel']);
 
         $oldStatus = $ticket->status;
         $notes = '';
@@ -49,26 +53,46 @@ class TechnicianController extends Controller
                 $request->validate([
                     'components_issue' => 'required|string',
                     'cause'            => 'required|string',
-                    'estimated_cost'   => 'nullable|numeric|min:0',
                 ]);
                 $components = array_filter(array_map('trim', explode("\n", $request->components_issue)));
                 $ticket->update([
-                    'status'           => 'checked',
+                    'status'           => 'konfirmasi_user',
                     'components_issue' => $components,
                     'cause'            => $request->cause,
-                    'estimated_cost'   => $request->estimated_cost,
                 ]);
-                $notes = "Selesai pengecekan. Komponen: " . implode(', ', $components) . ". Estimasi: Rp " . number_format($request->estimated_cost ?? 0, 0, ',', '.');
+                $notes = "Selesai pengecekan teknisi. Komponen: " . implode(', ', $components) . ". Penyebab: {$request->cause}";
+                break;
+
+            case 'set_menunggu_part':
+                $ticket->update([
+                    'status'     => 'proses_service',
+                    'sub_status' => 'menunggu_part',
+                ]);
+                $notes = 'Teknisi memperbarui progres: Menunggu Part (Sparepart).';
+                break;
+
+            case 'set_pengerjaan_unit':
+                $ticket->update([
+                    'status'     => 'proses_service',
+                    'sub_status' => 'pengerjaan_unit',
+                ]);
+                $notes = 'Teknisi memperbarui progres: Pengerjaan Unit.';
                 break;
 
             case 'rma':
-                $ticket->update(['status' => 'rma']);
+                $ticket->update([
+                    'status'     => 'proses_service',
+                    'sub_status' => 'klaim_garansi',
+                ]);
                 $notes = 'Unit masuk proses RMA (klaim garansi).';
                 break;
 
             case 'done':
-                $ticket->update(['status' => 'done']);
-                $notes = 'Unit selesai diperbaiki dan siap diambil.';
+                $ticket->update([
+                    'status'     => 'siap_diambil',
+                    'sub_status' => null,
+                ]);
+                $notes = 'Unit selesai diperbaiki oleh teknisi dan status menjadi Siap Diambil.';
                 break;
 
             case 'cancel':
@@ -85,7 +109,7 @@ class TechnicianController extends Controller
             'notes'      => $notes,
         ]);
 
-        return redirect()->route('dashboard.teknisi')->with('success', 'Status tiket berhasil diperbarui.');
+        return redirect()->back()->with('success', 'Status tiket berhasil diperbarui.');
     }
 
     public function show(Ticket $ticket)

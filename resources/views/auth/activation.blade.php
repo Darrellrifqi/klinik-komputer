@@ -55,6 +55,28 @@
                                 <p style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4;">Solusi cepat untuk kendala software, instalasi driver, maupun optimasi sistem melalui koneksi remote jarak jauh yang aman.</p>
                             </div>
                         </div>
+
+                        <!-- Benefit 4: Gratis Deep Care Cleaning 2x / Tahun -->
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="width: 42px; height: 42px; border-radius: 50%; background: rgba(95, 138, 99, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700;">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 4px; font-weight: 700;">Layanan Deep Care Cleaning (2x / Tahun)</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4;">Nikmati kuota perawatan rutin gratis sebanyak 2 kali dalam setahun (pembersihan hardware, pergantian thermal paste, & optimasi performa) agar laptop selalu prima.</p>
+                            </div>
+                        </div>
+
+                        <!-- Benefit 5: Gratis Essential Instalasi OS 2x / Tahun -->
+                        <div style="display: flex; gap: 16px; align-items: flex-start;">
+                            <div style="width: 42px; height: 42px; border-radius: 50%; background: rgba(95, 138, 99, 0.08); color: var(--primary); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-weight: 700;">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                            </div>
+                            <div>
+                                <h4 style="font-size: 0.95rem; color: var(--text-primary); margin-bottom: 4px; font-weight: 700;">Essential Instalasi OS (2x / Tahun)</h4>
+                                <p style="color: var(--text-secondary); font-size: 0.82rem; line-height: 1.4;">Gratis re-install Operating System, instalasi driver unit, dan optimasi sistem hingga 2 kali dalam 1 tahun keanggotaan Anda.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <div style="margin-top: 30px; padding: 14px; background: var(--bg-alt); border-radius: 8px; border: 1px solid var(--border-light); font-size: 0.78rem; color: var(--text-muted); line-height: 1.4;">
@@ -191,7 +213,7 @@
                                 <div id="panelRegular" style="display: none;">
                                     <div style="margin-bottom: 22px;">
                                         <h3 style="font-size: 1.15rem; color: var(--text-primary); font-weight: 800; margin-bottom: 6px;">Registrasi Member Mandiri (Umum)</h3>
-                                        <p style="color: var(--text-secondary); font-size: 0.84rem; line-height: 1.5;">Daftarkan keanggotaan Member Umum Klinik Komputer untuk menikmati benefit spesial: <strong>2x Tune-Up gratis per tahun</strong> dan layanan <strong>Onsite Servis Bandung Raya</strong> (perbaikan langsung di tempat Anda). Pendaftaran keanggotaan dapat dilakukan dengan datang langsung ke kantor Klinik Komputer atau hubungi CS via WhatsApp.</p>
+                                        <p style="color: var(--text-secondary); font-size: 0.84rem; line-height: 1.5;">Daftarkan keanggotaan Member Umum Klinik Komputer untuk menikmati benefit spesial: <strong>2x Deep Care Cleaning gratis per tahun</strong> dan layanan <strong>Onsite Servis Bandung Raya</strong> (perbaikan langsung di tempat Anda). Pendaftaran keanggotaan dapat dilakukan dengan datang langsung ke kantor Klinik Komputer atau hubungi CS via WhatsApp.</p>
                                     </div>
 
                                     <form action="{{ route('kit.activate.regular') }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 14px;">

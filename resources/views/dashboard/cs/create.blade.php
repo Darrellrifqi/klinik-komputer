@@ -48,8 +48,7 @@
                             <select name="unit_type" class="form-control" required>
                                 <option value="">-- Pilih --</option>
                                 <option value="laptop"  {{ old('unit_type')==='laptop'  ? 'selected':'' }}>Laptop</option>
-                                <option value="desktop" {{ old('unit_type')==='desktop' ? 'selected':'' }}>Desktop</option>
-                                <option value="printer" {{ old('unit_type')==='printer' ? 'selected':'' }}>Printer</option>
+                                <option value="desktop" {{ old('unit_type')==='desktop' ? 'selected':'' }}>Desktop / PC</option>
                                 <option value="other"   {{ old('unit_type')==='other'   ? 'selected':'' }}>Lainnya</option>
                             </select>
                             @error('unit_type')<span class="form-error">{{ $message }}</span>@enderror
@@ -81,10 +80,14 @@
                                 Kosongkan jika bukan member. NIK = Member Umum, SN = Member Pengadaan.
                             </div>
                         </div>
-                        <div class="form-group" style="margin-bottom:0; padding-top:22px;">
+                        <div class="form-group" style="margin-bottom:0; padding-top:10px; display:flex; flex-direction:column; gap:8px;">
                             <label class="form-label" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700;">
                                 <input type="checkbox" name="is_tune_up" value="1" {{ old('is_tune_up') ? 'checked' : '' }} style="transform: scale(1.15);">
-                                Tandai sebagai Tune-Up Gratis <span style="font-weight:400; color:var(--text-muted);">(kuota member -1)</span>
+                                Tandai sebagai Deep Care Cleaning Gratis <span style="font-weight:400; color:var(--text-muted);">(kuota member -1)</span>
+                            </label>
+                            <label class="form-label" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700;">
+                                <input type="checkbox" name="is_os_install" value="1" {{ old('is_os_install') ? 'checked' : '' }} style="transform: scale(1.15);">
+                                Tandai sebagai Essential Instalasi OS Gratis <span style="font-weight:400; color:var(--text-muted);">(kuota member -1)</span>
                             </label>
                         </div>
                     </div>

@@ -47,6 +47,7 @@ class TicketController extends Controller
             'damage_description' => 'required|string|min:5',
             'member_id_input'    => 'nullable|string',
             'is_tune_up'         => 'nullable|boolean',
+            'is_os_install'      => 'nullable|boolean',
         ]);
 
         $customerId = null;
@@ -84,6 +85,7 @@ class TicketController extends Controller
             'laptop_kit_id'      => $kitId,
             'customer_id'        => $customerId,
             'is_tune_up'         => $request->has('is_tune_up') ? (bool)$request->is_tune_up : false,
+            'is_os_install'      => $request->has('is_os_install') ? (bool)$request->is_os_install : false,
         ]);
 
         TicketHistory::create([
@@ -159,6 +161,7 @@ class TicketController extends Controller
     {
         $request->validate([
             'status'                  => 'required|in:waiting,checking,checked,konfirmasi_user,proses_service,rma,done,siap_diambil,sudah_diambil,taken,cancelled',
+            'sub_status'              => 'nullable|string|in:pembelian_part,klaim_garansi,menunggu_part,pengerjaan_unit',
             'airtable_service_number' => 'nullable|string|max:100',
             'pic_name'                => 'nullable|string|max:255',
             'start_check_date'        => 'nullable|date',
@@ -167,16 +170,32 @@ class TicketController extends Controller
             'estimated_cost'          => 'nullable|numeric|min:0',
             'notes'                   => 'nullable|string|max:500',
             'is_tune_up'              => 'nullable|boolean',
+            'is_os_install'           => 'nullable|boolean',
             'member_id_input'         => 'nullable|string',
         ], [
             'status.required'  => 'Status tiket wajib dipilih.',
             'status.in'        => 'Pilihan status tidak valid.',
         ]);
 
+        // Ensure sub_status column exists in database
+        if (!\Illuminate\Support\Facades\Schema::hasColumn('tickets', 'sub_status')) {
+            try {
+                \Illuminate\Support\Facades\Schema::table('tickets', function ($table) {
+                    $table->string('sub_status')->nullable()->after('status');
+                });
+            } catch (\Exception $e) {
+                try {
+                    \Illuminate\Support\Facades\Artisan::call('migrate');
+                } catch (\Exception $ex) {}
+            }
+        }
+
         $oldStatus = $ticket->status;
         $updateData = [
-            'status'     => $request->status,
-            'is_tune_up' => $request->has('is_tune_up') ? (bool)$request->is_tune_up : false,
+            'status'        => $request->status,
+            'sub_status'    => $request->sub_status,
+            'is_tune_up'    => $request->has('is_tune_up') ? (bool)$request->is_tune_up : false,
+            'is_os_install' => $request->has('is_os_install') ? (bool)$request->is_os_install : false,
         ];
 
         if ($request->filled('member_id_input')) {

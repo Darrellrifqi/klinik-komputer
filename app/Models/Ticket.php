@@ -8,8 +8,8 @@ class Ticket extends Model
 {
     protected $fillable = [
         'ticket_number', 'airtable_service_number', 'queue_number', 'customer_id', 'laptop_kit_id', 'customer_name',
-        'customer_phone', 'unit_type', 'is_tune_up', 'brand', 'model', 'damage_description',
-        'dropoff_schedule', 'status', 'assigned_to', 'created_by', 'start_check_date', 'pic_name',
+        'customer_phone', 'unit_type', 'is_tune_up', 'is_os_install', 'brand', 'model', 'damage_description',
+        'dropoff_schedule', 'status', 'sub_status', 'assigned_to', 'created_by', 'start_check_date', 'pic_name',
         'components_issue', 'cause', 'estimated_cost', 'notes',
     ];
 
@@ -17,6 +17,7 @@ class Ticket extends Model
         'components_issue' => 'array',
         'start_check_date' => 'date',
         'is_tune_up' => 'boolean',
+        'is_os_install' => 'boolean',
     ];
 
     public function customer()
@@ -42,6 +43,37 @@ class Ticket extends Model
     public function histories()
     {
         return $this->hasMany(TicketHistory::class)->orderBy('created_at', 'desc');
+    }
+
+    public function getSubStatusLabelAttribute(): ?string
+    {
+        return match ($this->sub_status) {
+            'pembelian_part'  => 'Pembelian Part',
+            'klaim_garansi'   => 'Klaim Garansi / RMA',
+            'menunggu_part'   => 'Menunggu Part',
+            'pengerjaan_unit' => 'Pengerjaan Unit',
+            default           => $this->sub_status ? ucfirst(str_replace('_', ' ', $this->sub_status)) : null,
+        };
+    }
+
+    public function getDropoffScheduleAttribute($value): ?string
+    {
+        if (!$value) return null;
+
+        // Clean any repeated "Jam Jam", "WIB WIB", "Jam (Jam", etc.
+        $cleaned = preg_replace('/\bJam\s+Jam\b/i', 'Jam', $value);
+        $cleaned = preg_replace('/\bWIB\s+WIB\b/i', 'WIB', $cleaned);
+        $cleaned = preg_replace('/\(Jam\s+Jam\s+/i', '(Jam ', $cleaned);
+        $cleaned = preg_replace('/\s+WIB\s+WIB\)/i', ' WIB)', $cleaned);
+
+        return $cleaned;
+    }
+
+    public function getFullStatusLabelAttribute(): string
+    {
+        $main = $this->status_label;
+        $sub  = $this->sub_status_label;
+        return $sub ? "{$main} ({$sub})" : $main;
     }
 
     public function getStatusLabelAttribute(): string

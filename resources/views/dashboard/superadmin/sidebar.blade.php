@@ -39,6 +39,11 @@
 <a href="{{ route('admin.acp.schools') }}" class="{{ request()->routeIs('admin.acp.schools*') ? 'active' : '' }}">
     <span class="nav-icon">Mitra Sekolah ACP</span>
 </a>
+<a href="{{ route('admin.internship.applications') }}" class="{{ request()->routeIs('admin.internship.applications*') ? 'active' : '' }}">
+    <span class="nav-icon">Pengajuan Sekolah</span>
+    @php $pendingApps = \App\Models\InternshipApplication::where('status','pending')->count(); @endphp
+    @if($pendingApps > 0)<span class="badge-count">{{ $pendingApps }}</span>@endif
+</a>
 <a href="{{ route('admin.pkl.tokens') }}" class="{{ request()->routeIs('admin.pkl.tokens*') ? 'active' : '' }}">
     <span class="nav-icon">Kelola Token PKL</span>
 </a>
@@ -50,3 +55,6 @@
 <div class="sidebar-section-label">Navigasi</div>
 <a href="{{ route('products') }}" target="_blank"><span class="nav-icon">Katalog Publik</span></a>
 <a href="{{ route('home') }}"><span class="nav-icon">Beranda</span></a>
+<a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+    <span class="nav-icon">Pengaturan Profile</span>
+</a>

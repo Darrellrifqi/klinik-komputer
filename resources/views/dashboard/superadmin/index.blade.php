@@ -12,86 +12,110 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 {{-- 1. Stat Cards Row --}}
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 24px;">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px; align-items: stretch;">
     
     <!-- Group 1: Layanan Servis -->
-    <div class="dash-card" style="padding: 20px;">
-        <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); margin-bottom: 16px; display: flex; align-items: center; gap: 6px;">
-            <span style="width: 6px; height: 6px; background: var(--primary); border-radius: 50%;"></span>
-            Layanan Servis
+    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); min-height: 24px; display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
+            <span style="width: 6px; height: 6px; background: var(--primary); border-radius: 50%; flex-shrink: 0;"></span>
+            <span>Layanan Servis</span>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary);">{{ $stats['total_tickets'] }}</div>
-                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Total Tiket</div>
+        <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 4px; flex: 1;">
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $stats['total_tickets'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Total Tiket</div>
             </div>
-            <div style="width: 1px; height: 32px; background: var(--border);"></div>
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #3b82f6;">{{ $stats['booking_tickets'] }}</div>
-                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Booking</div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #3b82f6; line-height: 1;">{{ $stats['booking_tickets'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Booking</div>
             </div>
-            <div style="width: 1px; height: 32px; background: var(--border);"></div>
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #f59e0b;">{{ $stats['active_tickets'] }}</div>
-                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Aktif (Serah)</div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #f59e0b; line-height: 1;">{{ $stats['active_tickets'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Aktif (Serah)</div>
             </div>
-            <div style="width: 1px; height: 32px; background: var(--border);"></div>
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #10b981;">{{ $stats['done_tickets'] }}</div>
-                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Selesai</div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #10b981; line-height: 1;">{{ $stats['done_tickets'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Selesai</div>
             </div>
         </div>
     </div>
 
     <!-- Group 2: Pengadaan Sekolah -->
-    <div class="dash-card" style="padding: 20px;">
-        <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); margin-bottom: 16px; display: flex; align-items: center; gap: 6px;">
-            <span style="width: 6px; height: 6px; background: var(--accent); border-radius: 50%;"></span>
-            Pengadaan Sekolah
+    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); min-height: 24px; display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
+            <span style="width: 6px; height: 6px; background: var(--accent); border-radius: 50%; flex-shrink: 0;"></span>
+            <span>Pengadaan Sekolah</span>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center; gap: 4px;">
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary);">{{ $stats['total_procurement'] }}</div>
-                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Total Order</div>
+        <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 4px; flex: 1;">
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $stats['total_procurement'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Total Order</div>
             </div>
-            <div style="width: 1px; height: 32px; background: var(--border);"></div>
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #f59e0b;">{{ $stats['processing_procurement'] }}</div>
-                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Diproses</div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #f59e0b; line-height: 1;">{{ $stats['processing_procurement'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Diproses</div>
             </div>
-            <div style="width: 1px; height: 32px; background: var(--border);"></div>
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #10b981;">{{ $stats['completed_procurement'] }}</div>
-                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Selesai</div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #10b981; line-height: 1;">{{ $stats['completed_procurement'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Selesai</div>
             </div>
-            <div style="width: 1px; height: 32px; background: var(--border);"></div>
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: #ef4444;">{{ $stats['cancelled_procurement'] }}</div>
-                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Dibatalkan</div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #ef4444; line-height: 1;">{{ $stats['cancelled_procurement'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Dibatalkan</div>
             </div>
         </div>
     </div>
 
-    <!-- Group 3: Sistem & Katalog -->
-    <div class="dash-card" style="padding: 20px;">
-        <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--info); margin-bottom: 16px; display: flex; align-items: center; gap: 6px;">
-            <span style="width: 6px; height: 6px; background: var(--info); border-radius: 50%;"></span>
-            Pengguna & Produk
+    <!-- Group 3: Pengguna & Produk -->
+    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--info); min-height: 24px; display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
+            <span style="width: 6px; height: 6px; background: var(--info); border-radius: 50%; flex-shrink: 0;"></span>
+            <span>Pengguna & Produk</span>
         </div>
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary);">{{ $stats['total_users'] }}</div>
-                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">User Staff</div>
+        <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 4px; flex: 1;">
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $stats['total_users'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">User Staff</div>
             </div>
-            <div style="width: 1px; height: 36px; background: var(--border);"></div>
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: var(--danger);">{{ $stats['pending_users'] }}</div>
-                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Persetujuan</div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--danger); line-height: 1;">{{ $stats['pending_users'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Persetujuan</div>
             </div>
-            <div style="width: 1px; height: 36px; background: var(--border);"></div>
-            <div style="text-align: center; flex: 1;">
-                <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">{{ $stats['total_products'] }}</div>
-                <div style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 2px;">Produk</div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary); line-height: 1;">{{ $stats['total_products'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Produk</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group 4: Internship & PKL Sekolah -->
+    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8b5cf6; min-height: 24px; display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
+            <span style="width: 6px; height: 6px; background: #8b5cf6; border-radius: 50%; flex-shrink: 0;"></span>
+            <span>Internship Sekolah</span>
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: stretch; gap: 4px; flex: 1;">
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: var(--text-primary); line-height: 1;">{{ $stats['total_internship_apps'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Total Pengajuan</div>
+            </div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #f59e0b; line-height: 1;">{{ $stats['pending_internship_apps'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Menunggu</div>
+            </div>
+            <div style="width: 1px; background: var(--border); margin: 2px 0;"></div>
+            <div style="text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                <div style="font-size: 1.5rem; font-weight: 800; color: #10b981; line-height: 1;">{{ $stats['approved_internship_apps'] }}</div>
+                <div style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.02em; font-weight: 600; margin-top: 8px; line-height: 1.2; min-height: 26px; display: flex; align-items: center; justify-content: center; text-align: center;">Disetujui</div>
             </div>
         </div>
     </div>

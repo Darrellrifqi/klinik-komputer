@@ -32,6 +32,12 @@ class AdminController extends Controller
             'processing_procurement'=> ProcurementOrder::whereIn('status', ['diproses', 'konfirmasi_harga', 'menunggu_pembayaran', 'siap_kirim', 'diproses_pengiriman'])->count(),
             'completed_procurement' => ProcurementOrder::whereIn('status', ['dibayar', 'selesai'])->count(),
             'cancelled_procurement' => ProcurementOrder::where('status', 'dibatalkan')->count(),
+
+            // Internship & PKL Stats
+            'total_internship_apps'   => \App\Models\InternshipApplication::count(),
+            'pending_internship_apps' => \App\Models\InternshipApplication::where('status', 'pending')->count(),
+            'approved_internship_apps'=> \App\Models\InternshipApplication::where('status', 'approved')->count(),
+            'total_pkl_students'      => \App\Models\PklStudent::count(),
         ];
 
         // Daily Trend Data (Last 7 Days)
@@ -856,6 +862,49 @@ class AdminController extends Controller
 
         $student->delete();
         return back()->with('success', 'Data siswa PKL berhasil dihapus.');
+    }
+
+    // ─── Internship Applications ──────────────────────────────────────────────
+    public function internshipApplications(Request $request)
+    {
+        $query = \App\Models\InternshipApplication::query();
+
+        if ($request->filled('status') && in_array($request->status, ['pending', 'approved', 'rejected'])) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('school_name', 'like', "%{$search}%")
+                  ->orWhere('contact_person', 'like', "%{$search}%")
+                  ->orWhere('phone', 'like', "%{$search}%");
+            });
+        }
+
+        $applications = $query->latest()->paginate(15)->withQueryString();
+        return view('dashboard.superadmin.pkl.applications', compact('applications'));
+    }
+
+    public function approveInternshipApplication(\App\Models\InternshipApplication $application)
+    {
+        $application->update(['status' => 'approved']);
+        return back()->with('success', 'Pengajuan internship berhasil disetujui.');
+    }
+
+    public function rejectInternshipApplication(\App\Models\InternshipApplication $application)
+    {
+        $application->update(['status' => 'rejected']);
+        return back()->with('success', 'Pengajuan internship telah ditolak.');
+    }
+
+    public function destroyInternshipApplication(\App\Models\InternshipApplication $application)
+    {
+        if ($application->proposal_file && \Illuminate\Support\Facades\Storage::disk('public')->exists($application->proposal_file)) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($application->proposal_file);
+        }
+        $application->delete();
+        return back()->with('success', 'Data pengajuan internship berhasil dihapus.');
     }
 
     public function banners()

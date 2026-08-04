@@ -7,6 +7,9 @@
 <a href="{{ route('dashboard.teknisi') }}" class="active">
     <span class="nav-icon">Daftar Tiket</span>
 </a>
+<a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+    <span class="nav-icon">Pengaturan Profile</span>
+</a>
 <div class="sidebar-section-label">Navigasi</div>
 <a href="{{ route('service.track') }}"><span class="nav-icon">Tracking Publik</span></a>
 <a href="{{ route('home') }}"><span class="nav-icon">Beranda</span></a>
@@ -113,102 +116,9 @@
                         </td>
                         <td style="font-size:0.78rem; color:var(--text-muted);">{{ $ticket->created_at->format('d M') }}</td>
                         <td>
-                            <div style="display:flex; gap:4px; flex-wrap:wrap;">
-                                <a href="{{ route('dashboard.teknisi.show', $ticket) }}" class="btn btn-outline btn-sm" style="padding: 6px 10px;">Detail</a>
-                                @if($ticket->status === 'waiting')
-                                    <button onclick="openModal('modal-start-{{ $ticket->id }}')" class="btn btn-primary btn-sm">Mulai Cek</button>
-                                @elseif($ticket->status === 'checking')
-                                    <button onclick="openModal('modal-finish-{{ $ticket->id }}')" class="btn btn-primary btn-sm">Selesai Cek</button>
-                                @elseif($ticket->status === 'checked')
-                                    <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <input type="hidden" name="action" value="rma">
-                                        <button type="submit" class="btn btn-sm btn-accent" onclick="return confirm('Tandai tiket ini masuk proses RMA?')">RMA</button>
-                                    </form>
-                                    <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <input type="hidden" name="action" value="done">
-                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Tandai unit sebagai selesai servis?')">Selesai</button>
-                                    </form>
-                                @elseif($ticket->status === 'rma')
-                                    <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" style="display:inline;">
-                                        @csrf
-                                        <input type="hidden" name="action" value="done">
-                                        <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Tandai unit sebagai selesai servis?')">Selesai</button>
-                                    </form>
-                                @endif
-                            </div>
+                            <a href="{{ route('dashboard.teknisi.show', $ticket) }}" class="btn btn-outline btn-sm" style="padding: 6px 10px;">Detail</a>
                         </td>
                     </tr>
-
-                    <!-- Modal: Start Check -->
-                    <div class="modal-overlay" id="modal-start-{{ $ticket->id }}">
-                        <div class="modal">
-                            <div class="modal-header">
-                                <h3>Mulai Pengecekan</h3>
-                                <button class="modal-close" onclick="closeModal('modal-start-{{ $ticket->id }}')">✕</button>
-                            </div>
-                            <p style="color:var(--text-secondary); margin-bottom:16px; font-size:0.85rem;">
-                                Tiket: <strong>{{ $ticket->ticket_number }}</strong> | {{ $ticket->brand }} {{ $ticket->model }}
-                            </p>
-                            <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" style="display: flex; flex-direction: column; gap: 14px;">
-                                @csrf
-                                <input type="hidden" name="action" value="start_check">
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label class="form-label">Tanggal Pemeriksaan <span>*</span></label>
-                                    <input type="date" name="start_check_date" class="form-control"
-                                           value="{{ date('Y-m-d') }}" required style="padding: 10px 12px; border-radius: 6px;">
-                                </div>
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label class="form-label">Penanggung Jawab <span>*</span></label>
-                                    <input type="text" name="pic_name" class="form-control"
-                                           value="{{ auth()->user()->name }}" placeholder="Nama teknisi PJ" required style="padding: 10px 12px; border-radius: 6px;">
-                                </div>
-                                <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;">
-                                    <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-start-{{ $ticket->id }}')">Batal</button>
-                                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 8px 16px;">Mulai Proses</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Modal: Finish Check -->
-                    <div class="modal-overlay" id="modal-finish-{{ $ticket->id }}">
-                        <div class="modal">
-                            <div class="modal-header">
-                                <h3>Hasil Pemeriksaan</h3>
-                                <button class="modal-close" onclick="closeModal('modal-finish-{{ $ticket->id }}')">✕</button>
-                            </div>
-                            <p style="color:var(--text-secondary); margin-bottom:16px; font-size:0.85rem;">
-                                Tiket: <strong>{{ $ticket->ticket_number }}</strong> | {{ $ticket->brand }} {{ $ticket->model }}
-                            </p>
-                            <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" style="display: flex; flex-direction: column; gap: 14px;">
-                                @csrf
-                                <input type="hidden" name="action" value="finish_check">
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label class="form-label">Komponen Bermasalah <span>*</span></label>
-                                    <textarea name="components_issue" class="form-control" rows="3"
-                                              placeholder="Tuliskan komponen bermasalah (Satu komponen per baris).&#10;Contoh:&#10;Layar LCD&#10;Baterai Kembung" required style="padding: 10px 12px; border-radius: 6px;"></textarea>
-                                    <span class="form-hint">Tuliskan satu komponen per baris.</span>
-                                </div>
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label class="form-label">Penyebab Kerusakan <span>*</span></label>
-                                    <textarea name="cause" class="form-control" rows="2"
-                                              placeholder="Penyebab kerusakan..." required style="padding: 10px 12px; border-radius: 6px;"></textarea>
-                                </div>
-                                <div class="form-group" style="margin-bottom: 0;">
-                                    <label class="form-label">Estimasi Biaya Perbaikan (Rp)</label>
-                                    <input type="number" name="estimated_cost" class="form-control"
-                                           placeholder="Contoh: 450000" min="0" style="padding: 10px 12px; border-radius: 6px;">
-                                </div>
-                                <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;">
-                                    <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-finish-{{ $ticket->id }}')">Batal</button>
-                                    <button type="submit" class="btn btn-primary btn-sm" style="padding: 8px 16px;">Simpan Laporan</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-
                     @endforeach
                 </tbody>
             </table>

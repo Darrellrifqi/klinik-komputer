@@ -38,3 +38,7 @@
 <a href="{{ route('home') }}">
     <span class="nav-icon">Beranda</span>
 </a>
+<div class="sidebar-section-label">Pengaturan</div>
+<a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+    <span class="nav-icon">Pengaturan Profile</span>
+</a>

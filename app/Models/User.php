@@ -12,8 +12,19 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'phone', 'status', 'nik',
+        'name', 'email', 'password', 'role', 'phone', 'status', 'nik', 'avatar',
     ];
+
+    public function getAvatarUrlAttribute(): string
+    {
+        if ($this->avatar) {
+            if (filter_var($this->avatar, FILTER_VALIDATE_URL)) {
+                return $this->avatar;
+            }
+            return asset('storage/' . $this->avatar);
+        }
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=15803d&color=ffffff&bold=true';
+    }
 
     protected $hidden = [
         'password', 'remember_token',
@@ -48,15 +59,20 @@ class User extends Authenticatable
      */
     public function tuneUpPeriod(): array
     {
-        $since = $this->created_at;
+        $since = $this->created_at ?: now();
         $periodsPassed = (int) $since->diffInYears(now());
         $start = $since->copy()->addYears($periodsPassed);
         $end   = $start->copy()->addYear();
         return ['start' => $start, 'end' => $end];
     }
 
+    public function tuneUpResetDate()
+    {
+        return $this->tuneUpPeriod()['end'];
+    }
+
     /**
-     * Count how many free tune-ups this member has used in the current period.
+     * Count how many free tune-ups (Deep Care Cleaning) this member has used in the current period.
      */
     public function tuneUpCount(): int
     {
@@ -68,11 +84,49 @@ class User extends Authenticatable
     }
 
     /**
-     * Remaining free tune-ups in the current period (max 2).
+     * Remaining free tune-ups (Deep Care Cleaning) in the current period (max 2).
      */
     public function tuneUpRemaining(): int
     {
         return max(0, 2 - $this->tuneUpCount());
+    }
+
+    /**
+     * Count how many free Essential OS installations this member has used in the current period.
+     */
+    public function osInstallCount(): int
+    {
+        $period = $this->tuneUpPeriod();
+        return Ticket::where('customer_id', $this->id)
+            ->where(function($q) {
+                $q->where('is_os_install', true)
+                  ->orWhere('damage_description', 'LIKE', '%Essential Instalasi OS%');
+            })
+            ->whereBetween('created_at', [$period['start'], $period['end']])
+            ->count();
+    }
+
+    /**
+     * Remaining free Essential OS installations in the current period (max 2).
+     */
+    public function osInstallRemaining(): int
+    {
+        return max(0, 2 - $this->osInstallCount());
+    }
+
+    public function getHasProcurementKitAttribute(): bool
+    {
+        return ProcurementLaptopKit::where('customer_id', $this->id)->where('is_regular', false)->exists();
+    }
+
+    public function getIsRegularMemberAttribute(): bool
+    {
+        return !empty($this->nik) || ProcurementLaptopKit::where('customer_id', $this->id)->where('is_regular', true)->exists();
+    }
+
+    public function getIsMemberAttribute(): bool
+    {
+        return $this->has_procurement_kit || $this->is_regular_member;
     }
 
     public function assignedTickets()

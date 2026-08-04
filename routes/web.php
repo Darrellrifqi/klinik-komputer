@@ -12,6 +12,7 @@ use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\TechnicianController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\PklController;
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
 // ─── Public Routes ───────────────────────────────────────────────────────────
@@ -58,6 +59,12 @@ Route::get('/dashboard', function () {
         default      => redirect()->route('home'),
     };
 })->name('dashboard')->middleware('auth');
+
+// ─── Shared Profile Routes (All Auth Roles) ───────────────────────────────────
+Route::middleware('auth')->prefix('dashboard')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+});
 
 // ─── Customer Dashboard ───────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:customer'])->prefix('dashboard/customer')->group(function () {
@@ -169,6 +176,11 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('dashboard/admin')->group
     Route::post('/pkl/students/{student}/approve', [AdminController::class, 'approvePklStudent'])->name('admin.pkl.students.approve');
     Route::post('/pkl/students/{student}/reject', [AdminController::class, 'rejectPklStudent'])->name('admin.pkl.students.reject');
     Route::delete('/pkl/students/{student}', [AdminController::class, 'destroyPklStudent'])->name('admin.pkl.students.destroy');
+
+    Route::get('/internship-applications', [AdminController::class, 'internshipApplications'])->name('admin.internship.applications');
+    Route::post('/internship-applications/{application}/approve', [AdminController::class, 'approveInternshipApplication'])->name('admin.internship.applications.approve');
+    Route::post('/internship-applications/{application}/reject', [AdminController::class, 'rejectInternshipApplication'])->name('admin.internship.applications.reject');
+    Route::delete('/internship-applications/{application}', [AdminController::class, 'destroyInternshipApplication'])->name('admin.internship.applications.destroy');
 });
 
 // ─── Production Dashboard ─────────────────────────────────────────────────────

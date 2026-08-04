@@ -29,7 +29,8 @@ class ServiceController extends Controller
             'brand'             => 'required|string|max:100',
             'model'             => 'required|string|max:100',
             'damage_description'=> 'required|string|min:10',
-            'dropoff_schedule'  => 'required|string|max:255',
+            'dropoff_date'      => 'required|date',
+            'dropoff_time'      => 'required|string',
             'laptop_kit_id'     => 'nullable|exists:procurement_laptop_kits,id',
             'is_tune_up'        => 'nullable|boolean',
         ], [
@@ -40,8 +41,22 @@ class ServiceController extends Controller
             'model.required'              => 'Seri/model unit wajib diisi.',
             'damage_description.required' => 'Deskripsi kerusakan wajib diisi.',
             'damage_description.min'      => 'Deskripsi kerusakan minimal 10 karakter.',
-            'dropoff_schedule.required'   => 'Jadwal penyerahan unit ke kantor wajib diisi.',
+            'dropoff_date.required'       => 'Tanggal penyerahan unit wajib dipilih.',
+            'dropoff_time.required'       => 'Jam penyerahan unit wajib diisi.',
         ]);
+
+        $carbonDate = \Carbon\Carbon::parse($request->dropoff_date);
+        $dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        $dayName = $dayNames[$carbonDate->dayOfWeek];
+        $monthName = $monthNames[$carbonDate->month];
+        $formattedDate = "{$dayName}, {$carbonDate->day} {$monthName} {$carbonDate->year}";
+        $rawTime = trim($request->dropoff_time);
+        $cleanTime = preg_replace('/^(Jam\s*)+/i', '', $rawTime);
+        $cleanTime = preg_replace('/(\s*WIB)+$/i', '', $cleanTime);
+        $cleanTime = trim($cleanTime) ?: '10:00';
+        $dropoffSchedule = "{$formattedDate} (Jam {$cleanTime} WIB)";
 
         $ticket = Ticket::create([
             'ticket_number'      => Ticket::generateTicketNumber(),
@@ -55,7 +70,7 @@ class ServiceController extends Controller
             'brand'              => $request->brand,
             'model'              => $request->model,
             'damage_description' => $request->damage_description,
-            'dropoff_schedule'   => $request->dropoff_schedule,
+            'dropoff_schedule'   => $dropoffSchedule,
             'status'             => 'waiting',
             'created_by'         => auth()->id(),
         ]);

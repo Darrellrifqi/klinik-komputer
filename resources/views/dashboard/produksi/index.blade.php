@@ -7,6 +7,9 @@
 <a href="{{ route('dashboard.produksi') }}" class="active">
     <span class="nav-icon">Daftar Project</span>
 </a>
+<a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+    <span class="nav-icon">Pengaturan Profile</span>
+</a>
 <div class="sidebar-section-label">Navigasi</div>
 <a href="{{ route('home') }}">
     <span class="nav-icon">Beranda</span>

@@ -11,7 +11,7 @@
         $subtitle  = 'Pantau status servis unit & laptop perakitan sekolah Anda';
     } elseif ($isUmum) {
         $titleName = 'Dashboard Member Umum';
-        $subtitle  = 'Pantau status servis & benefit tune-up gratis keanggotaan Anda';
+        $subtitle  = 'Pantau status servis & benefit Deep Care Cleaning gratis keanggotaan Anda';
     } else {
         $titleName = 'Dashboard Customer';
         $subtitle  = 'Pantau status servis unit Anda';
@@ -35,6 +35,9 @@
 </a>
 <a href="{{ route('service.track') }}">
     <span class="nav-icon">Cek Status Tiket</span>
+</a>
+<a href="{{ route('profile.edit') }}" class="{{ request()->routeIs('profile.edit') ? 'active' : '' }}">
+    <span class="nav-icon">Pengaturan Profile</span>
 </a>
 <div class="sidebar-section-label">Navigasi</div>
 <a href="{{ route('products') }}">
@@ -102,123 +105,239 @@
     <div class="stat-card">
         <div class="stat-icon blue">
             <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
         </div>
         <div class="stat-info">
-            <div class="stat-num" style="font-size: 0.88rem; font-family: sans-serif;">Pelanggan</div>
-            <div class="stat-label">Akun Customer</div>
+            <div class="stat-num" style="font-size: 0.85rem; font-weight: 700;">Non-Member</div>
+            <div class="stat-label">Status Keanggotaan</div>
         </div>
     </div>
     @endif
 </div>
 
+<!-- Flash Notifications -->
+    @if(session('success'))
+    <div class="alert alert-success" style="margin-bottom: 20px; border-radius: 8px;">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+    <div class="alert alert-error" style="margin-bottom: 20px; border-radius: 8px;">{{ session('error') }}</div>
+    @endif
+
+    {{-- User Profile Header Badge --}}
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-alt); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; border: 1px solid var(--border);">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+            </div>
+            <div>
+                <span style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary);">
+                    Selamat datang, {{ auth()->user()->name }}
+                </span>
+                <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 8px;">
+                    ({{ auth()->user()->phone ?? 'Belum ada No. HP' }} &bull; {{ auth()->user()->email }})
+                </span>
+            </div>
+        </div>
+
+        <div>
+            @if($isPengadaan || $isUmum)
+                <span class="badge badge-success" style="padding: 4px 10px; font-size: 0.72rem; border-radius: 6px; font-weight: 700; letter-spacing: 0.03em;">
+                    {{ $isPengadaan ? 'Member Pengadaan Sekolah' : 'Member Umum' }}
+                </span>
+            @else
+                <span class="badge badge-primary" style="padding: 3px 8px; font-size: 0.68rem; border-radius: 6px; font-weight: 700; background: var(--bg-alt); color: var(--text-muted); border: 1px solid var(--border);">
+                    Non-Member
+                </span>
+            @endif
+        </div>
+    </div>
+
+{{-- Member Benefit Cards: Deep Care Cleaning & Essential Instalasi OS --}}
 @if($isPengadaan || $isUmum)
-{{-- Member Tune-Up Benefit Card | Game Goals Style (Light) --}}
 @php
+    $tuneUpCount     = auth()->user()->tuneUpCount();
+    $osInstallCount  = auth()->user()->osInstallCount();
+    $tuneUpResetDate  = auth()->user()->tuneUpResetDate();
+    
     $tuneQuotaFull = $tuneUpCount >= 2;
     $slot1Done     = $tuneUpCount >= 1;
     $slot2Done     = $tuneUpCount >= 2;
+
+    $osQuotaFull   = $osInstallCount >= 2;
+    $osSlot1Done   = $osInstallCount >= 1;
+    $osSlot2Done   = $osInstallCount >= 2;
 @endphp
-<div style="background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; margin-bottom: 20px; position: relative; overflow: hidden; box-shadow: 0 2px 12px rgba(95,138,99,0.08);">
 
-    {{-- Subtle top accent stripe --}}
-    <div style="position:absolute; top:0; left:0; right:0; height:3px; background: {{ $tuneQuotaFull ? 'linear-gradient(90deg,#f87171,#ef4444)' : 'linear-gradient(90deg, var(--primary), #86efac)' }}; border-radius: 14px 14px 0 0;"></div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px;">
 
-    {{-- Header --}}
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-top: 4px;">
+    <!-- Benefit Bar 1: Deep Care Cleaning -->
+    <div style="position: relative; background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 18px rgba(0,0,0,0.03); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="position:absolute; top:0; left:0; right:0; height:3px; background: {{ $tuneQuotaFull ? 'linear-gradient(90deg,#f87171,#ef4444)' : 'linear-gradient(90deg, var(--primary), #86efac)' }}; border-radius: 14px 14px 0 0;"></div>
+
         <div>
-            <div style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 2px;">
-                {{ $isPengadaan ? 'BENEFIT LAPTOP ACP / PENGADAAN' : 'BENEFIT MEMBER UMUM' }}
-            </div>
-            <h4 style="font-size: 1.05rem; font-weight: 800; color: var(--text-primary); margin: 0 0 2px 0;">
-                Gratis Tune-Up Unit
-            </h4>
-            <div style="font-size: 0.73rem; color: var(--text-muted);">
-                Periode {{ $tuneUpResetDate->copy()->subYear()->format('d M Y') }} &ndash; {{ $tuneUpResetDate->format('d M Y') }}
-            </div>
-        </div>
-
-        {{-- Progress Counter Badge --}}
-        <div style="text-align: right;">
-            <div style="font-size: 1.25rem; font-weight: 900; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--primary)' }}; line-height: 1;">
-                {{ $tuneUpCount }}<span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">/2</span>
-            </div>
-            <div style="font-size: 0.65rem; font-weight: 600; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--text-muted)' }}; margin-top: 2px;">
-                {{ $tuneQuotaFull ? 'Kuota Habis' : ($tuneUpCount === 1 ? 'Tersisa 1x' : 'Belum digunakan') }}
-            </div>
-        </div>
-    </div>
-
-    {{-- 2 Quota Slot Cards --}}
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-
-        {{-- Slot 1 --}}
-        <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $slot1Done ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $slot1Done ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
-            @if($slot1Done)
-            <div style="position:absolute; top:0; left:-100%; width:60%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); animation: shimmer-light 2.5s infinite;"></div>
-            @endif
-            <div style="position:relative; padding: 12px 14px; display:flex; align-items:center; gap:10px;">
-                <div style="width: 32px; height: 32px; border-radius: 50%; background: {{ $slot1Done ? 'var(--primary)' : 'var(--border-light)' }}; border: 2px solid {{ $slot1Done ? 'var(--primary)' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0; {{ $slot1Done ? 'box-shadow: 0 0 0 3px rgba(95,138,99,0.15);' : '' }}">
-                    @if($slot1Done)
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    @else
-                    <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted);">1</span>
-                    @endif
-                </div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-top: 4px;">
                 <div>
-                    <div style="font-size: 0.75rem; font-weight: 700; color: {{ $slot1Done ? 'var(--primary)' : 'var(--text-muted)' }};">Tune-Up #1</div>
-                    <div style="font-size: 0.65rem; color: {{ $slot1Done ? '#16a34a' : 'var(--text-muted)' }}; font-weight: {{ $slot1Done ? '600' : '400' }};">
-                        {{ $slot1Done ? '✓ Sudah digunakan' : 'Belum diklaim' }}
+                    <div style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 2px;">
+                        {{ $isPengadaan ? 'BENEFIT LAPTOP ACP / PENGADAAN' : 'BENEFIT MEMBER UMUM' }}
+                    </div>
+                    <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-primary); margin: 0 0 2px 0;">
+                        Gratis Deep Care Cleaning Unit (2x / Tahun)
+                    </h4>
+                    <div style="font-size: 0.72rem; color: var(--text-muted);">
+                        Periode {{ $tuneUpResetDate->copy()->subYear()->format('d M Y') }} &ndash; {{ $tuneUpResetDate->format('d M Y') }}
+                    </div>
+                </div>
+
+                {{-- Progress Counter Badge --}}
+                <div style="text-align: right;">
+                    <div style="font-size: 1.25rem; font-weight: 900; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--primary)' }}; line-height: 1;">
+                        {{ $tuneUpCount }}<span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">/2</span>
+                    </div>
+                    <div style="font-size: 0.65rem; font-weight: 600; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--text-muted)' }}; margin-top: 2px;">
+                        {{ $tuneQuotaFull ? 'Kuota Habis' : ($tuneUpCount === 1 ? 'Tersisa 1x' : 'Belum digunakan') }}
+                    </div>
+                </div>
+            </div>
+
+            {{-- 2 Quota Slot Cards --}}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+
+                {{-- Slot 1 --}}
+                <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $slot1Done ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $slot1Done ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
+                    <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $slot1Done ? 'var(--primary)' : 'var(--border-light)' }}; border: 2px solid {{ $slot1Done ? 'var(--primary)' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            @if($slot1Done)
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            @else
+                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">1</span>
+                            @endif
+                        </div>
+                        <div>
+                            <div style="font-size: 0.72rem; font-weight: 700; color: {{ $slot1Done ? 'var(--primary)' : 'var(--text-muted)' }};">Deep Care #1</div>
+                            <div style="font-size: 0.62rem; color: {{ $slot1Done ? '#16a34a' : 'var(--text-muted)' }}; font-weight: {{ $slot1Done ? '600' : '400' }};">
+                                {{ $slot1Done ? '✓ Sudah dipakai' : 'Belum diklaim' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Slot 2 --}}
+                <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $slot2Done ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $slot2Done ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
+                    <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $slot2Done ? 'var(--primary)' : 'var(--border-light)' }}; border: 2px solid {{ $slot2Done ? 'var(--primary)' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            @if($slot2Done)
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            @else
+                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">2</span>
+                            @endif
+                        </div>
+                        <div>
+                            <div style="font-size: 0.72rem; font-weight: 700; color: {{ $slot2Done ? 'var(--primary)' : 'var(--text-muted)' }};">Deep Care #2</div>
+                            <div style="font-size: 0.62rem; color: {{ $slot2Done ? '#16a34a' : 'var(--text-muted)' }}; font-weight: {{ $slot2Done ? '600' : '400' }};">
+                                {{ $slot2Done ? '✓ Sudah dipakai' : 'Belum diklaim' }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        {{-- Slot 2 --}}
-        <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $slot2Done ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $slot2Done ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
-            @if($slot2Done)
-            <div style="position:absolute; top:0; left:-100%; width:60%; height:100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent); animation: shimmer-light 2.5s infinite 0.4s;"></div>
-            @endif
-            <div style="position:relative; padding: 12px 14px; display:flex; align-items:center; gap:10px;">
-                <div style="width: 32px; height: 32px; border-radius: 50%; background: {{ $slot2Done ? 'var(--primary)' : 'var(--border-light)' }}; border: 2px solid {{ $slot2Done ? 'var(--primary)' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0; {{ $slot2Done ? 'box-shadow: 0 0 0 3px rgba(95,138,99,0.15);' : '' }}">
-                    @if($slot2Done)
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    @else
-                    <span style="font-size: 0.75rem; font-weight: 800; color: var(--text-muted);">2</span>
-                    @endif
-                </div>
+        @if($tuneQuotaFull)
+        <div style="margin-top: 8px; text-align:center; font-size: 0.7rem; color: #dc2626; font-weight: 700; padding: 5px 8px; background: rgba(220,38,38,0.05); border-radius: 6px; border: 1px solid rgba(220,38,38,0.15);">
+            ⚠ Kuota periode ini telah habis
+        </div>
+        @endif
+    </div>
+
+    <!-- Benefit Bar 2: Essential Instalasi OS -->
+    <div style="position: relative; background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 18px rgba(0,0,0,0.03); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
+        <div style="position:absolute; top:0; left:0; right:0; height:3px; background: {{ $osQuotaFull ? 'linear-gradient(90deg,#f87171,#ef4444)' : 'linear-gradient(90deg, #3b82f6, #60a5fa)' }}; border-radius: 14px 14px 0 0;"></div>
+
+        <div>
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-top: 4px;">
                 <div>
-                    <div style="font-size: 0.75rem; font-weight: 700; color: {{ $slot2Done ? 'var(--primary)' : 'var(--text-muted)' }};">Tune-Up #2</div>
-                    <div style="font-size: 0.65rem; color: {{ $slot2Done ? '#16a34a' : 'var(--text-muted)' }}; font-weight: {{ $slot2Done ? '600' : '400' }};">
-                        {{ $slot2Done ? '✓ Sudah digunakan' : 'Belum diklaim' }}
+                    <div style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #2563eb; margin-bottom: 2px;">
+                        {{ $isPengadaan ? 'BENEFIT LAPTOP ACP / PENGADAAN' : 'BENEFIT MEMBER UMUM' }}
+                    </div>
+                    <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-primary); margin: 0 0 2px 0;">
+                        Gratis Essential Instalasi OS (2x / Tahun)
+                    </h4>
+                    <div style="font-size: 0.72rem; color: var(--text-muted);">
+                        Periode {{ $tuneUpResetDate->copy()->subYear()->format('d M Y') }} &ndash; {{ $tuneUpResetDate->format('d M Y') }}
+                    </div>
+                </div>
+
+                {{-- Progress Counter Badge --}}
+                <div style="text-align: right;">
+                    <div style="font-size: 1.25rem; font-weight: 900; color: {{ $osQuotaFull ? '#dc2626' : '#2563eb' }}; line-height: 1;">
+                        {{ $osInstallCount }}<span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">/2</span>
+                    </div>
+                    <div style="font-size: 0.65rem; font-weight: 600; color: {{ $osQuotaFull ? '#dc2626' : 'var(--text-muted)' }}; margin-top: 2px;">
+                        {{ $osQuotaFull ? 'Kuota Habis' : ($osInstallCount === 1 ? 'Tersisa 1x' : 'Belum digunakan') }}
+                    </div>
+                </div>
+            </div>
+
+            {{-- 2 Quota Slot Cards --}}
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
+
+                {{-- Slot 1 --}}
+                <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $osSlot1Done ? 'rgba(59,130,246,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $osSlot1Done ? '#2563eb' : 'var(--border)' }}; transition: all 0.3s ease;">
+                    <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $osSlot1Done ? '#2563eb' : 'var(--border-light)' }}; border: 2px solid {{ $osSlot1Done ? '#2563eb' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            @if($osSlot1Done)
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            @else
+                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">1</span>
+                            @endif
+                        </div>
+                        <div>
+                            <div style="font-size: 0.72rem; font-weight: 700; color: {{ $osSlot1Done ? '#2563eb' : 'var(--text-muted)' }};">Instalasi OS #1</div>
+                            <div style="font-size: 0.62rem; color: {{ $osSlot1Done ? '#2563eb' : 'var(--text-muted)' }}; font-weight: {{ $osSlot1Done ? '600' : '400' }};">
+                                {{ $osSlot1Done ? '✓ Sudah dipakai' : 'Belum diklaim' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {{-- Slot 2 --}}
+                <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $osSlot2Done ? 'rgba(59,130,246,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $osSlot2Done ? '#2563eb' : 'var(--border)' }}; transition: all 0.3s ease;">
+                    <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $osSlot2Done ? '#2563eb' : 'var(--border-light)' }}; border: 2px solid {{ $osSlot2Done ? '#2563eb' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                            @if($osSlot2Done)
+                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            @else
+                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">2</span>
+                            @endif
+                        </div>
+                        <div>
+                            <div style="font-size: 0.72rem; font-weight: 700; color: {{ $osSlot2Done ? '#2563eb' : 'var(--text-muted)' }};">Instalasi OS #2</div>
+                            <div style="font-size: 0.62rem; color: {{ $osSlot2Done ? '#2563eb' : 'var(--text-muted)' }}; font-weight: {{ $osSlot2Done ? '600' : '400' }};">
+                                {{ $osSlot2Done ? '✓ Sudah dipakai' : 'Belum diklaim' }}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
+        @if($osQuotaFull)
+        <div style="margin-top: 8px; text-align:center; font-size: 0.7rem; color: #dc2626; font-weight: 700; padding: 5px 8px; background: rgba(220,38,38,0.05); border-radius: 6px; border: 1px solid rgba(220,38,38,0.15);">
+            ⚠ Kuota periode ini telah habis
+        </div>
+        @endif
     </div>
 
-    @if($tuneQuotaFull)
-    <div style="margin-top: 10px; text-align:center; font-size: 0.72rem; color: #dc2626; font-weight: 700; padding: 6px 10px; background: rgba(220,38,38,0.05); border-radius: 6px; border: 1px solid rgba(220,38,38,0.15);">
-        ⚠ Kuota Tune-Up Gratis periode ini telah habis | Tune-Up selanjutnya berbayar
-    </div>
-    @endif
 </div>
 @else
-<div style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 16px 22px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-    <div style="display: flex; align-items: center; gap: 14px;">
-        <div style="width: 40px; height: 40px; background: rgba(95, 138, 99, 0.08); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--primary); flex-shrink: 0;">
-            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-        </div>
-        <div>
-            <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary); margin-bottom: 2px;">Ingin Menjadi Member Umum Klinik Komputer?</div>
-            <div style="font-size: 0.78rem; color: var(--text-secondary);">Dapatkan benefit 2x Tune-Up unit gratis per tahun & Onsite Servis Bandung Raya. Hubungi CS via WhatsApp.</div>
-        </div>
+<div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+    <div style="font-size: 0.78rem; color: var(--text-secondary);">
+        💡 <strong style="color: var(--text-primary);">Ingin benefit 2x Deep Care Cleaning &amp; 2x Essential OS gratis per tahun?</strong> Hubungi CS untuk pendaftaran Member Umum.
     </div>
-    <a href="https://wa.me/6285103051000?text=Halo%20Klinik%20Komputer,%20saya%20tertarik%20menjadi%20Member%20Umum" target="_blank" class="btn btn-primary btn-sm" style="padding: 8px 18px; font-weight: 700; font-size: 0.78rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;">
-        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-        Tanya via WA
+    <a href="https://wa.me/6285103051000?text=Halo%20Klinik%20Komputer,%20saya%20tertarik%20menjadi%20Member%20Umum" target="_blank" class="btn btn-primary btn-sm" style="padding: 5px 14px; font-weight: 700; font-size: 0.72rem; border-radius: 6px; flex-shrink: 0;">
+        Tanya Member CS
     </a>
 </div>
 @endif

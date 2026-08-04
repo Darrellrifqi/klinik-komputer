@@ -31,7 +31,13 @@
                     </div>
                     <div>
                         <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--primary);">Nomor Tiket Servis Resmi Terbit</div>
-                        <div style="font-size: 1.3rem; font-weight: 800; font-family: monospace; color: var(--text-primary); margin-top: 2px;">{{ $officialTicketNumber }}</div>
+                        <div style="display: flex; align-items: center; gap: 10px; margin-top: 2px;">
+                            <div style="font-size: 1.3rem; font-weight: 800; font-family: monospace; color: var(--text-primary);">{{ $officialTicketNumber }}</div>
+                            <button type="button" onclick="copyTicketNumber('{{ $officialTicketNumber }}', this)" title="Salin Nomor Tiket Resmi" style="background: var(--bg-alt); border: 1px solid var(--border); padding: 3px 9px; border-radius: 6px; cursor: pointer; font-size: 0.75rem; font-weight: 700; color: var(--primary); display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s ease;">
+                                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                                <span>Copy</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
                 <p style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; margin: 0;">
@@ -64,7 +70,7 @@
                     <div style="font-size: 0.78rem; color: var(--text-muted); margin-top: 2px;">Antrian #{{ $ticket->queue_number }} &bull; Dibuat {{ $ticket->created_at->format('d M Y, H:i') }}</div>
                 </div>
                 <span class="badge badge-{{ $ticket->status_color }}" style="padding: 6px 12px;">
-                    {{ $ticket->status_label }}
+                    {{ $ticket->full_status_label }}
                 </span>
             </div>
                 </span>
@@ -206,6 +212,13 @@
                 </div>
                 @endforeach
             </div>
+            @if($ticket->sub_status_label)
+            <div style="text-align: center; margin-top: -18px; margin-bottom: 24px;">
+                <span class="badge badge-primary" style="font-size: 0.78rem; padding: 6px 14px; background: rgba(95, 138, 99, 0.1); color: var(--primary); border: 1px solid rgba(95, 138, 99, 0.3);">
+                    Sub-Status: <strong>{{ $ticket->sub_status_label }}</strong>
+                </span>
+            </div>
+            @endif
             @else
             <div class="alert alert-error" style="margin-bottom: 20px;">
                 <span>Tiket perbaikan ini telah dibatalkan.</span>
@@ -303,4 +316,36 @@
     </div>
 </section>
 </div>
+
+<script>
+function copyTicketNumber(text, btn) {
+    if (!navigator.clipboard) {
+        const el = document.createElement('textarea');
+        el.value = text;
+        document.body.appendChild(el);
+        el.select();
+        document.execCommand('copy');
+        document.body.removeChild(el);
+        showCopyFeedback(btn);
+        return;
+    }
+    navigator.clipboard.writeText(text).then(function() {
+        showCopyFeedback(btn);
+    }).catch(function(err) {
+        alert('Gagal menyalin: ' + text);
+    });
+}
+
+function showCopyFeedback(btn) {
+    const origContent = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> <span style="color:#16a34a;">Tersalin!</span>';
+    btn.style.borderColor = '#16a34a';
+    btn.style.background = 'rgba(22, 163, 74, 0.08)';
+    setTimeout(() => {
+        btn.innerHTML = origContent;
+        btn.style.borderColor = 'var(--border)';
+        btn.style.background = 'var(--bg-alt)';
+    }, 2000);
+}
+</script>
 @endsection

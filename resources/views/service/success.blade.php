@@ -70,7 +70,7 @@
 
         <div style="margin-top: 24px; padding: 14px; background: var(--bg-alt); border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.8rem; color: var(--text-secondary); text-align: left;">
             <strong>Lokasi Kantor:</strong><br>
-            Komplek Ruko Segitiga Emas Kosambi, Jl. A. Yani Blok E8, Merdeka, Kec. Sumur Bandung, Kota Bandung 40113
+            Komplek Ruko Segitiga Emas Kosambi, Jl. A. Yani Blok E8, Merdeka, Kec. Sumur Bandung, Kota Bandung, Jawa Barat 40113
         </div>
     </div>
 </section>
