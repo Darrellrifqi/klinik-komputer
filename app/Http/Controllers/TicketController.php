@@ -10,16 +10,96 @@ use Illuminate\Http\Request;
 
 class TicketController extends Controller
 {
-    // CS Dashboard
+    // CS Dashboard - Tiket Servis
     public function index()
     {
-        $tickets = Ticket::with(['customer', 'technician', 'creator'])
-            ->whereNotIn('status', ['sudah_diambil', 'taken'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        // Cleanup leftover sub_status for tickets that are done, ready for pickup, picked up, or not in active sub-status stages
+        Ticket::whereNotIn('status', ['konfirmasi_user', 'checked', 'proses_service', 'rma', 'in_service'])
+            ->whereNotNull('sub_status')
+            ->update(['sub_status' => null]);
 
+        $allTickets = Ticket::with(['customer', 'laptopKit', 'technician', 'creator'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $groupedTickets = [
+            'waiting' => [
+                'title' => 'Menunggu Unit (Booking Online)',
+                'color' => '#eab308',
+                'tickets' => $allTickets->where('status', 'waiting')
+            ],
+            'unit_received' => [
+                'title' => 'Antrian Servis',
+                'color' => '#0284c7',
+                'tickets' => $allTickets->where('status', 'unit_received')
+            ],
+            'checking' => [
+                'title' => 'Pengecekan Teknisi',
+                'color' => '#3b82f6',
+                'tickets' => $allTickets->where('status', 'checking')
+            ],
+            'konfirmasi_user' => [
+                'title' => 'Konfirmasi User (Pembelian Part / Garansi)',
+                'color' => '#8b5cf6',
+                'tickets' => $allTickets->whereIn('status', ['konfirmasi_user', 'checked'])
+            ],
+            'proses_service' => [
+                'title' => 'Proses Service / Pengerjaan Unit',
+                'color' => '#64748b',
+                'tickets' => $allTickets->whereIn('status', ['proses_service', 'rma', 'in_service'])
+            ],
+            'siap_diambil' => [
+                'title' => 'Selesai Servis & Siap Diambil',
+                'color' => '#0d9488',
+                'tickets' => $allTickets->whereIn('status', ['done', 'siap_diambil'])
+            ],
+        ];
+
+        return view('dashboard.cs.index', compact('groupedTickets', 'allTickets'));
+    }
+
+    // CS Dashboard - History Servis (Sudah Diambil & Dibatalkan)
+    public function history(\Illuminate\Http\Request $request)
+    {
+        $query = Ticket::with(['customer', 'laptopKit', 'technician', 'creator'])
+            ->whereIn('status', ['sudah_diambil', 'taken', 'cancelled']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%")
+                  ->orWhere('airtable_service_number', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'sudah_diambil') {
+                $query->whereIn('status', ['sudah_diambil', 'taken']);
+            } elseif ($request->status === 'cancelled') {
+                $query->where('status', 'cancelled');
+            }
+        }
+
+        $tickets = $query->orderBy('updated_at', 'desc')->paginate(15)->withQueryString();
+
+        $stats = [
+            'total'         => Ticket::whereIn('status', ['sudah_diambil', 'taken', 'cancelled'])->count(),
+            'sudah_diambil' => Ticket::whereIn('status', ['sudah_diambil', 'taken'])->count(),
+            'cancelled'     => Ticket::where('status', 'cancelled')->count(),
+        ];
+
+        return view('dashboard.cs.history', compact('tickets', 'stats'));
+    }
+
+    // CS Dashboard - Tiket Pengadaan Sekolah
+    public function procurementIndex()
+    {
         $procurementOrders = ProcurementOrder::orderBy('created_at', 'desc')
-            ->paginate(10, ['*'], 'procurement_page');
+            ->paginate(15);
 
         $procurementStats = [
             'total'      => ProcurementOrder::count(),
@@ -28,7 +108,7 @@ class TicketController extends Controller
             'dibatalkan' => ProcurementOrder::where('status', 'dibatalkan')->count(),
         ];
 
-        return view('dashboard.cs.index', compact('tickets', 'procurementOrders', 'procurementStats'));
+        return view('dashboard.cs.procurement_index', compact('procurementOrders', 'procurementStats'));
     }
 
     public function create()
@@ -160,7 +240,7 @@ class TicketController extends Controller
     public function updateTicketStatus(Request $request, Ticket $ticket)
     {
         $request->validate([
-            'status'                  => 'required|in:waiting,checking,checked,konfirmasi_user,proses_service,rma,done,siap_diambil,sudah_diambil,taken,cancelled',
+            'status'                  => 'required|in:waiting,unit_received,checking,checked,konfirmasi_user,proses_service,rma,done,siap_diambil,sudah_diambil,taken,cancelled',
             'sub_status'              => 'nullable|string|in:pembelian_part,klaim_garansi,menunggu_part,pengerjaan_unit',
             'airtable_service_number' => 'nullable|string|max:100',
             'pic_name'                => 'nullable|string|max:255',
@@ -191,9 +271,12 @@ class TicketController extends Controller
         }
 
         $oldStatus = $ticket->status;
+        $activeProcessingStatuses = ['konfirmasi_user', 'checked', 'proses_service', 'rma', 'in_service'];
+        $newSubStatus = in_array($request->status, $activeProcessingStatuses) ? $request->sub_status : null;
+
         $updateData = [
             'status'        => $request->status,
-            'sub_status'    => $request->sub_status,
+            'sub_status'    => $newSubStatus,
             'is_tune_up'    => $request->has('is_tune_up') ? (bool)$request->is_tune_up : false,
             'is_os_install' => $request->has('is_os_install') ? (bool)$request->is_os_install : false,
         ];

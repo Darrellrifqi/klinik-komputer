@@ -47,13 +47,39 @@ class Ticket extends Model
 
     public function getSubStatusLabelAttribute(): ?string
     {
+        if (!in_array($this->status, ['konfirmasi_user', 'checked', 'proses_service', 'rma', 'in_service'])) {
+            return null;
+        }
+
         return match ($this->sub_status) {
             'pembelian_part'  => 'Pembelian Part',
-            'klaim_garansi'   => 'Klaim Garansi / RMA',
+            'klaim_garansi'   => 'Klaim Garansi',
             'menunggu_part'   => 'Menunggu Part',
             'pengerjaan_unit' => 'Pengerjaan Unit',
             default           => $this->sub_status ? ucfirst(str_replace('_', ' ', $this->sub_status)) : null,
         };
+    }
+
+    public function getIsMemberAttribute(): bool
+    {
+        if ($this->laptop_kit_id) {
+            return true;
+        }
+        if ($this->customer) {
+            return (bool)($this->customer->is_member ?? true);
+        }
+        return !empty($this->customer_id);
+    }
+
+    public function getMemberTypeLabelAttribute(): ?string
+    {
+        if ($this->laptop_kit_id || ($this->customer && $this->customer->has_procurement_kit)) {
+            return 'Member Pengadaan';
+        }
+        if ($this->is_member) {
+            return 'Member';
+        }
+        return null;
     }
 
     public function getDropoffScheduleAttribute($value): ?string
@@ -79,7 +105,8 @@ class Ticket extends Model
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
-            'waiting'                               => 'Menunggu',
+            'waiting'                               => 'Menunggu Unit',
+            'unit_received'                         => 'Antrian Servis',
             'checking'                              => 'Pengecekan Teknisi',
             'konfirmasi_user', 'checked'            => 'Konfirmasi User',
             'proses_service', 'rma', 'in_service'   => 'Proses Service',
@@ -94,6 +121,7 @@ class Ticket extends Model
     {
         return match ($this->status) {
             'waiting'                               => 'warning',
+            'unit_received'                         => 'info',
             'checking'                              => 'info',
             'konfirmasi_user', 'checked'            => 'primary',
             'proses_service', 'rma', 'in_service'   => 'secondary',
@@ -108,11 +136,12 @@ class Ticket extends Model
     {
         return match ($this->status) {
             'waiting'                               => 1,
-            'checking'                              => 2,
-            'konfirmasi_user', 'checked'            => 3,
-            'proses_service', 'rma', 'in_service'   => 4,
-            'done', 'siap_diambil'                  => 5,
-            'sudah_diambil', 'taken'                => 6,
+            'unit_received'                         => 2,
+            'checking'                              => 3,
+            'konfirmasi_user', 'checked'            => 4,
+            'proses_service', 'rma', 'in_service'   => 5,
+            'done', 'siap_diambil'                  => 6,
+            'sudah_diambil', 'taken'                => 7,
             'cancelled'                             => 0,
             default                                 => 1,
         };

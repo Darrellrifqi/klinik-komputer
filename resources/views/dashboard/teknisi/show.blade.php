@@ -38,31 +38,26 @@
                 </div>
                 <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
                     @if($ticket->status === 'waiting')
+                        <span class="badge badge-warning" style="padding: 7px 14px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; border: 1px solid rgba(234, 179, 8, 0.3);">
+                            Menunggu Unit Diserahkan ke Kantor
+                        </span>
+                    @elseif($ticket->status === 'unit_received')
                         <button onclick="openModal('modal-start')" class="btn btn-primary btn-sm" style="padding:7px 14px; font-weight:700;">Mulai Cek Perangkat</button>
                     @elseif($ticket->status === 'checking')
                         <button onclick="openModal('modal-finish')" class="btn btn-primary btn-sm" style="padding:7px 14px; font-weight:700;">Selesai Cek & Teruskan CS</button>
-                    @elseif(in_array($ticket->status, ['konfirmasi_user', 'checked', 'proses_service', 'rma', 'in_service']))
-                        @if($ticket->sub_status !== 'menunggu_part')
-                            <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" style="margin:0;">
-                                @csrf
-                                <input type="hidden" name="action" value="set_menunggu_part">
-                                <button type="submit" class="btn btn-sm btn-outline" style="padding:6px 14px; font-weight:600; font-size:0.8rem;">Menunggu Part</button>
-                            </form>
-                        @endif
-
-                        @if($ticket->sub_status !== 'pengerjaan_unit')
-                            <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" style="margin:0;">
-                                @csrf
-                                <input type="hidden" name="action" value="set_pengerjaan_unit">
-                                <button type="submit" class="btn btn-sm btn-primary" style="padding:6px 14px; font-weight:600; font-size:0.8rem;">Pengerjaan Unit</button>
-                            </form>
-                        @endif
-
-                        <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" style="margin:0;">
+                    @elseif(in_array($ticket->status, ['konfirmasi_user', 'checked']))
+                        <span class="badge badge-warning" style="padding: 7px 14px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3);">
+                            Proses Konfirmasi CS ke Customer
+                        </span>
+                    @elseif(in_array($ticket->status, ['proses_service', 'rma', 'in_service']))
+                        <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin pengerjaan servis unit ini sudah SELESAI? Status tiket akan otomatis diubah menjadi Siap Diambil.');" style="margin:0;">
                             @csrf
                             <input type="hidden" name="action" value="done">
-                            <button type="submit" class="btn btn-sm btn-success" style="padding:6px 16px; font-weight:700; font-size:0.8rem;" onclick="return confirm('Tandai proses pengerjaan telah selesai dan status menjadi Siap Diambil?')">
-                                ✓ Selesai Servis
+                            <button type="submit" class="btn btn-success btn-sm" style="padding: 8px 18px; font-weight: 800; background: #16a34a; border-color: #16a34a; color: #fff; display: inline-flex; align-items: center; gap: 6px;">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                    <polyline points="20 6 9 17 4 12"></polyline>
+                                </svg>
+                                Selesai Servis (Siap Diambil)
                             </button>
                         </form>
                     @endif
@@ -137,7 +132,7 @@
     </div>
 </div>
 
-@if($ticket->status === 'waiting')
+@if(in_array($ticket->status, ['waiting', 'unit_received']))
 <!-- Modal: Start Check -->
 <div class="modal-overlay" id="modal-start">
     <div class="modal">
@@ -185,15 +180,15 @@
             @csrf
             <input type="hidden" name="action" value="finish_check">
             <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Komponen Bermasalah <span>*</span></label>
+                <label class="form-label">Komponen Bermasalah / Keluhan <span>*</span></label>
                 <textarea name="components_issue" class="form-control" rows="3"
                           placeholder="Tuliskan komponen bermasalah (Satu komponen per baris).&#10;Contoh:&#10;Layar LCD&#10;Baterai Kembung" required style="padding: 10px 12px; border-radius: 6px;"></textarea>
                 <span class="form-hint">Tuliskan satu komponen per baris.</span>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-                <label class="form-label">Penyebab Kerusakan <span>*</span></label>
+                <label class="form-label">Deskripsi Masalah <span>*</span></label>
                 <textarea name="cause" class="form-control" rows="2"
-                          placeholder="Penyebab kerusakan..." required style="padding: 10px 12px; border-radius: 6px;"></textarea>
+                          placeholder="Tuliskan deskripsi masalah..." required style="padding: 10px 12px; border-radius: 6px;"></textarea>
             </div>
             <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:10px;">
                 <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('modal-finish')">Batal</button>

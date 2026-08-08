@@ -14,17 +14,76 @@ class TechnicianController extends Controller
             \Illuminate\Support\Facades\Artisan::call('migrate');
         } catch (\Exception $e) {}
 
-        $activeTickets = Ticket::with(['customer', 'creator'])
-            ->whereNotIn('status', ['done', 'cancelled'])
+        $allTickets = Ticket::with(['customer', 'laptopKit', 'creator', 'technician'])
             ->orderBy('created_at', 'asc')
             ->get();
 
-        $doneTickets = Ticket::with(['customer', 'technician'])
-            ->whereIn('status', ['done', 'cancelled'])
-            ->orderBy('updated_at', 'desc')
-            ->take(20)->get();
+        $groupedTickets = [
+            'unit_received' => [
+                'title' => 'Antrian Servis (Siap Cek Perangkat)',
+                'color' => '#0284c7',
+                'tickets' => $allTickets->where('status', 'unit_received')
+            ],
+            'checking' => [
+                'title' => 'Pengecekan Teknisi',
+                'color' => '#3b82f6',
+                'tickets' => $allTickets->where('status', 'checking')
+            ],
+            'konfirmasi_user' => [
+                'title' => 'Konfirmasi User (Menunggu CS/Customer)',
+                'color' => '#8b5cf6',
+                'tickets' => $allTickets->whereIn('status', ['konfirmasi_user', 'checked'])
+            ],
+            'proses_service' => [
+                'title' => 'Proses Service / Pengerjaan Unit',
+                'color' => '#64748b',
+                'tickets' => $allTickets->whereIn('status', ['proses_service', 'rma', 'in_service'])
+            ],
+            'done' => [
+                'title' => 'Selesai Servis & Siap Diambil',
+                'color' => '#0d9488',
+                'tickets' => $allTickets->whereIn('status', ['done', 'siap_diambil'])
+            ],
+        ];
 
-        return view('dashboard.teknisi.index', compact('activeTickets', 'doneTickets'));
+        return view('dashboard.teknisi.index', compact('groupedTickets', 'allTickets'));
+    }
+
+    // Teknisi Dashboard - History Servis (Sudah Diambil & Dibatalkan)
+    public function history(Request $request)
+    {
+        $query = Ticket::with(['customer', 'laptopKit', 'creator', 'technician'])
+            ->whereIn('status', ['sudah_diambil', 'taken', 'cancelled']);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                  ->orWhere('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%")
+                  ->orWhere('damage_description', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            if ($request->status === 'sudah_diambil') {
+                $query->whereIn('status', ['sudah_diambil', 'taken']);
+            } elseif ($request->status === 'cancelled') {
+                $query->where('status', 'cancelled');
+            }
+        }
+
+        $tickets = $query->orderBy('updated_at', 'desc')->paginate(15)->withQueryString();
+
+        $stats = [
+            'total'         => Ticket::whereIn('status', ['sudah_diambil', 'taken', 'cancelled'])->count(),
+            'sudah_diambil' => Ticket::whereIn('status', ['sudah_diambil', 'taken'])->count(),
+            'cancelled'     => Ticket::where('status', 'cancelled')->count(),
+        ];
+
+        return view('dashboard.teknisi.history', compact('tickets', 'stats'));
     }
 
     public function updateStatus(Request $request, Ticket $ticket)
@@ -36,6 +95,9 @@ class TechnicianController extends Controller
 
         switch ($request->action) {
             case 'start_check':
+                if ($ticket->status === 'waiting') {
+                    return redirect()->back()->with('error', 'Pemeriksaan perangkat belum dapat dimulai karena unit belum diserahkan oleh customer ke kantor (Status masih Menunggu Unit).');
+                }
                 $request->validate([
                     'start_check_date' => 'required|date',
                     'pic_name'         => 'required|string|max:255',

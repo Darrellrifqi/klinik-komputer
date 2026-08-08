@@ -178,7 +178,8 @@
             <!-- Progress Steps -->
             @php
             $steps = [
-                ['key'=>'waiting',          'label'=>'Menunggu'],
+                ['key'=>'waiting',          'label'=>'Menunggu Unit'],
+                ['key'=>'unit_received',    'label'=>'Antrian Servis'],
                 ['key'=>'checking',         'label'=>'Pengecekan Teknisi'],
                 ['key'=>'konfirmasi_user',  'label'=>'Konfirmasi User'],
                 ['key'=>'proses_service',   'label'=>'Proses Service'],
@@ -188,11 +189,12 @@
             $currentStep = $ticket->status_step;
             $fillPercent = match($currentStep) {
                 1 => 0,
-                2 => 20,
-                3 => 40,
-                4 => 60,
-                5 => 80,
-                6 => 100,
+                2 => 16.6,
+                3 => 33.3,
+                4 => 50,
+                5 => 66.6,
+                6 => 83.3,
+                7 => 100,
                 default => 0
             };
             @endphp
@@ -252,7 +254,7 @@
             <div style="background: rgba(59, 142, 202, 0.05); border: 1px solid rgba(59, 142, 202, 0.15); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px;">
                 <div style="font-size: 0.65rem; color: var(--info); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Hasil Pemeriksaan</div>
                 <div style="margin-bottom: 6px;">
-                    <span style="color: var(--text-muted); font-size: 0.8rem;">Komponen Bermasalah:</span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Komponen Bermasalah / Keluhan:</span>
                     <div style="margin-top: 4px; display: flex; flex-wrap: wrap; gap: 4px;">
                         @foreach($ticket->components_issue as $comp)
                         <span class="badge badge-danger" style="font-size: 0.65rem;">{{ $comp }}</span>
@@ -261,7 +263,7 @@
                 </div>
                 @if($ticket->cause)
                 <div style="margin-top: 8px;">
-                    <span style="color: var(--text-muted); font-size: 0.8rem;">Penyebab Kerusakan:</span>
+                    <span style="color: var(--text-muted); font-size: 0.8rem;">Deskripsi Masalah:</span>
                     <p style="font-size: 0.85rem; margin-top: 2px;">{{ $ticket->cause }}</p>
                 </div>
                 @endif

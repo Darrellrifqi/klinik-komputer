@@ -1,5 +1,8 @@
-<a href="{{ route('dashboard.cs') }}" class="{{ request()->routeIs('dashboard.cs') && !request()->routeIs('dashboard.cs.chat*') && !request()->routeIs('dashboard.cs.create') && !request()->routeIs('dashboard.cs.procurement*') && !request()->routeIs('dashboard.cs.show') ? 'active' : '' }}">
-    <span class="nav-icon">Semua Tiket</span>
+<a href="{{ route('dashboard.cs') }}" class="{{ request()->routeIs('dashboard.cs') && !request()->routeIs('dashboard.cs.history*') && !request()->routeIs('dashboard.cs.chat*') && !request()->routeIs('dashboard.cs.create') && !request()->routeIs('dashboard.cs.procurement*') && !request()->routeIs('dashboard.cs.show') ? 'active' : '' }}">
+    <span class="nav-icon">Tiket Aktif</span>
+</a>
+<a href="{{ route('dashboard.cs.history') }}" class="{{ request()->routeIs('dashboard.cs.history*') ? 'active' : '' }}">
+    <span class="nav-icon">Riwayat Servis</span>
 </a>
 <a href="{{ route('dashboard.cs.create') }}" class="{{ request()->routeIs('dashboard.cs.create') ? 'active' : '' }}">
     <span class="nav-icon">Buat Tiket Baru</span>
@@ -24,8 +27,8 @@
 </a>
 
 <div class="sidebar-section-label">Pengadaan Unit</div>
-<a href="{{ route('dashboard.cs') }}#procurement-section" class="{{ request()->routeIs('dashboard.cs.procurement*') ? 'active' : '' }}">
-    <span class="nav-icon">Daftar Pengadaan</span>
+<a href="{{ route('dashboard.cs.procurement.index') }}" class="{{ request()->routeIs('dashboard.cs.procurement*') ? 'active' : '' }}">
+    <span class="nav-icon">Tiket Pengadaan</span>
     @php $pendingProc = \App\Models\ProcurementOrder::where('status', 'pending')->count(); @endphp
     @if($pendingProc > 0)
     <span style="background:var(--warning); color:#fff; border-radius:10px; font-size:0.65rem; font-weight:700; padding:2px 7px; margin-left:auto;">{{ $pendingProc }}</span>

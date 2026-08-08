@@ -429,21 +429,17 @@
                 <table>
                     <thead>
                         <tr>
-                            <th style="width: 22%; padding: 10px 14px; font-size: 0.72rem;">No. Tiket</th>
-                            <th style="width: 14%; padding: 10px 14px; font-size: 0.72rem;">No. Antrian</th>
-                            <th style="width: 28%; padding: 10px 14px; font-size: 0.72rem;">Unit Perangkat</th>
-                            <th style="width: 20%; padding: 10px 14px; font-size: 0.72rem;">Teknisi PJ</th>
-                            <th style="width: 16%; padding: 10px 14px; font-size: 0.72rem;">Status Kerja</th>
+                            <th style="width: 18%; padding: 10px 14px; font-size: 0.72rem; text-align: center;">No. Antrian</th>
+                            <th style="width: 38%; padding: 10px 14px; font-size: 0.72rem;">Unit Perangkat</th>
+                            <th style="width: 24%; padding: 10px 14px; font-size: 0.72rem;">Teknisi PJ</th>
+                            <th style="width: 20%; padding: 10px 14px; font-size: 0.72rem;">Status Kerja</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($activeQueue as $ticket)
                         <tr>
-                            <td style="padding: 10px 14px; font-family: monospace; font-weight: 700; color: var(--primary); font-size: 0.88rem;">
-                                {{ $ticket->ticket_number }}
-                            </td>
-                            <td style="padding: 10px 14px; font-weight: 600; font-size: 0.85rem;">
-                                #{{ $ticket->queue_number }}
+                            <td style="padding: 10px 14px; font-weight: 600; font-size: 0.85rem; text-align: center;">
+                                #{{ $activeQueue->count() - $loop->index }}
                             </td>
                             <td style="padding: 10px 14px;">
                                 <div style="font-weight: 600; font-size: 0.85rem;">{{ $ticket->brand }} {{ $ticket->model }}</div>
@@ -650,7 +646,7 @@
                         </a>
 
                         {{-- Instagram --}}
-                        <a href="https://www.instagram.com/klinikkomp_id?igsh=MXYybTFnMzF1cnFoaA==" target="_blank" rel="noopener noreferrer" title="Instagram @klinikkomp_id" style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: #e1306c; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
+                        <a href="https://www.instagram.com/klinikkomp_id" target="_blank" rel="noopener noreferrer" title="Instagram @klinikkomp_id" style="width: 38px; height: 38px; border-radius: 50%; background: #ffffff; border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; color: #e1306c; transition: all 0.2s ease; box-shadow: 0 2px 6px rgba(0,0,0,0.03);">
                             <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                                 <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>

@@ -44,6 +44,12 @@ Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'login'])->name('login.post');
     Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
     Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+
+    // Forgot & Reset Password Routes
+    Route::get('/forgot-password', [AuthController::class, 'showForgotPassword'])->name('password.request');
+    Route::post('/forgot-password', [AuthController::class, 'sendResetLink'])->name('password.email');
+    Route::get('/reset-password/{token}', [AuthController::class, 'showResetPassword'])->name('password.reset');
+    Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 });
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout')->middleware('auth');
 
@@ -76,11 +82,13 @@ Route::middleware(['auth', 'role:customer'])->prefix('dashboard/customer')->grou
 // ─── CS Dashboard ─────────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:cs'])->prefix('dashboard/cs')->group(function () {
     Route::get('/', [TicketController::class, 'index'])->name('dashboard.cs');
+    Route::get('/history', [TicketController::class, 'history'])->name('dashboard.cs.history');
     Route::get('/tickets/create', [TicketController::class, 'create'])->name('dashboard.cs.create');
     Route::post('/tickets', [TicketController::class, 'store'])->name('dashboard.cs.store');
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('dashboard.cs.show');
     Route::post('/tickets/{ticket}/status', [TicketController::class, 'updateTicketStatus'])->name('dashboard.cs.tickets.update_status');
     Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('dashboard.cs.tickets.destroy');
+    Route::get('/procurement-list', [TicketController::class, 'procurementIndex'])->name('dashboard.cs.procurement.index');
     Route::get('/procurement/{order}', [TicketController::class, 'showProcurement'])->name('dashboard.cs.procurement.show');
     Route::post('/procurement/{order}/update', [TicketController::class, 'updateProcurement'])->name('dashboard.cs.procurement.update');
 
@@ -99,6 +107,7 @@ Route::middleware(['auth', 'role:cs'])->prefix('dashboard/cs')->group(function (
 // ─── Teknisi Dashboard ────────────────────────────────────────────────────────
 Route::middleware(['auth', 'role:teknisi'])->prefix('dashboard/teknisi')->group(function () {
     Route::get('/', [TechnicianController::class, 'index'])->name('dashboard.teknisi');
+    Route::get('/history', [TechnicianController::class, 'history'])->name('dashboard.teknisi.history');
     Route::post('/tickets/{ticket}/update', [TechnicianController::class, 'updateStatus'])->name('dashboard.teknisi.update');
     Route::get('/tickets/{ticket}', [TechnicianController::class, 'show'])->name('dashboard.teknisi.show');
 });
@@ -113,6 +122,7 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('dashboard/admin')->group
     Route::post('/users/{user}/approve', [AdminController::class, 'approveUser'])->name('admin.users.approve');
     Route::post('/users/{user}/reject', [AdminController::class, 'rejectUser'])->name('admin.users.reject');
     Route::post('/users/{user}/role', [AdminController::class, 'updateUserRole'])->name('admin.users.role');
+    Route::post('/users/{user}/reset-password', [AdminController::class, 'resetUserPassword'])->name('admin.users.reset-password');
     Route::delete('/users/{user}', [AdminController::class, 'deleteUser'])->name('admin.users.delete');
 
     // Ticket management

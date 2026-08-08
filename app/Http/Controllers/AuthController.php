@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -90,6 +92,116 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
         return redirect()->route('login')->with('success', 'Berhasil logout.');
+    }
+
+    // ─── Forgot & Reset Password ─────────────────────────────────────────────
+    public function showForgotPassword()
+    {
+        if (auth()->check()) return $this->redirectByRole(auth()->user());
+        return view('auth.forgot-password');
+    }
+
+    public function sendResetLink(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|email|exists:users,email',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email'    => 'Format email tidak valid.',
+            'email.exists'   => 'Maaf, alamat email ini tidak terdaftar dalam sistem kami.',
+        ]);
+
+        $email = strtolower(trim($request->email));
+        $user = User::where('email', $email)->first();
+
+        if (!$user) {
+            return back()->withErrors(['email' => 'Maaf, alamat email ini tidak terdaftar dalam sistem kami.'])->withInput();
+        }
+
+        $token = Str::random(64);
+
+        DB::table('password_reset_tokens')->updateOrInsert(
+            ['email' => $email],
+            [
+                'email'      => $email,
+                'token'      => Hash::make($token),
+                'created_at' => now(),
+            ]
+        );
+
+        $resetUrl = route('password.reset', ['token' => $token, 'email' => $email]);
+
+        try {
+            Mail::send('emails.reset-password', [
+                'resetUrl' => $resetUrl,
+                'user'     => $user,
+            ], function ($message) use ($user) {
+                $message->to($user->email)
+                        ->subject('Reset Password Akun - Klinik Komputer');
+            });
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::info("Reset Password Link for {$user->email}: {$resetUrl}");
+        }
+
+        return back()->with('status', 'Email terverifikasi!')
+                     ->with('resetUrl', $resetUrl);
+    }
+
+    public function showResetPassword(Request $request, $token)
+    {
+        if (auth()->check()) return $this->redirectByRole(auth()->user());
+
+        $email = strtolower(trim($request->query('email', '')));
+        $user = User::where('email', $email)->first();
+        $record = DB::table('password_reset_tokens')->where('email', $email)->first();
+
+        if (!$user || !$record || !Hash::check($token, $record->token)) {
+            return redirect()->route('password.request')->withErrors(['email' => 'Link reset password tidak valid atau email tidak terdaftar dalam sistem.']);
+        }
+
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $email,
+        ]);
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token'              => 'required',
+            'email'              => 'required|email|exists:users,email',
+            'password'           => 'required|min:8|confirmed',
+        ], [
+            'email.required'     => 'Email wajib diisi.',
+            'email.exists'       => 'Maaf, email ini tidak terdaftar.',
+            'password.required'  => 'Password baru wajib diisi.',
+            'password.min'       => 'Password baru minimal 8 karakter.',
+            'password.confirmed' => 'Konfirmasi password baru tidak cocok.',
+        ]);
+
+        $email = strtolower(trim($request->email));
+        $record = DB::table('password_reset_tokens')->where('email', $email)->first();
+
+        if (!$record || !Hash::check($request->token, $record->token)) {
+            return back()->withErrors(['email' => 'Link reset password tidak valid atau sudah kadaluarsa.'])->withInput();
+        }
+
+        if (\Carbon\Carbon::parse($record->created_at)->addMinutes(60)->isPast()) {
+            DB::table('password_reset_tokens')->where('email', $email)->delete();
+            return back()->withErrors(['email' => 'Link reset password telah kadaluarsa. Silakan ajukan kembali.'])->withInput();
+        }
+
+        $user = User::where('email', $email)->first();
+        if (!$user) {
+            return back()->withErrors(['email' => 'Maaf, akun tidak ditemukan.'])->withInput();
+        }
+
+        $user->password = Hash::make($request->password);
+        $user->save();
+
+        DB::table('password_reset_tokens')->where('email', $email)->delete();
+
+        return redirect()->route('login')->with('success', 'Password Anda berhasil diperbarui! Silakan masuk dengan password baru Anda.');
     }
 
     private function redirectByRole(User $user)

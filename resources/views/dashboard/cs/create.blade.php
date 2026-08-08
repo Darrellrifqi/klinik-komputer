@@ -74,13 +74,14 @@
                     <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; align-items:flex-start;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label class="form-label">ID Member (NIK / SN Pengadaan)</label>
-                            <input type="text" name="member_id_input" class="form-control"
-                                   value="{{ old('member_id_input') }}" placeholder="NIK (Member Umum) atau SN (Pengadaan)" style="font-family: monospace;">
+                            <input type="text" name="member_id_input" id="cs_create_member_id" class="form-control"
+                                   value="{{ old('member_id_input') }}" placeholder="NIK (Member Umum) atau SN (Pengadaan)" style="font-family: monospace;"
+                                   oninput="toggleCreateMemberBenefits(this.value)">
                             <div style="font-size:0.7rem; color:var(--text-muted); margin-top:4px;">
                                 Kosongkan jika bukan member. NIK = Member Umum, SN = Member Pengadaan.
                             </div>
                         </div>
-                        <div class="form-group" style="margin-bottom:0; padding-top:10px; display:flex; flex-direction:column; gap:8px;">
+                        <div id="cs_create_member_benefits" class="form-group" style="margin-bottom:0; padding-top:10px; display: {{ old('member_id_input') ? 'flex' : 'none' }}; flex-direction:column; gap:8px;">
                             <label class="form-label" style="display:flex; align-items:center; gap:8px; cursor:pointer; font-weight:700;">
                                 <input type="checkbox" name="is_tune_up" value="1" {{ old('is_tune_up') ? 'checked' : '' }} style="transform: scale(1.15);">
                                 Tandai sebagai Deep Care Cleaning Gratis <span style="font-weight:400; color:var(--text-muted);">(kuota member -1)</span>
@@ -90,6 +91,14 @@
                                 Tandai sebagai Essential Instalasi OS Gratis <span style="font-weight:400; color:var(--text-muted);">(kuota member -1)</span>
                             </label>
                         </div>
+                        <script>
+                        function toggleCreateMemberBenefits(val) {
+                            const box = document.getElementById('cs_create_member_benefits');
+                            if (box) {
+                                box.style.display = (val && val.trim().length > 0) ? 'flex' : 'none';
+                            }
+                        }
+                        </script>
                     </div>
                 </div>
 

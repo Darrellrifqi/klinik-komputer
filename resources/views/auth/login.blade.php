@@ -40,9 +40,12 @@
                         <button type="button" onclick="togglePwd()" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem;">Lihat</button>
                     </div>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 20px;">
-                    <input type="checkbox" name="remember" id="remember" style="accent-color: var(--primary); width: 14px; height: 14px;">
-                    <label for="remember" style="font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; user-select: none;">Ingat Sesi Masuk</label>
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" name="remember" id="remember" style="accent-color: var(--primary); width: 14px; height: 14px;">
+                        <label for="remember" style="font-size: 0.8rem; color: var(--text-secondary); cursor: pointer; user-select: none;">Ingat Sesi Masuk</label>
+                    </div>
+                    <a href="{{ route('password.request') }}" style="font-size: 0.8rem; color: var(--primary); font-weight: 600; text-decoration: none;">Lupa Password?</a>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">
                     Masuk

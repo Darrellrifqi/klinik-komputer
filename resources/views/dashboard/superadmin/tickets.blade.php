@@ -15,8 +15,9 @@
         <form method="GET" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
             <select name="status" class="form-control" style="width:auto; padding:6px 12px; font-size:0.8rem;">
                 <option value="">Semua Status</option>
-                <option value="waiting"  {{ request('status')==='waiting'  ? 'selected':'' }}>Menunggu</option>
-                <option value="checking" {{ request('status')==='checking' ? 'selected':'' }}>Pengecekan</option>
+                <option value="waiting"       {{ request('status')==='waiting'       ? 'selected':'' }}>Menunggu Unit</option>
+                <option value="unit_received" {{ request('status')==='unit_received' ? 'selected':'' }}>Antrian Servis</option>
+                <option value="checking"      {{ request('status')==='checking'      ? 'selected':'' }}>Pengecekan</option>
                 <option value="checked"  {{ request('status')==='checked'  ? 'selected':'' }}>Selesai Cek</option>
                 <option value="rma"      {{ request('status')==='rma'      ? 'selected':'' }}>Proses RMA</option>
                 <option value="done"     {{ in_array(request('status'), ['done','siap_diambil']) ? 'selected':'' }}>Siap Diambil</option>
@@ -68,7 +69,7 @@
                         <td>
                             <div style="display:flex; align-items:center; gap:5px;">
                                 <div class="status-dot {{ $ticket->status }}"></div>
-                                <span class="badge badge-{{ $ticket->status_color }}" style="font-size:0.68rem;">{{ $ticket->status_label }}</span>
+                                <span class="badge badge-{{ $ticket->status_color }}" style="font-size:0.68rem;">{{ $ticket->sub_status_label ?? $ticket->status_label }}</span>
                             </div>
                         </td>
                         <td style="font-size:0.78rem; color:var(--text-muted);">{{ $ticket->created_at->format('d M Y') }}</td>

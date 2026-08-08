@@ -12,9 +12,9 @@ class LandingController extends Controller
     {
         $featuredProducts = Product::active()->take(3)->get();
         
-        // Ambil 8 tiket antrian aktif (menunggu, pengecekan, rma, dll)
+        // Ambil tiket antrian aktif (dari Menunggu Unit sampai Proses Service)
         $activeQueue = Ticket::with('technician')
-            ->whereIn('status', ['waiting', 'checking', 'checked', 'rma'])
+            ->whereNotIn('status', ['done', 'siap_diambil', 'sudah_diambil', 'taken', 'cancelled'])
             ->orderBy('created_at', 'desc')
             ->take(8)
             ->get();

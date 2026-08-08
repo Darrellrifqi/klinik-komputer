@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="Laravel">
     <meta name="description" content="@yield('meta_description', 'Klinik Komputer | Mitra Resmi Axioo di Bandung. Penjualan laptop Axioo, service komputer, dan pengadaan laptop untuk sekolah.')">
     <meta name="keywords" content="klinik komputer, axioo bandung, service laptop bandung, pengadaan laptop sekolah">
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -117,7 +118,7 @@
                             <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 1 1-5.2-1.74 2.89 2.89 0 0 1 2.31-2.85V7.59a6.34 6.34 0 0 0-5.46 6.25 6.34 6.34 0 1 0 11.45-3.8 8.28 8.28 0 0 0 4.12 1.09V7.69a4.84 4.84 0 0 1-0.07-1z"/>
                         </svg>
                     </a>
-                    <a href="https://www.instagram.com/klinikkomp_id?igsh=MXYybTFnMzF1cnFoaA==" target="_blank" rel="noopener noreferrer" title="Instagram @klinikkomp_id" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: #ffffff; border: 1px solid rgba(255,255,255,0.15); transition: all 0.2s ease;">
+                    <a href="https://www.instagram.com/klinikkomp_id" target="_blank" rel="noopener noreferrer" title="Instagram @klinikkomp_id" style="width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: #ffffff; border: 1px solid rgba(255,255,255,0.15); transition: all 0.2s ease;">
                         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
                             <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
@@ -156,7 +157,7 @@
                     <li><a href="https://wa.me/6285103051000" target="_blank">085103051000</a></li>
                     <li><a href="https://maps.google.com/?q=Komplek+Ruko+Segitiga+Emas+Kosambi,+Jl.+A.+Yani+Blok+E8,+Merdeka,+Kec.+Sumur+Bandung,+Kota+Bandung,+Jawa+Barat+40113" target="_blank" style="line-height:1.45;">Komplek Ruko Segitiga Emas Kosambi, Jl. A. Yani Blok E8, Merdeka, Kec. Sumur Bandung, Kota Bandung, Jawa Barat 40113</a></li>
                     <li><a href="https://www.tiktok.com/@klinikkomp?_r=1&amp;_t=ZS-98VdwA99Nye" target="_blank">TikTok @klinikkomp</a></li>
-                    <li><a href="https://www.instagram.com/klinikkomp_id?igsh=MXYybTFnMzF1cnFoaA==" target="_blank">Instagram @klinikkomp_id</a></li>
+                    <li><a href="https://www.instagram.com/klinikkomp_id" target="_blank">Instagram @klinikkomp_id</a></li>
                     <li><a href="https://youtube.com/@kk-mediaa?si=vdpkezTBYu35niBe" target="_blank">YouTube KK Media</a></li>
                     <li><a href="https://www.tokopedia.com/k-techid" target="_blank">Tokopedia Official Store</a></li>
                 </ul>

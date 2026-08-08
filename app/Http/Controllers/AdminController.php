@@ -8,6 +8,7 @@ use App\Models\Ticket;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 use App\Models\PklPeriod;
 use App\Models\PklStudent;
 
@@ -99,6 +100,15 @@ class AdminController extends Controller
     {
         $user->delete();
         return back()->with('success', 'Akun berhasil dihapus.');
+    }
+
+    public function resetUserPassword(User $user)
+    {
+        $user->update([
+            'password' => Hash::make('KlinikComp'),
+        ]);
+
+        return back()->with('success', "Password akun {$user->name} ({$user->email}) berhasil di-reset menjadi default: KlinikComp");
     }
 
     public function updateUserRole(Request $request, User $user)

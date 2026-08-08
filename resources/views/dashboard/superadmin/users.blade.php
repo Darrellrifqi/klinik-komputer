@@ -192,7 +192,13 @@
                                 @endif
                                 
                                 @if(!$isCs)
-                                <form action="{{ route('admin.users.delete', $user) }}" method="POST">
+                                <form action="{{ route('admin.users.reset-password', $user) }}" method="POST" style="display:inline;">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline" style="font-size:0.7rem; padding:4px 8px; color:#d97706; border-color:rgba(217, 119, 6, 0.4);" onclick="return confirm('Reset password akun {{ $user->name }} menjadi default: KlinikComp?')">
+                                        Reset Password
+                                    </button>
+                                </form>
+                                <form action="{{ route('admin.users.delete', $user) }}" method="POST" style="display:inline;">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-sm btn-danger" style="font-size:0.7rem; padding:4px 8px;" onclick="return confirm('Hapus permanen akun {{ $user->name }}?')">Hapus</button>
                                 </form>
