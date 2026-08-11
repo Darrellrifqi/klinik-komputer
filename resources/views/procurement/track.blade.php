@@ -110,13 +110,13 @@
                 </div>
                 @endif
 
-                @if(!$isCancelled)
-                {{-- Sub Bab "Unit Diproses" Tracker --}}
+                @if($order->status === 'pending')
+                {{-- Sub Bab "Menunggu Konfirmasi" Tracker --}}
                 <div style="margin-top: 20px; padding-top: 16px; border-top: 1px dashed var(--border-light);">
                     <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between;">
                         <span style="display: flex; align-items: center; gap: 6px; color: var(--text-secondary);">
                             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-                            Sub-Tahap: Unit Diproses
+                            Sub-Tahap: Menunggu Konfirmasi
                         </span>
                         <span style="font-size: 0.68rem; color: var(--primary); font-weight: 700; background: rgba(22,163,74,0.08); padding: 2px 8px; border-radius: 99px;">Tahapan Proses</span>
                     </div>

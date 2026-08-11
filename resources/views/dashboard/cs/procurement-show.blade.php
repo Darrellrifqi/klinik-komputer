@@ -146,7 +146,51 @@
                     </div>
                     @endforeach
                 </div>
-            @endif
+
+                {{-- Sub-Tahap / Sub-Bab Visual Progress (Hanya muncul saat status Menunggu Konfirmasi) --}}
+                @if($order->status === 'pending')
+                <div style="margin-bottom: 24px; padding: 14px 16px; background: rgba(95, 138, 99, 0.04); border: 1px dashed rgba(95, 138, 99, 0.25); border-radius: 8px;">
+                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Sub-Tahap: Menunggu Konfirmasi</span>
+                        <span style="font-size: 0.68rem; color: var(--primary); font-weight: 700;">3 Sub-Bab Proses</span>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        {{-- Sub 1: Penawaran --}}
+                        <div style="background: {{ $order->substep_penawaran_active ? 'rgba(22, 163, 74, 0.08)' : '#ffffff' }}; border: 1.5px solid {{ $order->substep_penawaran_active ? '#16a34a' : 'var(--border-light)' }}; border-radius: 8px; padding: 10px 8px; text-align: center; transition: all 0.2s ease;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: {{ $order->substep_penawaran_active ? '#16a34a' : 'var(--bg-alt)' }}; color: {{ $order->substep_penawaran_active ? '#ffffff' : 'var(--text-muted)' }}; border: 1px solid {{ $order->substep_penawaran_active ? '#16a34a' : 'var(--border)' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px auto; font-size: 0.7rem; font-weight: 800;">
+                                @if($order->substep_penawaran_active) ✓ @else 1 @endif
+                            </div>
+                            <div style="font-size: 0.76rem; font-weight: 700; color: {{ $order->substep_penawaran_active ? 'var(--text-primary)' : 'var(--text-muted)' }};">1. Penawaran</div>
+                            <div style="font-size: 0.68rem; color: {{ $order->substep_penawaran_active ? '#16a34a' : 'var(--text-muted)' }}; font-weight: 600; margin-top: 2px;">
+                                {{ $order->substep_penawaran_active ? '✓ Selesai' : 'Belum' }}
+                            </div>
+                        </div>
+
+                        {{-- Sub 2: Proses Invoice --}}
+                        <div style="background: {{ $order->substep_invoice_active ? 'rgba(22, 163, 74, 0.08)' : '#ffffff' }}; border: 1.5px solid {{ $order->substep_invoice_active ? '#16a34a' : 'var(--border-light)' }}; border-radius: 8px; padding: 10px 8px; text-align: center; transition: all 0.2s ease;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: {{ $order->substep_invoice_active ? '#16a34a' : 'var(--bg-alt)' }}; color: {{ $order->substep_invoice_active ? '#ffffff' : 'var(--text-muted)' }}; border: 1px solid {{ $order->substep_invoice_active ? '#16a34a' : 'var(--border)' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px auto; font-size: 0.7rem; font-weight: 800;">
+                                @if($order->substep_invoice_active) ✓ @else 2 @endif
+                            </div>
+                            <div style="font-size: 0.76rem; font-weight: 700; color: {{ $order->substep_invoice_active ? 'var(--text-primary)' : 'var(--text-muted)' }};">2. Invoice</div>
+                            <div style="font-size: 0.68rem; color: {{ $order->substep_invoice_active ? '#16a34a' : 'var(--text-muted)' }}; font-weight: 600; margin-top: 2px;">
+                                {{ $order->substep_invoice_active ? '✓ Diterbitkan' : 'Belum' }}
+                            </div>
+                        </div>
+
+                        {{-- Sub 3: Pembayaran --}}
+                        <div style="background: {{ $order->substep_pembayaran_active ? 'rgba(22, 163, 74, 0.08)' : '#ffffff' }}; border: 1.5px solid {{ $order->substep_pembayaran_active ? '#16a34a' : 'var(--border-light)' }}; border-radius: 8px; padding: 10px 8px; text-align: center; transition: all 0.2s ease;">
+                            <div style="width: 24px; height: 24px; border-radius: 50%; background: {{ $order->substep_pembayaran_active ? '#16a34a' : 'var(--bg-alt)' }}; color: {{ $order->substep_pembayaran_active ? '#ffffff' : 'var(--text-muted)' }}; border: 1px solid {{ $order->substep_pembayaran_active ? '#16a34a' : 'var(--border)' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px auto; font-size: 0.7rem; font-weight: 800;">
+                                @if($order->substep_pembayaran_active) ✓ @else 3 @endif
+                            </div>
+                            <div style="font-size: 0.76rem; font-weight: 700; color: {{ $order->substep_pembayaran_active ? 'var(--text-primary)' : 'var(--text-muted)' }};">3. Pembayaran</div>
+                            <div style="font-size: 0.68rem; color: {{ $order->substep_pembayaran_active ? '#16a34a' : 'var(--text-muted)' }}; font-weight: 600; margin-top: 2px;">
+                                {{ $order->substep_pembayaran_active ? '✓ Lunas' : 'Belum' }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
             {{-- Form Update --}}
             @if($errors->any())
@@ -163,7 +207,7 @@
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:18px;">
                     <div class="form-group" style="margin-bottom:0;">
                         <label class="form-label" style="font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase;">Status Baru <span>*</span></label>
-                        <select name="status" class="form-control" required style="padding: 10px 12px; border-radius: 6px;">
+                        <select name="status" id="csStatusSelect" class="form-control" required style="padding: 10px 12px; border-radius: 6px;" onchange="toggleCsSubstepBox(this.value)">
                             <option value="pending"             {{ $order->status==='pending'             ? 'selected':'' }}>Menunggu Konfirmasi</option>
                             <option value="diproses"            {{ $order->status==='diproses'            ? 'selected':'' }}>Unit Diproses</option>
                             <option value="siap_kirim"          {{ $order->status==='siap_kirim'          ? 'selected':'' }}>Unit Siap Dikirim</option>
@@ -177,8 +221,8 @@
                                placeholder="Contoh: Sudah dihubungi, unit siap minggu depan" style="padding: 10px 12px; border-radius: 6px;">
                     </div>
                 </div>
-                <div style="margin-bottom: 16px; background: var(--bg-alt); border: 1px solid var(--border-light); border-radius: 8px; padding: 12px 14px;">
-                    <label style="font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 8px;">Sub-Tahap Unit Diproses:</label>
+                <div id="csSubstepBox" style="margin-bottom: 16px; background: var(--bg-alt); border: 1px solid var(--border-light); border-radius: 8px; padding: 12px 14px; display: {{ $order->status === 'pending' ? 'block' : 'none' }};">
+                    <label style="font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 8px;">Sub-Tahap Menunggu Konfirmasi:</label>
                     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                         <label style="display: flex; align-items: center; gap: 6px; font-size: 0.84rem; font-weight: 600; cursor: pointer; color: var(--text-primary);">
                             <input type="checkbox" name="substep_penawaran" value="1" {{ $order->substep_penawaran_active ? 'checked' : '' }} style="accent-color: var(--primary); width: 16px; height: 16px;">
@@ -194,8 +238,17 @@
                         </label>
                     </div>
                 </div>
+                <script>
+                function toggleCsSubstepBox(val) {
+                    const box = document.getElementById('csSubstepBox');
+                    if (box) {
+                        box.style.display = (val === 'pending') ? 'block' : 'none';
+                    }
+                }
+                </script>
                 <button type="submit" class="btn btn-primary" style="padding: 10px 20px; font-weight: 700; font-size: 0.8rem; border-radius: 6px;">Simpan Perubahan Status</button>
             </form>
+            @endif
         </div>
     </div>
 

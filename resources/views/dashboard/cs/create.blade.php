@@ -20,9 +20,9 @@
 
                 <div style="background:var(--bg-alt); border-radius:var(--radius-sm); padding:16px; margin-bottom:20px; border:1px solid var(--border);">
                     <div style="font-size:0.72rem; color:var(--primary); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">
-                        Data Customer
+                        Data Customer & No. Servis
                     </div>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+                    <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; align-items:flex-end;">
                         <div class="form-group" style="margin-bottom:0;">
                             <label class="form-label">Nama Lengkap <span>*</span></label>
                             <input type="text" name="customer_name" class="form-control"
@@ -34,6 +34,12 @@
                             <input type="tel" name="customer_phone" class="form-control"
                                    value="{{ old('customer_phone') }}" placeholder="081234567890" required>
                             @error('customer_phone')<span class="form-error">{{ $message }}</span>@enderror
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label class="form-label">No. Servis</label>
+                            <input type="text" name="airtable_service_number" class="form-control"
+                                   value="{{ old('airtable_service_number') }}" placeholder="Contoh: AX0-1234" style="font-family: monospace;">
+                            @error('airtable_service_number')<span class="form-error">{{ $message }}</span>@enderror
                         </div>
                     </div>
                 </div>
@@ -65,7 +71,7 @@
                                    value="{{ old('model') }}" placeholder="Contoh: Hype 5" required>
                             @error('model')<span class="form-error">{{ $message }}</span>@enderror
                         </div>
-                </div>
+                    </div>
 
                 <div style="background:var(--bg-alt); border-radius:var(--radius-sm); padding:16px; margin-bottom:20px; border:1px solid var(--border);">
                     <div style="font-size:0.72rem; color:var(--warning); font-weight:700; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:12px;">

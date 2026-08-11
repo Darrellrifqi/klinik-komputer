@@ -83,29 +83,38 @@ class ServiceController extends Controller
         $ticket = null;
         $ticketNumber = trim($request->ticket_number);
         $trackError = null;
-
         $officialTicketNumber = null;
 
         if ($ticketNumber) {
-            // Check first by airtable_service_number
-            $ticket = Ticket::with(['histories.user', 'technician'])
+            // 1. Search for ACTIVE ticket by airtable_service_number
+            $foundTicket = Ticket::with(['histories.user', 'technician'])
                 ->where('airtable_service_number', $ticketNumber)
+                ->whereNotIn('status', ['sudah_diambil', 'taken', 'cancelled'])
+                ->latest()
                 ->first();
 
-            // If not found by airtable_service_number, check by original ticket_number
-            if (!$ticket) {
+            // 2. If not found by airtable_service_number, search ACTIVE candidate by original ticket_number
+            if (!$foundTicket) {
                 $candidate = Ticket::with(['histories.user', 'technician'])
                     ->where('ticket_number', $ticketNumber)
+                    ->whereNotIn('status', ['sudah_diambil', 'taken', 'cancelled'])
+                    ->latest()
                     ->first();
 
                 if ($candidate) {
                     if (!empty($candidate->airtable_service_number)) {
-                        // Ticket has already been assigned an Airtable Service Number!
+                        // Ticket has official service number assigned
                         $officialTicketNumber = $candidate->airtable_service_number;
                     } else {
-                        $ticket = $candidate;
+                        $foundTicket = $candidate;
                     }
                 }
+            }
+
+            if ($foundTicket) {
+                $ticket = $foundTicket;
+            } elseif (!$officialTicketNumber) {
+                $trackError = 'Nomor tiket ' . $ticketNumber . ' tidak ditemukan atau sudah tidak aktif.';
             }
         }
 

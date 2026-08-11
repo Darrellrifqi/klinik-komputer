@@ -76,6 +76,7 @@ class PklController extends Controller
             'name' => 'required|string|max:100',
             'school' => 'required|string|max:100',
             'division' => 'required|string|max:100',
+            'testimonial' => 'nullable|string|max:1000',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:4096', // Max 4MB
@@ -105,6 +106,7 @@ class PklController extends Controller
             'name' => $request->name,
             'school' => $request->school,
             'division' => $request->division,
+            'testimonial' => $request->testimonial,
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
             'photo_path' => $photoPath,

@@ -256,6 +256,12 @@
                         <div style="display: inline-block; padding: 4px 12px; background: {{ $divColor }}; color: {{ $divTextColor }}; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">
                             {{ $student->division }}
                         </div>
+
+                        @if($student->testimonial)
+                        <div style="margin-top: 12px; font-size: 0.75rem; color: var(--text-secondary); font-style: italic; line-height: 1.45; background: rgba(95, 138, 99, 0.04); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(95, 138, 99, 0.12); text-align: center;">
+                            "{{ $student->testimonial }}"
+                        </div>
+                        @endif
                     </div>
 
                     <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border-light); font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">

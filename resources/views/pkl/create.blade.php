@@ -84,6 +84,11 @@
                             </div>
                         </div>
 
+                        <div class="form-group" style="margin-bottom: 16px;">
+                            <label class="form-label" style="font-weight: 700;">Kesan & Pesan Selama PKL</label>
+                            <textarea name="testimonial" class="form-control" rows="3" placeholder="Tuliskan kesan dan pesan kamu selama mengikuti kegiatan PKL/magang di Klinik Komputer..." style="padding: 12px; border-radius: 8px;">{{ old('testimonial') }}</textarea>
+                        </div>
+
                         <div class="form-group" style="margin-bottom: 0;">
                             <label class="form-label" style="font-weight: 700;">Foto Profil (Pas Foto) <span style="color: var(--danger);">*</span></label>
                             <input type="file" name="photo" accept="image/*" class="form-control" required style="padding: 8px; border-radius: 8px; border-style: dashed;">

@@ -15,6 +15,7 @@ class PklStudent extends Model
         'name',
         'school',
         'division',
+        'testimonial',
         'start_date',
         'end_date',
         'photo_path',

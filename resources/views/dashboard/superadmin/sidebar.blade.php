@@ -6,8 +6,11 @@
     @php $pending = \App\Models\User::where('status','pending')->count(); @endphp
     @if($pending > 0)<span class="badge-count">{{ $pending }}</span>@endif
 </a>
-<a href="{{ route('admin.tickets') }}" class="{{ request()->routeIs('admin.tickets') ? 'active' : '' }}">
-    <span class="nav-icon">Tiket Servis</span>
+<a href="{{ route('admin.tickets') }}" class="{{ request()->routeIs('admin.tickets') && !request()->routeIs('admin.tickets.history*') ? 'active' : '' }}">
+    <span class="nav-icon">Tiket Servis Aktif</span>
+</a>
+<a href="{{ route('admin.tickets.history') }}" class="{{ request()->routeIs('admin.tickets.history*') ? 'active' : '' }}">
+    <span class="nav-icon">History Servis Selesai</span>
 </a>
 <a href="{{ route('admin.procurement') }}" class="{{ request()->routeIs('admin.procurement') ? 'active' : '' }}">
     <span class="nav-icon">Daftar Pengadaan</span>

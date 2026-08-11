@@ -159,10 +159,218 @@ class AdminController extends Controller
     // Ticket management
     public function tickets(Request $request)
     {
-        $query = Ticket::with(['customer', 'technician', 'creator']);
-        if ($request->filled('status')) $query->where('status', $request->status);
-        $tickets = $query->latest()->paginate(20);
-        return view('dashboard.superadmin.tickets', compact('tickets'));
+        $query = Ticket::with(['customer', 'technician', 'creator', 'laptopKit'])
+            ->whereNotIn('status', ['sudah_diambil', 'taken', 'cancelled']);
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('airtable_service_number', 'like', "%{$search}%")
+                  ->orWhere('customer_name', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        $allTickets = $query->orderBy('created_at', 'desc')->get();
+
+        $groupedTickets = [
+            'waiting' => [
+                'title' => 'Menunggu Unit (Booking Online)',
+                'color' => '#eab308',
+                'tickets' => $allTickets->where('status', 'waiting')
+            ],
+            'unit_received' => [
+                'title' => 'Antrian Servis',
+                'color' => '#0284c7',
+                'tickets' => $allTickets->where('status', 'unit_received')
+            ],
+            'checking' => [
+                'title' => 'Pengecekan Teknisi',
+                'color' => '#3b82f6',
+                'tickets' => $allTickets->where('status', 'checking')
+            ],
+            'konfirmasi_user' => [
+                'title' => 'Konfirmasi User (Pembelian Part / Garansi)',
+                'color' => '#8b5cf6',
+                'tickets' => $allTickets->whereIn('status', ['konfirmasi_user', 'checked'])
+            ],
+            'proses_service' => [
+                'title' => 'Proses Service / Pengerjaan Unit',
+                'color' => '#64748b',
+                'tickets' => $allTickets->whereIn('status', ['proses_service', 'rma', 'in_service'])
+            ],
+            'siap_diambil' => [
+                'title' => 'Selesai Servis & Siap Diambil',
+                'color' => '#0d9488',
+                'tickets' => $allTickets->whereIn('status', ['done', 'siap_diambil'])
+            ],
+        ];
+
+        return view('dashboard.superadmin.tickets', compact('groupedTickets', 'allTickets'));
+    }
+
+    public function ticketsHistory(Request $request)
+    {
+        $query = Ticket::with(['customer', 'technician', 'creator'])
+            ->whereIn('status', ['sudah_diambil', 'taken']);
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('airtable_service_number', 'like', "%{$search}%")
+                  ->orWhere('customer_name', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('unit_type')) {
+            $query->where('unit_type', $request->unit_type);
+        }
+
+        if ($request->filled('month')) {
+            $query->whereMonth('updated_at', $request->month);
+        }
+
+        if ($request->filled('year')) {
+            $query->whereYear('updated_at', $request->year);
+        }
+
+        $tickets = $query->orderBy('updated_at', 'desc')->paginate(20)->withQueryString();
+
+        $months = [
+            1  => 'Januari',
+            2  => 'Februari',
+            3  => 'Maret',
+            4  => 'April',
+            5  => 'Mei',
+            6  => 'Juni',
+            7  => 'Juli',
+            8  => 'Agustus',
+            9  => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+
+        $years = Ticket::whereIn('status', ['sudah_diambil', 'taken'])
+            ->selectRaw('YEAR(updated_at) as year')
+            ->distinct()
+            ->orderBy('year', 'desc')
+            ->pluck('year')
+            ->toArray();
+
+        if (empty($years)) {
+            $years = [now()->year];
+        }
+
+        return view('dashboard.superadmin.tickets_history', compact('tickets', 'months', 'years'));
+    }
+
+    public function exportTicketsHistory(Request $request)
+    {
+        $query = Ticket::with(['customer', 'technician', 'creator'])
+            ->whereIn('status', ['sudah_diambil', 'taken']);
+
+        if ($request->filled('search')) {
+            $search = trim($request->search);
+            $query->where(function ($q) use ($search) {
+                $q->where('ticket_number', 'like', "%{$search}%")
+                  ->orWhere('airtable_service_number', 'like', "%{$search}%")
+                  ->orWhere('customer_name', 'like', "%{$search}%")
+                  ->orWhere('customer_phone', 'like', "%{$search}%")
+                  ->orWhere('brand', 'like', "%{$search}%")
+                  ->orWhere('model', 'like', "%{$search}%");
+            });
+        }
+
+        if ($request->filled('unit_type')) {
+            $query->where('unit_type', $request->unit_type);
+        }
+
+        if ($request->filled('month')) {
+            $query->whereMonth('updated_at', $request->month);
+        }
+
+        if ($request->filled('year')) {
+            $query->whereYear('updated_at', $request->year);
+        }
+
+        $tickets = $query->orderBy('updated_at', 'desc')->get();
+
+        $filename = 'history_servis_selesai_' . now()->format('Ymd_His') . '.xls';
+
+        $headers = [
+            'Content-Type' => 'application/vnd.ms-excel; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            'Pragma' => 'no-cache',
+            'Cache-Control' => 'must-revalidate, post-check=0, pre-check=0',
+            'Expires' => '0'
+        ];
+
+        $callback = function() use($tickets) {
+            $html = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">';
+            $html .= '<head>';
+            $html .= '<!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>History Servis</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]-->';
+            $html .= '<meta http-equiv="content-type" content="text/html; charset=utf-8">';
+            $html .= '<style>';
+            $html .= 'table { border-collapse: collapse; width: 100%; }';
+            $html .= 'th { background-color: #15803d; color: #ffffff; font-weight: bold; border: 1px solid #cccccc; padding: 8px 12px; text-align: center; }';
+            $html .= 'td { border: 1px solid #cccccc; padding: 6px 10px; font-size: 11pt; vertical-align: top; }';
+            $html .= '.text { mso-number-format:"\@"; }';
+            $html .= '.num { mso-number-format:"\#\,\#\#0"; text-align: right; }';
+            $html .= '</style>';
+            $html .= '</head>';
+            $html .= '<body>';
+            $html .= '<table>';
+            
+            // Header row
+            $html .= '<tr>';
+            foreach ([
+                'No', 'No. Tiket Booking', 'No. Servis (Airtable)', 'Antrian', 'Nama Customer', 
+                'No. WhatsApp', 'Tipe Perangkat', 'Merek & Model', 'Deskripsi Kerusakan', 
+                'Penyebab / Kerusakan Part', 'Teknisi PJ', 'Biaya Servis (Rp)', 'Status Rinci', 
+                'Tanggal Dibuat', 'Tanggal Selesai / Diambil'
+            ] as $head) {
+                $html .= '<th>' . htmlspecialchars($head) . '</th>';
+            }
+            $html .= '</tr>';
+
+            foreach ($tickets as $idx => $t) {
+                $html .= '<tr>';
+                $html .= '<td style="text-align:center;">' . ($idx + 1) . '</td>';
+                $html .= '<td class="text">' . htmlspecialchars($t->ticket_number) . '</td>';
+                $html .= '<td class="text">' . htmlspecialchars($t->airtable_service_number ?: '-') . '</td>';
+                $html .= '<td class="text">#' . htmlspecialchars($t->queue_number) . '</td>';
+                $html .= '<td>' . htmlspecialchars($t->customer_name) . '</td>';
+                $html .= '<td class="text">' . htmlspecialchars($t->customer_phone) . '</td>';
+                $html .= '<td>' . htmlspecialchars(strtoupper($t->unit_type)) . '</td>';
+                $html .= '<td>' . htmlspecialchars($t->brand . ' ' . $t->model) . '</td>';
+                $html .= '<td>' . htmlspecialchars($t->damage_description ?: '-') . '</td>';
+                $html .= '<td>' . htmlspecialchars($t->cause ?: ($t->components_issue ?: '-')) . '</td>';
+                $html .= '<td>' . htmlspecialchars($t->technician ? $t->technician->name : '-') . '</td>';
+                $html .= '<td class="num">' . number_format($t->estimated_cost ?: 0, 0, ',', '.') . '</td>';
+                $html .= '<td>' . htmlspecialchars($t->sub_status_label ?: 'Sudah Diambil') . '</td>';
+                $html .= '<td class="text">' . htmlspecialchars($t->created_at->format('d/m/Y H:i')) . '</td>';
+                $html .= '<td class="text">' . htmlspecialchars($t->updated_at->format('d/m/Y H:i')) . '</td>';
+                $html .= '</tr>';
+            }
+
+            $html .= '</table></body></html>';
+
+            echo $html;
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 
     // Product management (CRUD)
@@ -467,7 +675,7 @@ class AdminController extends Controller
                 if (!$newSubstepPembayaran)$missing[] = 'Pembayaran';
 
                 return back()->withErrors([
-                    'status' => 'Pengadaan belum dapat dipindahkan ke tahap selanjutnya karena sub-tahap Unit Diproses belum lengkap: ' . implode(', ', $missing) . '.'
+                    'status' => 'Pengadaan belum dapat dipindahkan ke tahap selanjutnya karena sub-tahap Menunggu Konfirmasi belum lengkap: ' . implode(', ', $missing) . '.'
                 ])->withInput();
             }
         }

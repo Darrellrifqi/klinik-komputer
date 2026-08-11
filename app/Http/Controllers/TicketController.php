@@ -119,15 +119,16 @@ class TicketController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'customer_name'      => 'required|string|max:255',
-            'customer_phone'     => 'required|string|max:20',
-            'unit_type'          => 'required|in:laptop,desktop,printer,other',
-            'brand'              => 'required|string|max:100',
-            'model'              => 'required|string|max:100',
-            'damage_description' => 'required|string|min:5',
-            'member_id_input'    => 'nullable|string',
-            'is_tune_up'         => 'nullable|boolean',
-            'is_os_install'      => 'nullable|boolean',
+            'customer_name'           => 'required|string|max:255',
+            'customer_phone'          => 'required|string|max:20',
+            'unit_type'               => 'required|in:laptop,desktop,printer,other',
+            'brand'                   => 'required|string|max:100',
+            'model'                   => 'required|string|max:100',
+            'damage_description'      => 'required|string|min:5',
+            'member_id_input'         => 'nullable|string',
+            'airtable_service_number' => 'nullable|string|max:100',
+            'is_tune_up'              => 'nullable|boolean',
+            'is_os_install'           => 'nullable|boolean',
         ]);
 
         $customerId = null;
@@ -151,32 +152,33 @@ class TicketController extends Controller
         }
 
         $ticket = Ticket::create([
-            'ticket_number'      => Ticket::generateTicketNumber(),
-            'queue_number'       => Ticket::generateQueueNumber(),
-            'customer_name'      => $request->customer_name,
-            'customer_phone'     => $request->customer_phone,
-            'unit_type'          => $request->unit_type,
-            'brand'              => $request->brand,
-            'model'              => $request->model,
-            'damage_description' => $request->damage_description,
-            'status'             => 'waiting',
-            'notes'              => $request->notes,
-            'created_by'         => auth()->id(),
-            'laptop_kit_id'      => $kitId,
-            'customer_id'        => $customerId,
-            'is_tune_up'         => $request->has('is_tune_up') ? (bool)$request->is_tune_up : false,
-            'is_os_install'      => $request->has('is_os_install') ? (bool)$request->is_os_install : false,
+            'ticket_number'           => Ticket::generateTicketNumber(),
+            'queue_number'            => Ticket::generateQueueNumber(),
+            'customer_name'           => $request->customer_name,
+            'customer_phone'          => $request->customer_phone,
+            'unit_type'               => $request->unit_type,
+            'brand'                   => $request->brand,
+            'model'                   => $request->model,
+            'damage_description'      => $request->damage_description,
+            'status'                  => 'unit_received', // Walk-in CS ticket directly enters Antrian Servis (Unit Diterima)
+            'airtable_service_number' => $request->airtable_service_number,
+            'notes'                   => $request->notes,
+            'created_by'              => auth()->id(),
+            'laptop_kit_id'           => $kitId,
+            'customer_id'             => $customerId,
+            'is_tune_up'              => $request->has('is_tune_up') ? (bool)$request->is_tune_up : false,
+            'is_os_install'           => $request->has('is_os_install') ? (bool)$request->is_os_install : false,
         ]);
 
         TicketHistory::create([
             'ticket_id'  => $ticket->id,
             'user_id'    => auth()->id(),
             'old_status' => null,
-            'new_status' => 'waiting',
-            'notes'      => 'Tiket dibuat oleh CS: ' . auth()->user()->name,
+            'new_status' => 'unit_received',
+            'notes'      => 'Tiket Walk-in dibuat oleh CS: ' . auth()->user()->name,
         ]);
 
-        return redirect()->route('dashboard.cs')->with('success', "Tiket {$ticket->ticket_number} berhasil dibuat. Nomor antrian: #{$ticket->queue_number}");
+        return redirect()->route('dashboard.cs')->with('success', "Tiket Walk-in {$ticket->ticket_number} berhasil dibuat dan masuk ke Antrian Servis. Nomor antrian: #{$ticket->queue_number}");
     }
 
     public function show(Ticket $ticket)
@@ -218,7 +220,7 @@ class TicketController extends Controller
                 if (!$newSubstepPembayaran)$missing[] = 'Pembayaran';
 
                 return back()->withErrors([
-                    'status' => 'Pengadaan belum dapat dipindahkan ke tahap selanjutnya karena sub-tahap Unit Diproses belum lengkap: ' . implode(', ', $missing) . '.'
+                    'status' => 'Pengadaan belum dapat dipindahkan ke tahap selanjutnya karena sub-tahap Menunggu Konfirmasi belum lengkap: ' . implode(', ', $missing) . '.'
                 ])->withInput();
             }
         }

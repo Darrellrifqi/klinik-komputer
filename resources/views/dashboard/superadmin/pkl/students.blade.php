@@ -72,6 +72,9 @@
                                     <div>
                                         <div style="font-weight: 800; font-size: 0.9rem; color: var(--text-primary);">{{ $student->name }}</div>
                                         <div style="font-size: 0.76rem; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-top: 2px;">{{ $student->school }}</div>
+                                        @if($student->testimonial)
+                                        <div style="font-size: 0.72rem; color: var(--text-secondary); font-style: italic; margin-top: 2px;">"{{ $student->testimonial }}"</div>
+                                        @endif
                                         <div style="font-size: 0.68rem; color: var(--text-muted); margin-top: 4px;">Pendaftaran: {{ $student->created_at->format('d M Y') }}</div>
                                     </div>
                                 </div>

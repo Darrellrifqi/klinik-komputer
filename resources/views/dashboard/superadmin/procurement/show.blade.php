@@ -112,6 +112,81 @@
     <div class="dash-card">
         <div class="dash-card-header"><h3>Update Status Pengadaan</h3></div>
         <div class="dash-card-body">
+            {{-- Stepper Progress --}}
+            @php
+            $superStatuses = ['pending', 'diproses', 'siap_kirim', 'diproses_pengiriman'];
+            $currentSuperIdx = array_search($order->status, $superStatuses);
+            @endphp
+            <div style="display:flex; align-items:center; gap:0; margin-bottom:20px; overflow-x:auto; padding-bottom:4px;">
+                @php
+                $superSteps = [
+                    'pending'             => "Menunggu\nKonfirmasi",
+                    'diproses'            => "Unit\nDiproses",
+                    'siap_kirim'          => "Siap\nDikirim",
+                    'diproses_pengiriman' => "Unit\nDikirim",
+                ];
+                @endphp
+                @foreach($superSteps as $val => $label)
+                @php
+                    $stepIdx   = array_search($val, $superStatuses);
+                    $isDone    = $currentSuperIdx !== false && $stepIdx < $currentSuperIdx;
+                    $isCurrent = $order->status === $val;
+                @endphp
+                <div style="display:flex; align-items:center; flex:1; min-width:90px;">
+                    <div style="display:flex; flex-direction:column; align-items:center; gap:5px; flex:1;">
+                        <div style="width:32px; height:32px; border-radius:50%; border:2px solid {{ $isCurrent ? 'var(--primary)' : ($isDone ? 'var(--success)' : 'var(--border)') }}; background:{{ $isCurrent ? 'var(--primary)' : ($isDone ? 'var(--success)' : '#fff') }}; display:flex; align-items:center; justify-content:center; font-size:0.72rem; font-weight:800; color:{{ ($isCurrent || $isDone) ? '#fff' : 'var(--text-muted)' }};">
+                            @if($isDone) ✓ @else {{ $loop->iteration }} @endif
+                        </div>
+                        <div style="font-size:0.68rem; font-weight:{{ $isCurrent ? '700' : '600' }}; color:{{ $isCurrent ? 'var(--primary)' : ($isDone ? 'var(--success)' : 'var(--text-muted)') }}; text-align:center; white-space:pre-line; line-height:1.2;">{{ $label }}</div>
+                    </div>
+                    @if(!$loop->last)
+                    <div style="height:2px; flex:1; background:{{ ($currentSuperIdx !== false && $stepIdx < $currentSuperIdx) ? 'var(--success)' : 'var(--border)' }}; margin-bottom:16px;"></div>
+                    @endif
+                </div>
+                @endforeach
+            </div>
+
+            {{-- Sub-Tahap / Sub-Bab Visual Progress (Hanya muncul saat status Menunggu Konfirmasi) --}}
+            @if($order->status === 'pending')
+            <div style="margin-bottom: 20px; padding: 12px 14px; background: rgba(95, 138, 99, 0.04); border: 1px dashed rgba(95, 138, 99, 0.25); border-radius: 8px;">
+                <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-secondary); margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                    <span>Sub-Tahap: Menunggu Konfirmasi</span>
+                    <span style="font-size: 0.68rem; color: var(--primary); font-weight: 700;">3 Sub-Bab Proses</span>
+                </div>
+
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    <div style="background: {{ $order->substep_penawaran_active ? 'rgba(22, 163, 74, 0.08)' : '#ffffff' }}; border: 1.5px solid {{ $order->substep_penawaran_active ? '#16a34a' : 'var(--border-light)' }}; border-radius: 8px; padding: 8px; text-align: center;">
+                        <div style="width: 22px; height: 22px; border-radius: 50%; background: {{ $order->substep_penawaran_active ? '#16a34a' : 'var(--bg-alt)' }}; color: {{ $order->substep_penawaran_active ? '#ffffff' : 'var(--text-muted)' }}; border: 1px solid {{ $order->substep_penawaran_active ? '#16a34a' : 'var(--border)' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 3px auto; font-size: 0.68rem; font-weight: 800;">
+                            @if($order->substep_penawaran_active) ✓ @else 1 @endif
+                        </div>
+                        <div style="font-size: 0.74rem; font-weight: 700; color: {{ $order->substep_penawaran_active ? 'var(--text-primary)' : 'var(--text-muted)' }};">1. Penawaran</div>
+                        <div style="font-size: 0.65rem; color: {{ $order->substep_penawaran_active ? '#16a34a' : 'var(--text-muted)' }}; font-weight: 600; margin-top: 2px;">
+                            {{ $order->substep_penawaran_active ? '✓ Selesai' : 'Belum' }}
+                        </div>
+                    </div>
+
+                    <div style="background: {{ $order->substep_invoice_active ? 'rgba(22, 163, 74, 0.08)' : '#ffffff' }}; border: 1.5px solid {{ $order->substep_invoice_active ? '#16a34a' : 'var(--border-light)' }}; border-radius: 8px; padding: 8px; text-align: center;">
+                        <div style="width: 22px; height: 22px; border-radius: 50%; background: {{ $order->substep_invoice_active ? '#16a34a' : 'var(--bg-alt)' }}; color: {{ $order->substep_invoice_active ? '#ffffff' : 'var(--text-muted)' }}; border: 1px solid {{ $order->substep_invoice_active ? '#16a34a' : 'var(--border)' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 3px auto; font-size: 0.68rem; font-weight: 800;">
+                            @if($order->substep_invoice_active) ✓ @else 2 @endif
+                        </div>
+                        <div style="font-size: 0.74rem; font-weight: 700; color: {{ $order->substep_invoice_active ? 'var(--text-primary)' : 'var(--text-muted)' }};">2. Invoice</div>
+                        <div style="font-size: 0.65rem; color: {{ $order->substep_invoice_active ? '#16a34a' : 'var(--text-muted)' }}; font-weight: 600; margin-top: 2px;">
+                            {{ $order->substep_invoice_active ? '✓ Diterbitkan' : 'Belum' }}
+                        </div>
+                    </div>
+
+                    <div style="background: {{ $order->substep_pembayaran_active ? 'rgba(22, 163, 74, 0.08)' : '#ffffff' }}; border: 1.5px solid {{ $order->substep_pembayaran_active ? '#16a34a' : 'var(--border-light)' }}; border-radius: 8px; padding: 8px; text-align: center;">
+                        <div style="width: 22px; height: 22px; border-radius: 50%; background: {{ $order->substep_pembayaran_active ? '#16a34a' : 'var(--bg-alt)' }}; color: {{ $order->substep_pembayaran_active ? '#ffffff' : 'var(--text-muted)' }}; border: 1px solid {{ $order->substep_pembayaran_active ? '#16a34a' : 'var(--border)' }}; display: flex; align-items: center; justify-content: center; margin: 0 auto 3px auto; font-size: 0.68rem; font-weight: 800;">
+                            @if($order->substep_pembayaran_active) ✓ @else 3 @endif
+                        </div>
+                        <div style="font-size: 0.74rem; font-weight: 700; color: {{ $order->substep_pembayaran_active ? 'var(--text-primary)' : 'var(--text-muted)' }};">3. Pembayaran</div>
+                        <div style="font-size: 0.65rem; color: {{ $order->substep_pembayaran_active ? '#16a34a' : 'var(--text-muted)' }}; font-weight: 600; margin-top: 2px;">
+                            {{ $order->substep_pembayaran_active ? '✓ Lunas' : 'Belum' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @endif
             @if($errors->any())
             <div class="alert alert-danger" style="margin-bottom: 16px; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;">
                 <ul style="margin: 0; padding-left: 18px;">
@@ -126,7 +201,7 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
                     <div class="form-group">
                         <label class="form-label">Status Pengadaan <span>*</span></label>
-                        <select name="status" class="form-control" required>
+                        <select name="status" id="adminStatusSelect" class="form-control" required onchange="toggleAdminSubstepBox(this.value)">
                             @foreach([
                                 'pending'             => 'Menunggu Konfirmasi',
                                 'diproses'            => 'Unit Diproses',
@@ -150,8 +225,8 @@
                         <span class="form-hint">Opsional. Total harga keseluruhan unit.</span>
                     </div>
                 </div>
-                <div style="margin-bottom: 16px; background: var(--bg-alt); border: 1px solid var(--border-light); border-radius: 8px; padding: 12px 14px;">
-                    <label style="font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 8px;">Sub-Tahap Unit Diproses:</label>
+                <div id="adminSubstepBox" style="margin-bottom: 16px; background: var(--bg-alt); border: 1px solid var(--border-light); border-radius: 8px; padding: 12px 14px; display: {{ $order->status === 'pending' ? 'block' : 'none' }};">
+                    <label style="font-weight: 700; font-size: 0.72rem; color: var(--text-secondary); text-transform: uppercase; display: block; margin-bottom: 8px;">Sub-Tahap Menunggu Konfirmasi:</label>
                     <div style="display: flex; gap: 20px; flex-wrap: wrap;">
                         <label style="display: flex; align-items: center; gap: 6px; font-size: 0.84rem; font-weight: 600; cursor: pointer; color: var(--text-primary);">
                             <input type="checkbox" name="substep_penawaran" value="1" {{ $order->substep_penawaran_active ? 'checked' : '' }} style="accent-color: var(--primary); width: 16px; height: 16px;">
@@ -167,6 +242,14 @@
                         </label>
                     </div>
                 </div>
+                <script>
+                function toggleAdminSubstepBox(val) {
+                    const box = document.getElementById('adminSubstepBox');
+                    if (box) {
+                        box.style.display = (val === 'pending') ? 'block' : 'none';
+                    }
+                }
+                </script>
                 <div class="form-group">
                     <label class="form-label">Catatan Internal</label>
                     <textarea name="admin_notes" class="form-control" rows="3"

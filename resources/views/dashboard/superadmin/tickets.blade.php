@@ -1,111 +1,220 @@
 @extends('layouts.dashboard')
-@section('title', 'Tiket Servis | Super Admin')
-@section('page_title', 'Tiket Servis')
-@section('page_subtitle', 'Pantau tiket servis di sistem')
+@section('title', 'Tiket Servis Aktif | Super Admin')
+@section('page_title', 'Tiket Servis Aktif')
+@section('page_subtitle', 'Pantau dan kelola seluruh alur tiket servis aktif berdasarkan tahapan proses')
 
 @section('sidebar_nav')
     @include('dashboard.superadmin.sidebar')
 @endsection
 
-
 @section('content')
-<!-- Filter -->
+
+{{-- ════════ STATS RINGKASAN ════════ --}}
+<div style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px;">
+    {{-- Baris 1: 4 Kolom --}}
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+        {{-- Menunggu Unit --}}
+        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+            <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(234, 179, 8, 0.12); color: #d97706;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 16 14"></polyline>
+                </svg>
+            </div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->where('status','waiting')->count() }}</div>
+                <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Menunggu Unit</div>
+            </div>
+        </div>
+
+        {{-- Antrian Servis --}}
+        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+            <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(2, 132, 199, 0.12); color: #0284c7;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+                </svg>
+            </div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->where('status','unit_received')->count() }}</div>
+                <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Antrian Servis</div>
+            </div>
+        </div>
+
+        {{-- Pengecekan Teknisi --}}
+        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+            <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.12); color: #2563eb;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+            </div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->where('status','checking')->count() }}</div>
+                <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Pengecekan</div>
+            </div>
+        </div>
+
+        {{-- Konfirmasi User --}}
+        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+            <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.12); color: #7c3aed;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+                </svg>
+            </div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->whereIn('status',['konfirmasi_user','checked'])->count() }}</div>
+                <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Konfirmasi User</div>
+            </div>
+        </div>
+    </div>
+
+    {{-- Baris 2: 2 Kolom --}}
+    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        {{-- Proses Service --}}
+        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+            <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(100, 116, 139, 0.12); color: #475569;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                </svg>
+            </div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->whereIn('status',['proses_service','rma','in_service'])->count() }}</div>
+                <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Proses Service</div>
+            </div>
+        </div>
+
+        {{-- Siap Diambil --}}
+        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+            <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(13, 148, 136, 0.12); color: #0d9488;">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+            </div>
+            <div style="overflow: hidden;">
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->whereIn('status',['done','siap_diambil'])->count() }}</div>
+                <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Siap Diambil</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filter Bar -->
 <div class="dash-card" style="margin-bottom:16px;">
     <div class="dash-card-body" style="padding:12px 16px;">
-        <form method="GET" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
-            <select name="status" class="form-control" style="width:auto; padding:6px 12px; font-size:0.8rem;">
-                <option value="">Semua Status</option>
+        <form method="GET" action="{{ route('admin.tickets') }}" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <div style="position:relative; min-width: 240px; flex:1;">
+                <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari No. Tiket, No. Servis, Customer, WA, Merek..." class="form-control" style="padding:7px 12px; font-size:0.82rem; border-radius:6px;">
+            </div>
+            <select name="status" class="form-control" style="width:auto; padding:7px 12px; font-size:0.82rem; border-radius:6px;">
+                <option value="">Semua Tahapan Status</option>
                 <option value="waiting"       {{ request('status')==='waiting'       ? 'selected':'' }}>Menunggu Unit</option>
                 <option value="unit_received" {{ request('status')==='unit_received' ? 'selected':'' }}>Antrian Servis</option>
-                <option value="checking"      {{ request('status')==='checking'      ? 'selected':'' }}>Pengecekan</option>
-                <option value="checked"  {{ request('status')==='checked'  ? 'selected':'' }}>Selesai Cek</option>
-                <option value="rma"      {{ request('status')==='rma'      ? 'selected':'' }}>Proses RMA</option>
-                <option value="done"     {{ in_array(request('status'), ['done','siap_diambil']) ? 'selected':'' }}>Siap Diambil</option>
-                <option value="sudah_diambil" {{ in_array(request('status'), ['sudah_diambil','taken']) ? 'selected':'' }}>Sudah Diambil</option>
-                <option value="cancelled"{{ request('status')==='cancelled'? 'selected':'' }}>Dibatalkan</option>
+                <option value="checking"      {{ request('status')==='checking'      ? 'selected':'' }}>Pengecekan Teknisi</option>
+                <option value="konfirmasi_user" {{ request('status')==='konfirmasi_user' ? 'selected':'' }}>Konfirmasi User</option>
+                <option value="proses_service" {{ request('status')==='proses_service' ? 'selected':'' }}>Proses Service</option>
+                <option value="siap_diambil"  {{ in_array(request('status'), ['done','siap_diambil']) ? 'selected':'' }}>Siap Diambil</option>
             </select>
-            <button type="submit" class="btn btn-primary btn-sm">Filter</button>
-            <a href="{{ route('admin.tickets') }}" class="btn btn-outline btn-sm">Reset</a>
+            <button type="submit" class="btn btn-primary btn-sm" style="padding:7px 14px; font-weight:700;">Filter</button>
+            @if(request()->hasAny(['search', 'status']))
+            <a href="{{ route('admin.tickets') }}" class="btn btn-outline btn-sm" style="padding:7px 12px;">Reset</a>
+            @endif
         </form>
     </div>
 </div>
 
-<div class="dash-card">
-    <div class="dash-card-header">
-        <h3>Tiket Servis ({{ $tickets->total() }})</h3>
-    </div>
-    <div class="dash-card-body" style="padding:0;">
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>No. Tiket</th>
-                        <th>Customer</th>
-                        <th>Unit Perangkat</th>
-                        <th>Dibuat Oleh</th>
-                        <th>Teknisi PJ</th>
-                        <th>Status</th>
-                        <th>Tanggal</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($tickets as $ticket)
-                    <tr>
-                        <td>
-                            <div style="font-family:monospace; font-weight:700; color:var(--primary); font-size:0.82rem;">{{ $ticket->ticket_number }}</div>
-                            <div style="font-size:0.7rem; color:var(--text-muted);">#{{ $ticket->queue_number }}</div>
-                        </td>
-                        <td>
-                            <div style="font-weight:600; font-size:0.85rem;">{{ $ticket->customer_name }}</div>
-                            <div style="font-size:0.75rem; color:var(--text-muted);">{{ $ticket->customer_phone }}</div>
-                        </td>
-                        <td style="font-size:0.85rem;">
-                            <div>{{ $ticket->brand }} {{ $ticket->model }}</div>
-                            <div style="font-size:0.72rem; color:var(--text-muted); text-transform:uppercase;">{{ $ticket->unit_type }}</div>
-                        </td>
-                        <td style="font-size:0.82rem; color:var(--text-secondary);">{{ $ticket->creator?->name ?? 'Online' }}</td>
-                        <td style="font-size:0.82rem; color:var(--text-secondary);">{{ $ticket->technician?->name ?? '—' }}</td>
-                        <td>
-                            <div style="display:flex; align-items:center; gap:5px;">
-                                <div class="status-dot {{ $ticket->status }}"></div>
-                                <span class="badge badge-{{ $ticket->status_color }}" style="font-size:0.68rem;">{{ $ticket->sub_status_label ?? $ticket->status_label }}</span>
-                            </div>
-                        </td>
-                        <td style="font-size:0.78rem; color:var(--text-muted);">{{ $ticket->created_at->format('d M Y') }}</td>
-                        <td style="white-space: nowrap;">
-                            <div style="display: flex; gap: 6px; align-items: center;">
-                                <a href="{{ route('service.track') }}?ticket_number={{ $ticket->ticket_number }}"
-                                   target="_blank" class="btn btn-outline btn-sm" style="padding:4px 8px;">Lacak</a>
-                                <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tiket {{ $ticket->ticket_number }} ini secara permanen dari database?');" style="margin: 0;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm" style="padding:4px 8px; font-size:0.72rem;">Hapus</button>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="8">
-                            <div style="padding: 48px 24px; text-align: center;">
-                                <div style="width: 64px; height: 64px; background: rgba(95, 138, 99, 0.08); border: 1.5px solid rgba(95, 138, 99, 0.2); border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 14px; color: var(--primary);">
-                                    <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                        <rect x="2" y="4" width="20" height="16" rx="3" ry="3"></rect>
-                                        <path d="M12 9v6"></path>
-                                        <path d="M9 12h6"></path>
-                                    </svg>
-                                </div>
-                                <h4 style="font-size: 1.1rem; font-weight: 800; color: var(--text-primary); margin: 0 0 6px 0;">Tidak Ada Tiket Perbaikan</h4>
-                                <p style="color: var(--text-muted); font-size: 0.85rem; margin: 0;">Belum ada data tiket perbaikan yang sesuai dengan kriteria pencarian.</p>
-                            </div>
-                        </td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+{{-- ════════ TIKET GROUPED SECTIONS (Per Sub-Bab Status) ════════ --}}
+<div style="display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px;">
+    @foreach($groupedTickets as $statusKey => $group)
+    <div class="dash-card" style="border-left: 4px solid {{ $group['color'] }}; background: var(--bg-card); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 0;">
+        <div class="dash-card-header" style="background: var(--bg-alt); padding: 8px 14px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <h3 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-primary);">{{ $group['title'] }}</h3>
+                <span class="badge" style="background: {{ $group['color'] }}; color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; font-weight: 800;">{{ $group['tickets']->count() }}</span>
+            </div>
         </div>
-        <div style="padding:12px 16px;">{{ $tickets->appends(request()->query())->links() }}</div>
+        <div class="dash-card-body" style="padding: 0;">
+            @if($group['tickets']->count() > 0)
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="padding: 8px 14px; font-size: 0.72rem;">No. Tiket / Servis</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem;">Customer</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem;">Unit Perangkat</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem;">Dibuat Oleh</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem;">Teknisi PJ</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem;">Status Rinci</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem;">Tanggal</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem; text-align: center;">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($group['tickets'] as $ticket)
+                        <tr>
+                            <td style="padding: 8px 14px;">
+                                <div style="font-family:monospace; font-weight:700; color:var(--primary); font-size:0.85rem;">{{ $ticket->ticket_number }}</div>
+                                @if($ticket->airtable_service_number)
+                                    <div style="font-family:monospace; font-size:0.74rem; color:#2563eb; font-weight:700; margin-top:2px;">
+                                        No. Servis: {{ $ticket->airtable_service_number }}
+                                    </div>
+                                @endif
+                                <div style="font-size:0.72rem; color:var(--text-muted);">Antrian #{{ $ticket->queue_number }}</div>
+                            </td>
+                            <td style="padding: 8px 14px;">
+                                <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
+                                    <span style="font-weight:600; font-size:0.85rem;">{{ $ticket->customer_name }}</span>
+                                    @if($ticket->is_member)
+                                        @if($ticket->member_type_label === 'Member Pengadaan')
+                                            <span class="badge" style="background:#7c3aed; color:#fff; font-size:0.62rem; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:0.02em;">MEMBER PENGADAAN</span>
+                                        @else
+                                            <span class="badge" style="background:#0284c7; color:#fff; font-size:0.62rem; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:0.02em;">MEMBER</span>
+                                        @endif
+                                    @endif
+                                </div>
+                                <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">{{ $ticket->customer_phone }}</div>
+                            </td>
+                            <td style="padding: 8px 14px;">
+                                <div style="font-weight:600; font-size:0.85rem;">{{ $ticket->brand }} {{ $ticket->model }}</div>
+                                <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">{{ $ticket->unit_type }}</div>
+                            </td>
+                            <td style="padding: 8px 14px; font-size:0.82rem; color:var(--text-secondary);">
+                                {{ $ticket->creator?->name ?? 'Online' }}
+                            </td>
+                            <td style="padding: 8px 14px; font-size:0.82rem; color:var(--text-secondary);">
+                                {{ $ticket->technician?->name ?? '—' }}
+                            </td>
+                            <td style="padding: 8px 14px;">
+                                <div style="display:flex; align-items:center; gap:6px;">
+                                    <div class="status-dot {{ $ticket->status }}"></div>
+                                    <span class="badge badge-{{ $ticket->status_color }}" style="font-size:0.72rem;">{{ $ticket->sub_status_label ?? $ticket->status_label }}</span>
+                                </div>
+                            </td>
+                            <td style="padding: 8px 14px; font-size:0.78rem; color:var(--text-muted);">{{ $ticket->created_at->format('d M Y') }}</td>
+                            <td style="padding: 8px 14px; white-space: nowrap; text-align: center;">
+                                <div style="display: flex; gap: 6px; align-items: center; justify-content: center;">
+                                    <a href="{{ route('dashboard.cs.show', $ticket) }}" class="btn btn-outline btn-sm" style="padding:4px 8px; font-size:0.72rem; font-weight:700;">Detail</a>
+                                    <a href="{{ route('service.track') }}?ticket_number={{ $ticket->ticket_number }}" target="_blank" class="btn btn-outline btn-sm" style="padding:4px 8px; font-size:0.72rem;">Lacak</a>
+                                    <form action="{{ route('admin.tickets.destroy', $ticket) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tiket {{ $ticket->ticket_number }} ini secara permanen dari database?');" style="margin: 0;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-danger btn-sm" style="padding: 4px 8px; font-size: 0.72rem;">Hapus</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @else
+            <div style="padding: 10px 14px; color: var(--text-muted); font-size: 0.8rem; font-style: italic; background: var(--bg);">
+                Tidak ada tiket pada status ini.
+            </div>
+            @endif
+        </div>
     </div>
+    @endforeach
 </div>
+
 @endsection

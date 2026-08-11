@@ -127,6 +127,8 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('dashboard/admin')->group
 
     // Ticket management
     Route::get('/tickets', [AdminController::class, 'tickets'])->name('admin.tickets');
+    Route::get('/tickets-history', [AdminController::class, 'ticketsHistory'])->name('admin.tickets.history');
+    Route::get('/tickets-history/export', [AdminController::class, 'exportTicketsHistory'])->name('admin.tickets.history.export');
     Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('admin.tickets.destroy');
 
     // Product management

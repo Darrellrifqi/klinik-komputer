@@ -26,6 +26,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('school');
             $table->string('division'); // e.g. CS, Produksi, Teknisi, Administrasi, dll.
+            $table->text('testimonial')->nullable(); // Kesan & Pesan
             $table->date('start_date');
             $table->date('end_date');
             $table->string('photo_path');

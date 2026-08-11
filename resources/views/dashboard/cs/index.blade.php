@@ -127,7 +127,7 @@
                 <h3 style="font-size: 0.9rem; font-weight: 700; margin: 0; color: var(--text-primary);">{{ $group['title'] }}</h3>
                 <span class="badge" style="background: {{ $group['color'] }}; color: #fff; font-size: 0.7rem; padding: 2px 8px; border-radius: 12px; font-weight: 800;">{{ $group['tickets']->count() }}</span>
             </div>
-            @if($statusKey === 'waiting' || $statusKey === 'unit_received')
+            @if($statusKey === 'unit_received')
                 <a href="{{ route('dashboard.cs.create') }}" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 3px 8px;">+ Buat Tiket</a>
             @endif
         </div>
