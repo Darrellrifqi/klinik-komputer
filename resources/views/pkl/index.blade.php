@@ -218,74 +218,87 @@
         </div>
 
         @if($students->count() > 0)
-        <!-- Students Grid -->
-        <div class="students-grid" id="studentsGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px;">
-            @foreach($students as $student)
-            @php
-                $divColor = 'rgba(95, 138, 99, 0.08)';
-                $divTextColor = 'var(--primary)';
-                if ($student->division === 'Teknisi') {
-                    $divColor = 'rgba(217, 119, 6, 0.08)';
-                    $divTextColor = '#d97706';
-                } elseif (in_array($student->division, ['CS', 'Customer Service'])) {
-                    $divColor = 'rgba(2, 132, 199, 0.08)';
-                    $divTextColor = '#0284c7';
-                } elseif ($student->division === 'Produksi') {
-                    $divColor = 'rgba(16, 185, 129, 0.08)';
-                    $divTextColor = '#10b981';
-                } elseif ($student->division === 'Digital Sales Media') {
-                    $divColor = 'rgba(139, 92, 246, 0.08)';
-                    $divTextColor = '#8b5cf6';
-                } elseif ($student->division === 'Sales & Marketing') {
-                    $divColor = 'rgba(236, 72, 153, 0.08)';
-                    $divTextColor = '#ec4899';
-                } elseif ($student->division === 'Admin') {
-                    $divColor = 'rgba(100, 116, 139, 0.08)';
-                    $divTextColor = '#475569';
-                }
-            @endphp
-            <div class="student-card" data-quarter="{{ $student->period->quarter }}" data-year="{{ $student->period->year }}" style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.25s ease; display: flex; flex-direction: column;">
-                
-                <div style="position: relative; height: 80px; display: flex; justify-content: center; align-items: flex-end;">
-                    <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(13, 30, 17, 0.45), rgba(13, 30, 17, 0.75)), url('/images/pkl-banner.png') no-repeat center center; background-size: cover; border-top-left-radius: 11px; border-top-right-radius: 11px;"></div>
+        <!-- Students Carousel Wrapper -->
+        <div style="position: relative;">
+            <!-- Carousel Navigation Arrows -->
+            <button type="button" id="prevPklBtn" onclick="scrollPklCarousel(-1)" aria-label="Previous"
+                    style="position: absolute; left: -14px; top: 50%; transform: translateY(-50%); z-index: 15; width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 14px rgba(0,0,0,0.12); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: all 0.2s ease;">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+
+            <button type="button" id="nextPklBtn" onclick="scrollPklCarousel(1)" aria-label="Next"
+                    style="position: absolute; right: -14px; top: 50%; transform: translateY(-50%); z-index: 15; width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 14px rgba(0,0,0,0.12); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: all 0.2s ease;">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+
+            <div class="students-grid" id="studentsGrid" style="display: flex; gap: 18px; align-items: stretch; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; padding: 12px 4px 20px; -webkit-overflow-scrolling: touch; scrollbar-width: thin;">
+                @foreach($students as $student)
+                @php
+                    $divColor = 'rgba(95, 138, 99, 0.08)';
+                    $divTextColor = 'var(--primary)';
+                    if ($student->division === 'Teknisi') {
+                        $divColor = 'rgba(217, 119, 6, 0.08)';
+                        $divTextColor = '#d97706';
+                    } elseif (in_array($student->division, ['CS', 'Customer Service'])) {
+                        $divColor = 'rgba(2, 132, 199, 0.08)';
+                        $divTextColor = '#0284c7';
+                    } elseif ($student->division === 'Produksi') {
+                        $divColor = 'rgba(16, 185, 129, 0.08)';
+                        $divTextColor = '#10b981';
+                    } elseif ($student->division === 'Digital Sales Media') {
+                        $divColor = 'rgba(139, 92, 246, 0.08)';
+                        $divTextColor = '#8b5cf6';
+                    } elseif ($student->division === 'Sales & Marketing') {
+                        $divColor = 'rgba(236, 72, 153, 0.08)';
+                        $divTextColor = '#ec4899';
+                    } elseif ($student->division === 'Admin') {
+                        $divColor = 'rgba(100, 116, 139, 0.08)';
+                        $divTextColor = '#475569';
+                    }
+                @endphp
+                <div class="student-card" data-quarter="{{ $student->period->quarter }}" data-year="{{ $student->period->year }}" style="flex: 0 0 250px; width: 250px; min-width: 250px; scroll-snap-align: start; background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 14px; overflow: hidden; box-shadow: 0 4px 18px rgba(0,0,0,0.03); transition: all 0.25s ease; display: flex; flex-direction: column;">
                     
-                    <div style="position: relative; z-index: 2; margin-bottom: -36px;">
-                        <img src="{{ asset('storage/' . $student->photo_path) }}" alt="{{ $student->name }}" 
-                             style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--bg-card); box-shadow: 0 4px 10px rgba(0,0,0,0.12); background: #fff;"
-                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($student->name) }}&background=5f8a63&color=fff';">
-                    </div>
-                </div>
-
-                <div style="padding: 44px 16px 20px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <div style="font-weight: 800; font-size: 0.98rem; color: var(--text-primary); line-height: 1.3; margin-bottom: 4px;">
-                            {{ $student->name }}
-                        </div>
-                        <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 500; margin-bottom: 12px;">
-                            {{ $student->school }}
-                        </div>
+                    <div style="position: relative; height: 80px; display: flex; justify-content: center; align-items: flex-end; flex-shrink: 0;">
+                        <div style="position: absolute; inset: 0; background: linear-gradient(to bottom, rgba(13, 30, 17, 0.45), rgba(13, 30, 17, 0.75)), url('/images/pkl-banner.png') no-repeat center center; background-size: cover; border-top-left-radius: 13px; border-top-right-radius: 13px;"></div>
                         
-                        <div style="display: inline-block; padding: 4px 12px; background: {{ $divColor }}; color: {{ $divTextColor }}; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">
-                            {{ $student->division }}
+                        <div style="position: relative; z-index: 2; margin-bottom: -36px;">
+                            <img src="{{ asset('storage/' . $student->photo_path) }}" alt="{{ $student->name }}" 
+                                 style="width: 72px; height: 72px; border-radius: 50%; object-fit: cover; border: 3px solid var(--bg-card); box-shadow: 0 4px 10px rgba(0,0,0,0.12); background: #fff;"
+                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($student->name) }}&background=5f8a63&color=fff';">
                         </div>
-
-                        @if($student->testimonial)
-                        <div style="margin-top: 12px; font-size: 0.75rem; color: var(--text-secondary); font-style: italic; line-height: 1.45; background: rgba(95, 138, 99, 0.04); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(95, 138, 99, 0.12); text-align: center;">
-                            "{{ $student->testimonial }}"
-                        </div>
-                        @endif
                     </div>
 
-                    <div style="margin-top: 16px; padding-top: 12px; border-top: 1px dashed var(--border-light); font-size: 0.75rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
-                        <span>Periode {{ $student->period->quarter }} {{ $student->period->year }}</span>
-                        <span style="color: var(--primary); font-weight: 700;">Lulus</span>
+                    <div style="padding: 44px 16px 16px; text-align: center; flex: 1; display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="font-weight: 800; font-size: 0.92rem; color: var(--text-primary); line-height: 1.3; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $student->name }}">
+                                {{ $student->name }}
+                            </div>
+                            <div style="font-size: 0.76rem; color: var(--text-muted); font-weight: 500; margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="{{ $student->school }}">
+                                {{ $student->school }}
+                            </div>
+                            
+                            <div style="display: inline-block; padding: 3px 12px; background: {{ $divColor }}; color: {{ $divTextColor }}; border-radius: 20px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.03em;">
+                                {{ $student->division }}
+                            </div>
+
+                            @if($student->testimonial)
+                            <div style="margin-top: 12px; font-size: 0.74rem; color: var(--text-secondary); font-style: italic; line-height: 1.45; background: rgba(95, 138, 99, 0.04); padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(95, 138, 99, 0.12); text-align: center; word-break: break-word; overflow-wrap: anywhere; word-wrap: break-word;">
+                                "{{ $student->testimonial }}"
+                            </div>
+                            @endif
+                        </div>
+
+                        <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed var(--border-light); font-size: 0.74rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center;">
+                            <span>Periode {{ $student->period->quarter }} {{ $student->period->year }}</span>
+                            <span style="color: var(--primary); font-weight: 700;">Lulus</span>
+                        </div>
                     </div>
                 </div>
+                @endforeach
             </div>
-            @endforeach
         </div>
         @else
-        <div style="text-align: center; padding: 50px 20px; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border);">
+                    <div style="text-align: center; padding: 50px 20px; background: var(--bg-card); border-radius: 12px; border: 1px dashed var(--border);">
             <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">Belum ada data siswa PKL terpublikasi</h3>
             <p style="font-size: 0.85rem; color: var(--text-muted); margin-top: 4px;">Riwayat anak PKL akan muncul di sini setelah diverifikasi oleh Admin.</p>
         </div>
@@ -295,7 +308,6 @@
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
     const acpInput = document.getElementById('acpSchoolInput');
     const acpHiddenId = document.getElementById('acpPartnerSchoolId');
     const acpDropdown = document.getElementById('acpSchoolDropdown');
@@ -373,6 +385,15 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // PKL Carousel Scroll Script
+    window.scrollPklCarousel = function(direction) {
+        const grid = document.getElementById('studentsGrid');
+        if (grid) {
+            const scrollStep = 268 * 2 * direction; // Scroll width of 2 cards
+            grid.scrollBy({ left: scrollStep, behavior: 'smooth' });
+        }
+    };
+
     // Filter Tabs Script for PKL Students
     const filterTabs = document.querySelectorAll('.filter-tab');
     const yearFilter = document.getElementById('yearFilter');
@@ -400,6 +421,9 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         if (studentCount) studentCount.textContent = count;
+
+        const grid = document.getElementById('studentsGrid');
+        if (grid) grid.scrollTo({ left: 0, behavior: 'smooth' });
     }
 
     filterTabs.forEach(tab => {

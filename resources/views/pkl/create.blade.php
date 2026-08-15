@@ -85,8 +85,16 @@
                         </div>
 
                         <div class="form-group" style="margin-bottom: 16px;">
-                            <label class="form-label" style="font-weight: 700;">Kesan & Pesan Selama PKL</label>
-                            <textarea name="testimonial" class="form-control" rows="3" placeholder="Tuliskan kesan dan pesan kamu selama mengikuti kegiatan PKL/magang di Klinik Komputer..." style="padding: 12px; border-radius: 8px;">{{ old('testimonial') }}</textarea>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <label class="form-label" style="font-weight: 700; margin: 0;">Kesan & Pesan Selama PKL</label>
+                                <span id="charCounter" style="font-size: 0.76rem; color: var(--text-muted); font-weight: 600; font-family: monospace;">0 / 400</span>
+                            </div>
+                            <textarea name="testimonial" id="testimonialText" class="form-control" rows="3" maxlength="400"
+                                      placeholder="Tuliskan kesan dan pesan kamu selama mengikuti kegiatan PKL/magang di Klinik Komputer..."
+                                      style="padding: 12px; border-radius: 8px;">{{ old('testimonial') }}</textarea>
+                            @error('testimonial')
+                                <span class="form-error" style="color: var(--danger); font-size: 0.75rem; margin-top: 4px; display: block;">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         <div class="form-group" style="margin-bottom: 0;">
@@ -109,3 +117,28 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const txt = document.getElementById('testimonialText');
+    const counter = document.getElementById('charCounter');
+    
+    if (txt && counter) {
+        function updateCount() {
+            const len = txt.value.length;
+            counter.textContent = len + ' / 400';
+            if (len >= 400) {
+                counter.style.color = '#dc2626';
+            } else if (len > 350) {
+                counter.style.color = '#d97706';
+            } else {
+                counter.style.color = 'var(--text-muted)';
+            }
+        }
+        txt.addEventListener('input', updateCount);
+        updateCount();
+    }
+});
+</script>
+@endpush

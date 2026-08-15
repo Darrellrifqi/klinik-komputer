@@ -77,7 +77,7 @@ class PklController extends Controller
             'name' => 'required|string|max:100',
             'school' => 'required|string|max:100',
             'division' => 'required|string|max:100',
-            'testimonial' => 'nullable|string|max:1000',
+            'testimonial' => 'nullable|string|max:400',
             'start_date' => 'required|date',
             'end_date' => 'required|date|after_or_equal:start_date',
             'photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:4096', // Max 4MB
@@ -86,6 +86,7 @@ class PklController extends Controller
             'name.required' => 'Nama lengkap wajib diisi.',
             'school.required' => 'Asal sekolah/universitas wajib diisi.',
             'division.required' => 'Divisi magang wajib diisi.',
+            'testimonial.max' => 'Kesan dan pesan maksimal 400 huruf (termasuk spasi).',
             'start_date.required' => 'Tanggal mulai PKL wajib diisi.',
             'end_date.required' => 'Tanggal selesai PKL wajib diisi.',
             'end_date.after_or_equal' => 'Tanggal selesai harus setelah atau sama dengan tanggal mulai.',
