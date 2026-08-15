@@ -30,7 +30,7 @@
             line-height: 1.5 !important;
         }
         .swal2-confirm {
-            background-color: #dc2626 !important;
+            background-color: #15803d !important;
             color: #ffffff !important;
             font-weight: 700 !important;
             border-radius: 6px !important;

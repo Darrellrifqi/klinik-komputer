@@ -78,6 +78,8 @@
             <div class="product-card" 
                  data-product="{{ json_encode($product) }}" 
                  data-formatted-price="{{ $product->formatted_price }}" 
+                 data-has-discount="{{ $product->has_discount ? '1' : '0' }}"
+                 data-formatted-discount="{{ $product->formatted_discount_price }}"
                  data-images="{{ json_encode(array_map(fn($img) => asset('storage/'.$img), $pImages)) }}" 
                  data-series-label="{{ $product->series_label }}"
                  style="background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); cursor: pointer; box-shadow: 0 4px 18px rgba(0,0,0,0.03);">
@@ -98,9 +100,14 @@
                         <span class="badge {{ $product->series === 'pongo' ? 'badge-accent' : 'badge-primary' }}" style="font-size: 0.68rem; font-weight: 700; text-transform: uppercase; padding: 5px 12px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
                             {{ $product->series_label }}
                         </span>
-                        @if($product->tokopedia_url)
-                            <span style="font-size: 0.68rem; font-weight: 700; color: #16a34a; background: rgba(255,255,255,0.95); border: 1px solid rgba(22,163,74,0.3); padding: 4px 10px; border-radius: 99px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">✓ Online Shop</span>
-                        @endif
+                        <div style="display: flex; gap: 6px; align-items: center;">
+                            @if($product->has_discount)
+                                <span style="font-size: 0.68rem; font-weight: 800; color: #ffffff; background: #dc2626; padding: 4px 10px; border-radius: 99px; box-shadow: 0 2px 6px rgba(220,38,38,0.3);">DISKON {{ $product->discount_percentage }}%</span>
+                            @endif
+                            @if($product->tokopedia_url)
+                                <span style="font-size: 0.68rem; font-weight: 700; color: #16a34a; background: rgba(255,255,255,0.95); border: 1px solid rgba(22,163,74,0.3); padding: 4px 10px; border-radius: 99px; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">✓ Online Shop</span>
+                            @endif
+                        </div>
                     </div>
                 </div>
 
@@ -137,10 +144,19 @@
                     @endif
 
                     <div style="margin-top: auto; padding-top: 10px;">
-                        <div style="font-size: 1.3rem; font-weight: 800; color: var(--primary); letter-spacing: -0.4px;">
-                            {{ $product->formatted_price }}
-                        </div>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Garansi Resmi & Ready Stock</div>
+                        @if($product->has_discount)
+                            <div style="font-size: 0.82rem; color: var(--text-muted); text-decoration: line-through; font-weight: 500; margin-bottom: 1px;">
+                                {{ $product->formatted_price }}
+                            </div>
+                            <div style="font-size: 1.3rem; font-weight: 800; color: #dc2626; letter-spacing: -0.4px;">
+                                {{ $product->formatted_discount_price }}
+                            </div>
+                        @else
+                            <div style="font-size: 1.3rem; font-weight: 800; color: var(--primary); letter-spacing: -0.4px;">
+                                {{ $product->formatted_price }}
+                            </div>
+                        @endif
+                        <div style="font-size: 0.72rem; color: var(--text-muted); margin-top: 2px;">Garansi Resmi &amp; Ready Stock</div>
                     </div>
 
                     <!-- Buttons Row -->
@@ -442,11 +458,22 @@ document.addEventListener('DOMContentLoaded', function() {
             
             const product = JSON.parse(this.getAttribute('data-product'));
             const formattedPrice = this.getAttribute('data-formatted-price');
+            const hasDiscount = this.getAttribute('data-has-discount') === '1';
+            const formattedDiscount = this.getAttribute('data-formatted-discount');
             currentImages = JSON.parse(this.getAttribute('data-images')) || [];
             const seriesLabel = this.getAttribute('data-series-label');
 
             document.getElementById('modalProductTitle').innerText = product.name;
-            document.getElementById('modalProductPrice').innerText = formattedPrice;
+            
+            const priceEl = document.getElementById('modalProductPrice');
+            if (hasDiscount && formattedDiscount) {
+                priceEl.innerHTML = `
+                    <div style="font-size: 0.95rem; color: var(--text-muted); text-decoration: line-through; font-weight: 500;">${formattedPrice}</div>
+                    <div style="font-size: 1.6rem; font-weight: 800; color: #dc2626;">${formattedDiscount}</div>
+                `;
+            } else {
+                priceEl.innerHTML = `<div style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">${formattedPrice}</div>`;
+            }
             
             const descElement = document.getElementById('modalProductDesc');
             if (product.description) {

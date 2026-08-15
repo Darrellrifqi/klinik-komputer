@@ -13,8 +13,8 @@ class TicketController extends Controller
     // CS Dashboard - Tiket Servis
     public function index()
     {
-        // Cleanup leftover sub_status for tickets that are done, ready for pickup, picked up, or not in active sub-status stages
-        Ticket::whereNotIn('status', ['konfirmasi_user', 'checked', 'proses_service', 'rma', 'in_service'])
+        // Cleanup leftover sub_status for tickets that are not in konfirmasi_user status
+        Ticket::whereNotIn('status', ['konfirmasi_user', 'checked'])
             ->whereNotNull('sub_status')
             ->update(['sub_status' => null]);
 
@@ -42,6 +42,11 @@ class TicketController extends Controller
                 'title' => 'Konfirmasi User (Pembelian Part / Garansi)',
                 'color' => '#8b5cf6',
                 'tickets' => $allTickets->whereIn('status', ['konfirmasi_user', 'checked'])
+            ],
+            'menunggu_part' => [
+                'title' => 'Menunggu Part',
+                'color' => '#d97706',
+                'tickets' => $allTickets->where('status', 'menunggu_part')
             ],
             'proses_service' => [
                 'title' => 'Proses Service / Pengerjaan Unit',
@@ -242,7 +247,7 @@ class TicketController extends Controller
     public function updateTicketStatus(Request $request, Ticket $ticket)
     {
         $request->validate([
-            'status'                  => 'required|in:waiting,unit_received,checking,checked,konfirmasi_user,proses_service,rma,done,siap_diambil,sudah_diambil,taken,cancelled',
+            'status'                  => 'required|in:waiting,unit_received,checking,checked,konfirmasi_user,menunggu_part,proses_service,rma,done,siap_diambil,sudah_diambil,taken,cancelled',
             'sub_status'              => 'nullable|string|in:pembelian_part,klaim_garansi,menunggu_part,pengerjaan_unit',
             'airtable_service_number' => 'nullable|string|max:100',
             'pic_name'                => 'nullable|string|max:255',
@@ -273,7 +278,7 @@ class TicketController extends Controller
         }
 
         $oldStatus = $ticket->status;
-        $activeProcessingStatuses = ['konfirmasi_user', 'checked', 'proses_service', 'rma', 'in_service'];
+        $activeProcessingStatuses = ['konfirmasi_user', 'checked'];
         $newSubStatus = in_array($request->status, $activeProcessingStatuses) ? $request->sub_status : null;
 
         $updateData = [

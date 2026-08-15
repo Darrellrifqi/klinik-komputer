@@ -49,6 +49,10 @@
                         <span class="badge badge-warning" style="padding: 7px 14px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3);">
                             Proses Konfirmasi CS ke Customer
                         </span>
+                    @elseif($ticket->status === 'menunggu_part')
+                        <span class="badge badge-warning" style="padding: 7px 14px; font-weight: 700; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.15); color: #d97706; border: 1px solid rgba(245, 158, 11, 0.3);">
+                            Menunggu CS Konfirmasi Sparepart Datang
+                        </span>
                     @elseif(in_array($ticket->status, ['proses_service', 'rma', 'in_service']))
                         <form action="{{ route('dashboard.teknisi.update', $ticket) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin pengerjaan servis unit ini sudah SELESAI? Status tiket akan otomatis diubah menjadi Siap Diambil.');" style="margin:0;">
                             @csrf
@@ -79,6 +83,12 @@
                         <div><span style="color:var(--text-muted);">Tipe:</span> <strong style="text-transform:uppercase;">{{ $ticket->unit_type }}</strong></div>
                         <div><span style="color:var(--text-muted);">Merek:</span> <strong>{{ $ticket->brand }}</strong></div>
                         <div><span style="color:var(--text-muted);">Model:</span> <strong>{{ $ticket->model }}</strong></div>
+                        @php
+                            $tekRegSn = $ticket->laptopKit?->axioo_serial_number ?: ($ticket->customer?->laptopKits?->where('is_regular', true)->first()?->axioo_serial_number);
+                        @endphp
+                        @if($tekRegSn)
+                            <div><span style="color:var(--text-muted);">SN Terdaftar Member:</span> <strong style="font-family:monospace; color:#0284c7; background:#e0f2fe; padding:2px 6px; border-radius:4px; font-size:0.8rem;">{{ $tekRegSn }}</strong></div>
+                        @endif
                     </div>
                 </div>
             </div>

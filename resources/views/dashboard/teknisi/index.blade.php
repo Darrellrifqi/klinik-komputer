@@ -76,7 +76,7 @@
                 </svg>
             </div>
             <div style="overflow: hidden;">
-                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->whereIn('sub_status', ['menunggu_part', 'pembelian_part'])->count() }}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->where('status', 'menunggu_part')->count() }}</div>
                 <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Menunggu Part</div>
             </div>
         </div>
@@ -103,7 +103,7 @@
                 </svg>
             </div>
             <div style="overflow: hidden;">
-                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->whereIn('status',['done','siap_diambil','sudah_diambil','taken'])->count() }}</div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--text-primary); line-height: 1.1;">{{ $allTickets->whereIn('status', ['done', 'siap_diambil'])->count() }}</div>
                 <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px;">Selesai</div>
             </div>
         </div>
@@ -146,11 +146,7 @@
                                 <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                                     <span style="font-weight:600; font-size:0.85rem;">{{ $ticket->customer_name }}</span>
                                     @if($ticket->is_member)
-                                        @if($ticket->member_type_label === 'Member Pengadaan')
-                                            <span class="badge" style="background:#7c3aed; color:#fff; font-size:0.62rem; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:0.02em;">MEMBER PENGADAAN</span>
-                                        @else
-                                            <span class="badge" style="background:#0284c7; color:#fff; font-size:0.62rem; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:0.02em;">MEMBER</span>
-                                        @endif
+                                        <span class="badge" style="background:{{ $ticket->member_badge_bg }}; color:#fff; font-size:0.62rem; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:0.02em;">{{ $ticket->member_type_label }}</span>
                                     @endif
                                 </div>
                                 <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">{{ $ticket->customer_phone }}</div>
@@ -158,6 +154,12 @@
                             <td style="padding: 8px 14px;">
                                 <div style="font-weight:600; font-size:0.85rem;">{{ $ticket->brand }} {{ $ticket->model }}</div>
                                 <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">{{ $ticket->unit_type }}</div>
+                                @php
+                                    $regSnTek = $ticket->laptopKit?->axioo_serial_number ?: ($ticket->customer?->laptopKits?->where('is_regular', true)->first()?->axioo_serial_number);
+                                @endphp
+                                @if($regSnTek)
+                                    <div style="font-size:0.68rem; font-family:monospace; color:#0284c7; font-weight:700; margin-top:2px;">SN: {{ $regSnTek }}</div>
+                                @endif
                             </td>
                             <td style="padding: 8px 14px; max-width:200px;">
                                 <div style="font-size:0.8rem; color:var(--text-secondary); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;" title="{{ $ticket->damage_description }}">
@@ -172,7 +174,7 @@
                             </td>
                             <td style="padding: 8px 14px; font-size:0.78rem; color:var(--text-muted);">{{ $ticket->created_at->format('d M H:i') }}</td>
                             <td style="padding: 8px 14px;">
-                                @if($statusKey === 'konfirmasi_user')
+                                @if(in_array($statusKey, ['konfirmasi_user', 'menunggu_part']))
                                     <a href="{{ route('dashboard.teknisi.show', $ticket) }}" class="btn btn-outline btn-sm" style="padding: 4px 10px; font-size: 0.75rem;">Detail</a>
                                 @elseif($statusKey === 'proses_service')
                                     <div style="display: flex; gap: 6px; align-items: center;">

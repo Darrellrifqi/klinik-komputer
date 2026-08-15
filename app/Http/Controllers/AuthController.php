@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -297,13 +299,20 @@ class AuthController extends Controller
 
     public function registerRegularMember(Request $request)
     {
-        $request->validate([
+        $rules = [
             'nik'                 => 'required|numeric|digits_between:16,16|unique:users,nik',
             'name'                => 'required|string|max:255',
             'email'               => 'required|email|unique:users,email',
             'phone'               => 'required|string|max:20',
             'password'            => 'required|min:8|confirmed',
-        ], [
+            'membership_plan'     => 'required|string|in:Basic Priority,Silver Priority,Gold Priority,Platinum Priority',
+        ];
+
+        if ($request->membership_plan !== 'Platinum Priority') {
+            $rules['registered_sn'] = 'required|string|max:255';
+        }
+
+        $messages = [
             'nik.required'                 => 'NIK (Nomor Induk Kependudukan) wajib diisi.',
             'nik.numeric'                  => 'NIK harus berupa angka.',
             'nik.digits_between'           => 'NIK harus terdiri dari 16 digit.',
@@ -315,10 +324,34 @@ class AuthController extends Controller
             'password.required'            => 'Password wajib diisi.',
             'password.min'                 => 'Password minimal 8 karakter.',
             'password.confirmed'           => 'Konfirmasi password tidak cocok.',
-        ]);
+            'membership_plan.required'     => 'Silakan pilih salah satu paket Priority Member terlebih dahulu.',
+            'membership_plan.in'           => 'Pilihan paket member tidak valid.',
+            'registered_sn.required'       => 'Serial Number (SN) perangkat wajib diisi untuk paket ' . $request->membership_plan . '.',
+        ];
+
+        $request->validate($rules, $messages);
 
         try {
             DB::beginTransaction();
+
+            // Map plan details
+            $plansMeta = [
+                'Basic Priority'    => ['price' => 199000, 'duration' => 12],
+                'Silver Priority'   => ['price' => 279000, 'duration' => 18],
+                'Gold Priority'     => ['price' => 399000, 'duration' => 18],
+                'Platinum Priority' => ['price' => 599000, 'duration' => 18],
+            ];
+            $selectedPlan = $request->membership_plan;
+            $planInfo = $plansMeta[$selectedPlan] ?? ['price' => 399000, 'duration' => 18];
+
+            // Ensure columns exist on procurement_laptop_kits table
+            if (!Schema::hasColumn('procurement_laptop_kits', 'membership_plan')) {
+                Schema::table('procurement_laptop_kits', function (Blueprint $table) {
+                    $table->string('membership_plan')->nullable();
+                    $table->decimal('membership_price', 12, 2)->nullable();
+                    $table->integer('membership_duration')->nullable();
+                });
+            }
 
             // Create customer user
             $user = User::create([
@@ -338,17 +371,23 @@ class AuthController extends Controller
                 'student_name'         => $user->name,
                 'status'               => 'assembly', // Set to assembly/ready until approved/activated by CS
                 'warranty_start'       => null,
-                'warranty_expires'     => null, // Set to null as CS checks manually
+                'warranty_expires'     => null,
                 'is_regular'           => true,
-                'axioo_serial_number'  => null,
+                'axioo_serial_number'  => $request->membership_plan !== 'Platinum Priority' ? trim($request->registered_sn) : null,
                 'purchase_store'       => null,
                 'proof_of_purchase'    => null,
                 'procurement_order_id' => null,
+                'membership_plan'     => $selectedPlan,
+                'membership_price'    => $planInfo['price'],
+                'membership_duration' => $planInfo['duration'],
             ]);
 
             DB::commit();
 
-            return redirect()->route('login')->with('success', 'Registrasi Member Mandiri berhasil diajukan! Akun Anda berstatus PENDING. Silakan lakukan pembayaran terlebih dahulu di kantor. CS kami akan memverifikasi dan mengaktifkan akun Anda setelah pembayaran selesai.');
+            return redirect()->route('login')
+                ->with('member_registered', true)
+                ->with('member_plan', $selectedPlan)
+                ->with('success', "Tim Customer Service Kami akan segera Menghubungi Anda dalam waktu 30-60 Menit untuk Konfirmasi Priority Member");
 
         } catch (\Exception $e) {
             DB::rollBack();

@@ -6,15 +6,79 @@
     $isPengadaan = $schoolKits->isNotEmpty();
     $isUmum      = !$isPengadaan && ($regularKits->isNotEmpty() || !empty(auth()->user()->nik));
     
+    // Get plan string from regular laptop kit if available
+    $planRecord = $regularKits->first();
+    $rawPlan    = $planRecord ? $planRecord->membership_plan : null;
+
     if ($isPengadaan) {
-        $titleName = 'Dashboard Member Pengadaan';
-        $subtitle  = 'Pantau status servis unit & laptop perakitan sekolah Anda';
+        $userPlanShort    = 'Member Pengadaan';
+        $userPlanBadge    = 'Member Pengadaan Sekolah';
+        $userPlanTag      = 'BENEFIT LAPTOP ACP / PENGADAAN';
+        $titleName        = 'Dashboard Member Pengadaan';
+        $subtitle         = 'Pantau status servis unit & laptop perakitan sekolah Anda';
+        
+        $cleaningQuotaMax = 2;
+        $osQuotaMax       = 2;
+        $cleaningType     = 'Deep Care Cleaning';
+        $onsiteBenefit    = null;
     } elseif ($isUmum) {
-        $titleName = 'Dashboard Member Umum';
-        $subtitle  = 'Pantau status servis & benefit Deep Care Cleaning gratis keanggotaan Anda';
+        if ($rawPlan === 'Basic Priority') {
+            $userPlanShort    = 'Member Basic Priority';
+            $userPlanBadge    = 'Member Basic Priority';
+            $userPlanTag      = 'BENEFIT BASIC PRIORITY';
+            $titleName        = 'Dashboard Member Basic Priority';
+            $cleaningQuotaMax = 2;
+            $osQuotaMax       = 1;
+            $cleaningType     = 'Essential Cleaning';
+            $onsiteBenefit    = null;
+        } elseif ($rawPlan === 'Silver Priority') {
+            $userPlanShort    = 'Member Silver Priority';
+            $userPlanBadge    = 'Member Silver Priority';
+            $userPlanTag      = 'BENEFIT SILVER PRIORITY';
+            $titleName        = 'Dashboard Member Silver Priority';
+            $cleaningQuotaMax = 2;
+            $osQuotaMax       = 2;
+            $cleaningType     = 'Deep Care Cleaning';
+            $onsiteBenefit    = null;
+        } elseif ($rawPlan === 'Gold Priority') {
+            $userPlanShort    = 'Member Gold Priority';
+            $userPlanBadge    = 'Member Gold Priority';
+            $userPlanTag      = 'BENEFIT GOLD PRIORITY';
+            $titleName        = 'Dashboard Member Gold Priority';
+            $cleaningQuotaMax = 3;
+            $osQuotaMax       = 3;
+            $cleaningType     = 'Deep Care Cleaning';
+            $onsiteBenefit    = 'GRATIS Onsite Service Bandung Raya';
+        } elseif ($rawPlan === 'Platinum Priority') {
+            $userPlanShort    = 'Member Platinum Priority';
+            $userPlanBadge    = 'Member Platinum Priority';
+            $userPlanTag      = 'BENEFIT PLATINUM PRIORITY';
+            $titleName        = 'Dashboard Member Platinum Priority';
+            $cleaningQuotaMax = 4;
+            $osQuotaMax       = 4;
+            $cleaningType     = 'Deep Care Cleaning';
+            $onsiteBenefit    = 'GRATIS Onsite Service + Prioritas Jadwal';
+        } else {
+            $userPlanShort    = 'Member Mandiri / Umum';
+            $userPlanBadge    = 'Member Umum';
+            $userPlanTag      = 'BENEFIT MEMBER UMUM';
+            $titleName        = 'Dashboard Member Umum';
+            $cleaningQuotaMax = 2;
+            $osQuotaMax       = 2;
+            $cleaningType     = 'Deep Care Cleaning';
+            $onsiteBenefit    = null;
+        }
+        $subtitle = 'Pantau status servis & benefit keanggotaan ' . ($rawPlan ?: 'Member Umum') . ' Anda';
     } else {
-        $titleName = 'Dashboard Customer';
-        $subtitle  = 'Pantau status servis unit Anda';
+        $userPlanShort    = 'Non-Member';
+        $userPlanBadge    = 'Non-Member';
+        $userPlanTag      = 'NON-MEMBER';
+        $titleName        = 'Dashboard Customer';
+        $subtitle         = 'Pantau status servis unit Anda';
+        $cleaningQuotaMax = 0;
+        $osQuotaMax       = 0;
+        $cleaningType     = 'Deep Care Cleaning';
+        $onsiteBenefit    = null;
     }
 @endphp
 @section('title', $titleName . ' | Klinik Komputer')
@@ -89,6 +153,9 @@
         </div>
     </div>
     @elseif($isUmum)
+    @php
+        $registeredSn = $regularKits->first()?->axioo_serial_number;
+    @endphp
     <div class="stat-card">
         <div class="stat-icon green">
             <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -98,7 +165,10 @@
         </div>
         <div class="stat-info">
             <div class="stat-num" style="font-size: 0.88rem; font-family: monospace;">{{ auth()->user()->nik ?: 'MEMBER' }}</div>
-            <div class="stat-label">Member Mandiri / Umum</div>
+            <div class="stat-label">{{ $userPlanShort }}</div>
+            @if($registeredSn)
+            <div style="font-size: 0.72rem; color: #0284c7; font-weight: 700; font-family: monospace; margin-top: 2px;">SN: {{ $registeredSn }}</div>
+            @endif
         </div>
     </div>
     @else
@@ -141,10 +211,14 @@
             </div>
         </div>
 
-        <div>
-            @if($isPengadaan || $isUmum)
-                <span class="badge badge-success" style="padding: 4px 10px; font-size: 0.72rem; border-radius: 6px; font-weight: 700; letter-spacing: 0.03em;">
-                    {{ $isPengadaan ? 'Member Pengadaan Sekolah' : 'Member Umum' }}
+        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            @if(!empty($registeredSn))
+                <span class="badge" style="padding: 6px 14px; font-size: 0.78rem; border-radius: 6px; font-weight: 800; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-family: monospace; letter-spacing: 0.04em;">
+                    SN TERDAFTAR: {{ $registeredSn }}
+                </span>
+            @elseif($isPengadaan || $isUmum)
+                <span class="badge badge-success" style="padding: 6px 14px; font-size: 0.78rem; border-radius: 6px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;">
+                    {{ $userPlanBadge }}
                 </span>
             @else
                 <span class="badge badge-primary" style="padding: 3px 8px; font-size: 0.68rem; border-radius: 6px; font-weight: 700; background: var(--bg-alt); color: var(--text-muted); border: 1px solid var(--border);">
@@ -161,18 +235,13 @@
     $osInstallCount  = auth()->user()->osInstallCount();
     $tuneUpResetDate  = auth()->user()->tuneUpResetDate();
     
-    $tuneQuotaFull = $tuneUpCount >= 2;
-    $slot1Done     = $tuneUpCount >= 1;
-    $slot2Done     = $tuneUpCount >= 2;
-
-    $osQuotaFull   = $osInstallCount >= 2;
-    $osSlot1Done   = $osInstallCount >= 1;
-    $osSlot2Done   = $osInstallCount >= 2;
+    $tuneQuotaFull = $tuneUpCount >= $cleaningQuotaMax;
+    $osQuotaFull   = $osInstallCount >= $osQuotaMax;
 @endphp
 
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px;">
 
-    <!-- Benefit Bar 1: Deep Care Cleaning -->
+    <!-- Benefit Bar 1: Cleaning -->
     <div style="position: relative; background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 18px rgba(0,0,0,0.03); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
         <div style="position:absolute; top:0; left:0; right:0; height:3px; background: {{ $tuneQuotaFull ? 'linear-gradient(90deg,#f87171,#ef4444)' : 'linear-gradient(90deg, var(--primary), #86efac)' }}; border-radius: 14px 14px 0 0;"></div>
 
@@ -180,10 +249,10 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-top: 4px;">
                 <div>
                     <div style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary); margin-bottom: 2px;">
-                        {{ $isPengadaan ? 'BENEFIT LAPTOP ACP / PENGADAAN' : 'BENEFIT MEMBER UMUM' }}
+                        {{ $userPlanTag }}
                     </div>
                     <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-primary); margin: 0 0 2px 0;">
-                        Gratis Deep Care Cleaning Unit (2x / Tahun)
+                        Gratis {{ $cleaningType }} Unit ({{ $cleaningQuotaMax }}x / Periode)
                     </h4>
                     <div style="font-size: 0.72rem; color: var(--text-muted);">
                         Periode {{ $tuneUpResetDate->copy()->subYear()->format('d M Y') }} &ndash; {{ $tuneUpResetDate->format('d M Y') }}
@@ -193,54 +262,36 @@
                 {{-- Progress Counter Badge --}}
                 <div style="text-align: right;">
                     <div style="font-size: 1.25rem; font-weight: 900; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--primary)' }}; line-height: 1;">
-                        {{ $tuneUpCount }}<span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">/2</span>
+                        {{ $tuneUpCount }}<span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">/{{ $cleaningQuotaMax }}</span>
                     </div>
                     <div style="font-size: 0.65rem; font-weight: 600; color: {{ $tuneQuotaFull ? '#dc2626' : 'var(--text-muted)' }}; margin-top: 2px;">
-                        {{ $tuneQuotaFull ? 'Kuota Habis' : ($tuneUpCount === 1 ? 'Tersisa 1x' : 'Belum digunakan') }}
+                        {{ $tuneQuotaFull ? 'Kuota Habis' : ($cleaningQuotaMax - $tuneUpCount . 'x tersisa') }}
                     </div>
                 </div>
             </div>
 
-            {{-- 2 Quota Slot Cards --}}
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
-
-                {{-- Slot 1 --}}
-                <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $slot1Done ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $slot1Done ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
-                    <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
-                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $slot1Done ? 'var(--primary)' : 'var(--border-light)' }}; border: 2px solid {{ $slot1Done ? 'var(--primary)' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            @if($slot1Done)
-                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            @else
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">1</span>
-                            @endif
-                        </div>
-                        <div>
-                            <div style="font-size: 0.72rem; font-weight: 700; color: {{ $slot1Done ? 'var(--primary)' : 'var(--text-muted)' }};">Deep Care #1</div>
-                            <div style="font-size: 0.62rem; color: {{ $slot1Done ? '#16a34a' : 'var(--text-muted)' }}; font-weight: {{ $slot1Done ? '600' : '400' }};">
-                                {{ $slot1Done ? '✓ Sudah dipakai' : 'Belum diklaim' }}
+            {{-- Dynamic Quota Slot Cards --}}
+            <div style="display: grid; grid-template-columns: repeat({{ min($cleaningQuotaMax, 4) }}, 1fr); gap: 10px; margin-bottom: 8px;">
+                @for($i = 1; $i <= $cleaningQuotaMax; $i++)
+                    @php $isDone = $tuneUpCount >= $i; @endphp
+                    <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $isDone ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $isDone ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
+                        <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
+                            <div style="width: 26px; height: 26px; border-radius: 50%; background: {{ $isDone ? 'var(--primary)' : 'var(--border-light)' }}; border: 2px solid {{ $isDone ? 'var(--primary)' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                @if($isDone)
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                @else
+                                <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">{{ $i }}</span>
+                                @endif
+                            </div>
+                            <div>
+                                <div style="font-size: 0.72rem; font-weight: 700; color: {{ $isDone ? 'var(--primary)' : 'var(--text-muted)' }};">Cleaning #{{ $i }}</div>
+                                <div style="font-size: 0.62rem; color: {{ $isDone ? '#16a34a' : 'var(--text-muted)' }}; font-weight: {{ $isDone ? '600' : '400' }};">
+                                    {{ $isDone ? '✓ Sudah dipakai' : 'Belum diklaim' }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {{-- Slot 2 --}}
-                <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $slot2Done ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $slot2Done ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
-                    <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
-                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $slot2Done ? 'var(--primary)' : 'var(--border-light)' }}; border: 2px solid {{ $slot2Done ? 'var(--primary)' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            @if($slot2Done)
-                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            @else
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">2</span>
-                            @endif
-                        </div>
-                        <div>
-                            <div style="font-size: 0.72rem; font-weight: 700; color: {{ $slot2Done ? 'var(--primary)' : 'var(--text-muted)' }};">Deep Care #2</div>
-                            <div style="font-size: 0.62rem; color: {{ $slot2Done ? '#16a34a' : 'var(--text-muted)' }}; font-weight: {{ $slot2Done ? '600' : '400' }};">
-                                {{ $slot2Done ? '✓ Sudah dipakai' : 'Belum diklaim' }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endfor
             </div>
         </div>
 
@@ -259,10 +310,10 @@
             <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; padding-top: 4px;">
                 <div>
                     <div style="font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: #2563eb; margin-bottom: 2px;">
-                        {{ $isPengadaan ? 'BENEFIT LAPTOP ACP / PENGADAAN' : 'BENEFIT MEMBER UMUM' }}
+                        {{ $userPlanTag }}
                     </div>
                     <h4 style="font-size: 1rem; font-weight: 800; color: var(--text-primary); margin: 0 0 2px 0;">
-                        Gratis Essential Instalasi OS (2x / Tahun)
+                        Gratis Essential Instalasi OS ({{ $osQuotaMax }}x / Periode)
                     </h4>
                     <div style="font-size: 0.72rem; color: var(--text-muted);">
                         Periode {{ $tuneUpResetDate->copy()->subYear()->format('d M Y') }} &ndash; {{ $tuneUpResetDate->format('d M Y') }}
@@ -272,54 +323,36 @@
                 {{-- Progress Counter Badge --}}
                 <div style="text-align: right;">
                     <div style="font-size: 1.25rem; font-weight: 900; color: {{ $osQuotaFull ? '#dc2626' : '#2563eb' }}; line-height: 1;">
-                        {{ $osInstallCount }}<span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">/2</span>
+                        {{ $osInstallCount }}<span style="font-size: 0.82rem; font-weight: 600; color: var(--text-muted);">/{{ $osQuotaMax }}</span>
                     </div>
                     <div style="font-size: 0.65rem; font-weight: 600; color: {{ $osQuotaFull ? '#dc2626' : 'var(--text-muted)' }}; margin-top: 2px;">
-                        {{ $osQuotaFull ? 'Kuota Habis' : ($osInstallCount === 1 ? 'Tersisa 1x' : 'Belum digunakan') }}
+                        {{ $osQuotaFull ? 'Kuota Habis' : ($osQuotaMax - $osInstallCount . 'x tersisa') }}
                     </div>
                 </div>
             </div>
 
-            {{-- 2 Quota Slot Cards --}}
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 8px;">
-
-                {{-- Slot 1 --}}
-                <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $osSlot1Done ? 'rgba(59,130,246,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $osSlot1Done ? '#2563eb' : 'var(--border)' }}; transition: all 0.3s ease;">
-                    <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
-                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $osSlot1Done ? '#2563eb' : 'var(--border-light)' }}; border: 2px solid {{ $osSlot1Done ? '#2563eb' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            @if($osSlot1Done)
-                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            @else
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">1</span>
-                            @endif
-                        </div>
-                        <div>
-                            <div style="font-size: 0.72rem; font-weight: 700; color: {{ $osSlot1Done ? '#2563eb' : 'var(--text-muted)' }};">Instalasi OS #1</div>
-                            <div style="font-size: 0.62rem; color: {{ $osSlot1Done ? '#2563eb' : 'var(--text-muted)' }}; font-weight: {{ $osSlot1Done ? '600' : '400' }};">
-                                {{ $osSlot1Done ? '✓ Sudah dipakai' : 'Belum diklaim' }}
+            {{-- Dynamic Quota Slot Cards --}}
+            <div style="display: grid; grid-template-columns: repeat({{ min($osQuotaMax, 4) }}, 1fr); gap: 10px; margin-bottom: 8px;">
+                @for($j = 1; $j <= $osQuotaMax; $j++)
+                    @php $isOsDone = $osInstallCount >= $j; @endphp
+                    <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $isOsDone ? 'rgba(59,130,246,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $isOsDone ? '#2563eb' : 'var(--border)' }}; transition: all 0.3s ease;">
+                        <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
+                            <div style="width: 26px; height: 26px; border-radius: 50%; background: {{ $isOsDone ? '#2563eb' : 'var(--border-light)' }}; border: 2px solid {{ $isOsDone ? '#2563eb' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+                                @if($isOsDone)
+                                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                                @else
+                                <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">{{ $j }}</span>
+                                @endif
+                            </div>
+                            <div>
+                                <div style="font-size: 0.72rem; font-weight: 700; color: {{ $isOsDone ? '#2563eb' : 'var(--text-muted)' }};">Instalasi OS #{{ $j }}</div>
+                                <div style="font-size: 0.62rem; color: {{ $isOsDone ? '#2563eb' : 'var(--text-muted)' }}; font-weight: {{ $isOsDone ? '600' : '400' }};">
+                                    {{ $isOsDone ? '✓ Sudah dipakai' : 'Belum diklaim' }}
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-
-                {{-- Slot 2 --}}
-                <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $osSlot2Done ? 'rgba(59,130,246,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $osSlot2Done ? '#2563eb' : 'var(--border)' }}; transition: all 0.3s ease;">
-                    <div style="position:relative; padding: 10px 12px; display:flex; align-items:center; gap:8px;">
-                        <div style="width: 28px; height: 28px; border-radius: 50%; background: {{ $osSlot2Done ? '#2563eb' : 'var(--border-light)' }}; border: 2px solid {{ $osSlot2Done ? '#2563eb' : 'var(--border)' }}; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                            @if($osSlot2Done)
-                            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                            @else
-                            <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-muted);">2</span>
-                            @endif
-                        </div>
-                        <div>
-                            <div style="font-size: 0.72rem; font-weight: 700; color: {{ $osSlot2Done ? '#2563eb' : 'var(--text-muted)' }};">Instalasi OS #2</div>
-                            <div style="font-size: 0.62rem; color: {{ $osSlot2Done ? '#2563eb' : 'var(--text-muted)' }}; font-weight: {{ $osSlot2Done ? '600' : '400' }};">
-                                {{ $osSlot2Done ? '✓ Sudah dipakai' : 'Belum diklaim' }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                @endfor
             </div>
         </div>
 
@@ -331,6 +364,7 @@
     </div>
 
 </div>
+
 @else
 <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
     <div style="font-size: 0.78rem; color: var(--text-secondary);">

@@ -49,10 +49,11 @@
                             <th>No</th>
                             <th>NIK (ID Member)</th>
                             <th>Nama Pemilik</th>
+                            <th>Paket Priority</th>
                             <th>WhatsApp</th>
                             <th>Email</th>
                             <th>Status Aktivasi</th>
-                            <th>Aksi</th>
+                            <th style="text-align: center;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -65,28 +66,44 @@
                             <td style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary);">
                                 {{ $kit->student_name ?? '-' }}
                             </td>
+                            <td>
+                                @if($kit->membership_plan)
+                                    <div style="font-weight: 800; font-size: 0.82rem; color: var(--primary);">{{ $kit->membership_plan }}</div>
+                                    <div style="font-size: 0.72rem; color: var(--text-muted);">Rp {{ number_format($kit->membership_price ?? 0, 0, ',', '.') }} / {{ $kit->membership_duration ?? 18 }} Bln</div>
+                                @else
+                                    <span style="font-size: 0.78rem; color: var(--text-muted); font-style: italic;">Reguler Standard</span>
+                                @endif
+                            </td>
                             <td style="font-size: 0.85rem;">{{ $kit->customer->phone ?? '-' }}</td>
                             <td style="font-size: 0.85rem; color: var(--text-muted);">{{ $kit->customer->email ?? '-' }}</td>
                             <td>
                                 @if($kit->customer && $kit->customer->status === 'active')
-                                    <span class="badge badge-success" style="font-size: 0.7rem; padding: 3px 8px;">Aktif</span>
+                                    <span class="badge badge-success" style="font-size: 0.7rem; padding: 3px 8px;">● Aktif</span>
                                 @elseif($kit->customer && $kit->customer->status === 'pending')
-                                    <span class="badge badge-warning" style="font-size: 0.7rem; padding: 3px 8px;">Pending</span>
+                                    <span class="badge badge-warning" style="font-size: 0.7rem; padding: 3px 8px;">● Menunggu Pembayaran</span>
                                 @else
-                                    <span class="badge badge-danger" style="font-size: 0.7rem; padding: 3px 8px;">Nonaktif</span>
+                                    <span class="badge badge-danger" style="font-size: 0.7rem; padding: 3px 8px;">● Nonaktif</span>
                                 @endif
                             </td>
-                            <td>
-                                <form action="{{ route('admin.procurement-kits.destroy', $kit) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus member mandiri {{ $kit->student_name }}?');" style="display:inline;">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger" style="font-size: 0.7rem; padding: 4px 8px; font-weight: 700;">Hapus</button>
-                                </form>
+                            <td style="text-align: center;">
+                                <div style="display: flex; gap: 6px; justify-content: center; align-items: center;">
+                                    @if($kit->customer && $kit->customer->status === 'pending')
+                                        <form action="{{ auth()->user()->isCs() ? route('cs.users.approve', $kit->customer) : route('admin.users.approve', $kit->customer) }}" method="POST" style="display:inline;">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success" style="font-size: 0.7rem; padding: 4px 8px; font-weight: 700;">Aktivasi (Lunas)</button>
+                                        </form>
+                                    @endif
+                                    <form action="{{ route('admin.procurement-kits.destroy', $kit) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus member mandiri {{ $kit->student_name }}?');" style="display:inline;">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger" style="font-size: 0.7rem; padding: 4px 8px; font-weight: 700;">Hapus</button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         @empty
                         <tr>
-                            <td colspan="7" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
                                 Belum ada data member mandiri terdaftar.
                             </td>
                         </tr>

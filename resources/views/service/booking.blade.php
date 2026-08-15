@@ -227,8 +227,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Check tune-up quota
                 const tuneUpsCount = parseInt(selectedOption.getAttribute('data-tuneups') || '0', 10);
-                const maxFree = 2;
-                const remaining = maxFree - tuneUpsCount;
+                const maxFree = {{ auth()->check() ? auth()->user()->cleaning_quota_max : 2 }};
+                const remaining = Math.max(0, maxFree - tuneUpsCount);
                 
                 tuneUpBox.style.display = 'block';
                 if (remaining > 0) {

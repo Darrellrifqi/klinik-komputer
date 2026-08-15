@@ -1,7 +1,7 @@
 {{-- Shared form partial for create & edit product --}}
 @php $isEdit = isset($product); @endphp
 
-<div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+<div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:16px;">
     <div class="form-group" style="grid-column:1/-1;">
         <label class="form-label">Nama Produk <span>*</span></label>
         <input type="text" name="name" class="form-control" value="{{ old('name', $product->name ?? '') }}"
@@ -19,10 +19,18 @@
     </div>
 
     <div class="form-group">
-        <label class="form-label">Harga (Rp)</label>
+        <label class="form-label">Harga Asli (Rp)</label>
         <input type="number" name="price" class="form-control" value="{{ old('price', $product->price ?? '') }}"
                placeholder="Contoh: 6499000" min="0">
         @error('price')<span class="form-error">{{ $message }}</span>@enderror
+    </div>
+
+    <div class="form-group">
+        <label class="form-label">Harga Diskon (Rp - opsional)</label>
+        <input type="number" name="discount_price" class="form-control" value="{{ old('discount_price', $product->discount_price ?? '') }}"
+               placeholder="Contoh: 5999000" min="0">
+        <span class="form-hint" style="font-size: 0.7rem; color: var(--text-muted);">Harga asli akan dicoret jika diskon diisi.</span>
+        @error('discount_price')<span class="form-error">{{ $message }}</span>@enderror
     </div>
 
     <div class="form-group" style="grid-column: 1 / -1;">

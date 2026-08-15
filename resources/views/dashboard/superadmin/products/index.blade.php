@@ -74,7 +74,21 @@
                                 <div style="color: var(--text-muted); font-size: 0.75rem;">{{ $product->ram }} &bull; {{ $product->storage }}</div>
                             </div>
                         </td>
-                        <td style="font-weight:700; color:var(--primary); font-size: 0.9rem;">{{ $product->formatted_price }}</td>
+                        <td>
+                            @if($product->has_discount)
+                                <div style="font-size: 0.78rem; color: var(--text-muted); text-decoration: line-through; font-weight: 500;">
+                                    {{ $product->formatted_price }}
+                                </div>
+                                <div style="font-weight: 800; color: #dc2626; font-size: 0.92rem;">
+                                    {{ $product->formatted_discount_price }}
+                                    <span style="font-size: 0.65rem; background: rgba(220,38,38,0.1); color: #dc2626; padding: 1px 5px; border-radius: 4px; font-weight: 700; margin-left: 2px;">-{{ $product->discount_percentage }}%</span>
+                                </div>
+                            @else
+                                <div style="font-weight:700; color:var(--primary); font-size: 0.9rem;">
+                                    {{ $product->formatted_price }}
+                                </div>
+                            @endif
+                        </td>
                         <td>
                             @if($product->is_active)
                                 <span class="badge badge-success" style="font-size: 0.7rem;">Aktif</span>

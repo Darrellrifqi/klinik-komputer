@@ -50,6 +50,9 @@
 <a href="{{ route('admin.pkl.tokens') }}" class="{{ request()->routeIs('admin.pkl.tokens*') ? 'active' : '' }}">
     <span class="nav-icon">Kelola Token PKL</span>
 </a>
+<a href="{{ route('admin.pkl.divisions') }}" class="{{ request()->routeIs('admin.pkl.divisions*') ? 'active' : '' }}">
+    <span class="nav-icon">Kelola Divisi PKL</span>
+</a>
 <a href="{{ route('admin.pkl.students') }}" class="{{ request()->routeIs('admin.pkl.students*') ? 'active' : '' }}">
     <span class="nav-icon">Review Pendaftar</span>
     @php $pendingPkl = \App\Models\PklStudent::where('status','pending')->count(); @endphp

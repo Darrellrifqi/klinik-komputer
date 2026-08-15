@@ -128,11 +128,7 @@
                             <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap;">
                                 <span style="font-weight:600; font-size:0.85rem;">{{ $ticket->customer_name }}</span>
                                 @if($ticket->is_member)
-                                    @if($ticket->member_type_label === 'Member Pengadaan')
-                                        <span class="badge" style="background:#7c3aed; color:#fff; font-size:0.62rem; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:0.02em;">MEMBER PENGADAAN</span>
-                                    @else
-                                        <span class="badge" style="background:#0284c7; color:#fff; font-size:0.62rem; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:0.02em;">MEMBER</span>
-                                    @endif
+                                    <span class="badge" style="background:{{ $ticket->member_badge_bg }}; color:#fff; font-size:0.62rem; padding:1px 6px; border-radius:4px; font-weight:800; letter-spacing:0.02em;">{{ $ticket->member_type_label }}</span>
                                 @endif
                             </div>
                             <div style="font-size:0.75rem; color:var(--text-muted); margin-top:2px;">{{ $ticket->customer_phone }}</div>

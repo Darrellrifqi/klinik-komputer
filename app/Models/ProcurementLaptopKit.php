@@ -21,6 +21,9 @@ class ProcurementLaptopKit extends Model
         'institution',
         'year',
         'unit_model',
+        'membership_plan',
+        'membership_price',
+        'membership_duration',
     ];
 
     protected $casts = [

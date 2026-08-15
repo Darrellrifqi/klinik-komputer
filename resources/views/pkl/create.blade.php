@@ -67,9 +67,9 @@
                             <label class="form-label" style="font-weight: 700;">Divisi Magang <span style="color: var(--danger);">*</span></label>
                             <select name="division" class="form-control" required style="padding: 12px; border-radius: 8px; height: auto;">
                                 <option value="" disabled selected>Pilih Divisi Magang</option>
-                                <option value="Teknisi" {{ old('division') === 'Teknisi' ? 'selected' : '' }}>Teknisi</option>
-                                <option value="CS" {{ old('division') === 'CS' ? 'selected' : '' }}>CS</option>
-                                <option value="Produksi" {{ old('division') === 'Produksi' ? 'selected' : '' }}>Produksi</option>
+                                @foreach($divisions as $divName)
+                                    <option value="{{ $divName }}" {{ old('division') === $divName ? 'selected' : '' }}>{{ $divName }}</option>
+                                @endforeach
                             </select>
                         </div>
 

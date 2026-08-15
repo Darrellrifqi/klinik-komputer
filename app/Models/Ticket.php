@@ -47,15 +47,13 @@ class Ticket extends Model
 
     public function getSubStatusLabelAttribute(): ?string
     {
-        if (!in_array($this->status, ['konfirmasi_user', 'checked', 'proses_service', 'rma', 'in_service'])) {
+        if (!in_array($this->status, ['konfirmasi_user', 'checked'])) {
             return null;
         }
 
         return match ($this->sub_status) {
             'pembelian_part'  => 'Pembelian Part',
             'klaim_garansi'   => 'Klaim Garansi',
-            'menunggu_part'   => 'Menunggu Part',
-            'pengerjaan_unit' => 'Pengerjaan Unit',
             default           => $this->sub_status ? ucfirst(str_replace('_', ' ', $this->sub_status)) : null,
         };
     }
@@ -73,13 +71,40 @@ class Ticket extends Model
 
     public function getMemberTypeLabelAttribute(): ?string
     {
-        if ($this->laptop_kit_id || ($this->customer && $this->customer->has_procurement_kit)) {
-            return 'Member Pengadaan';
+        if ($this->laptop_kit_id) {
+            $kit = $this->laptopKit;
+            if ($kit && !$kit->is_regular) {
+                return 'PENGADAAN';
+            }
         }
+
+        $customer = $this->customer;
+        if ($customer) {
+            $plan = $customer->membership_plan;
+            if ($plan === 'Basic Priority') return 'BASIC';
+            if ($plan === 'Silver Priority') return 'SILVER';
+            if ($plan === 'Gold Priority') return 'GOLD';
+            if ($plan === 'Platinum Priority') return 'PLAT';
+            if ($customer->has_procurement_kit) return 'PENGADAAN';
+        }
+
         if ($this->is_member) {
-            return 'Member';
+            return 'MEMBER';
         }
         return null;
+    }
+
+    public function getMemberBadgeBgAttribute(): string
+    {
+        $label = $this->member_type_label;
+        return match ($label) {
+            'BASIC'     => '#8b5a2b', // Coklat kayu
+            'SILVER'    => '#78909c', // Silver
+            'GOLD'      => '#d97706', // Gold
+            'PLAT'      => '#0284c7', // Platinum
+            'PENGADAAN' => '#7c3aed', // Member Pengadaan
+            default     => '#0284c7',
+        };
     }
 
     public function getDropoffScheduleAttribute($value): ?string
@@ -109,6 +134,7 @@ class Ticket extends Model
             'unit_received'                         => 'Antrian Servis',
             'checking'                              => 'Pengecekan Teknisi',
             'konfirmasi_user', 'checked'            => 'Konfirmasi User',
+            'menunggu_part'                         => 'Menunggu Part',
             'proses_service', 'rma', 'in_service'   => 'Proses Service',
             'done', 'siap_diambil'                  => 'Siap Diambil',
             'sudah_diambil', 'taken'                => 'Sudah Diambil',
@@ -124,6 +150,7 @@ class Ticket extends Model
             'unit_received'                         => 'info',
             'checking'                              => 'info',
             'konfirmasi_user', 'checked'            => 'primary',
+            'menunggu_part'                         => 'warning',
             'proses_service', 'rma', 'in_service'   => 'secondary',
             'done', 'siap_diambil'                  => 'info',
             'sudah_diambil', 'taken'                => 'success',
@@ -139,9 +166,10 @@ class Ticket extends Model
             'unit_received'                         => 2,
             'checking'                              => 3,
             'konfirmasi_user', 'checked'            => 4,
-            'proses_service', 'rma', 'in_service'   => 5,
-            'done', 'siap_diambil'                  => 6,
-            'sudah_diambil', 'taken'                => 7,
+            'menunggu_part'                         => 5,
+            'proses_service', 'rma', 'in_service'   => 6,
+            'done', 'siap_diambil'                  => 7,
+            'sudah_diambil', 'taken'                => 8,
             'cancelled'                             => 0,
             default                                 => 1,
         };

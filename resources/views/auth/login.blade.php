@@ -15,6 +15,12 @@
 
         <!-- Card -->
         <div class="card" style="padding: 28px;">
+            @if(session('success'))
+            <div class="alert alert-success" style="margin-bottom: 20px; font-size: 0.82rem; border-radius: 8px;">
+                {{ session('success') }}
+            </div>
+            @endif
+
             @if($errors->any())
             <div class="alert alert-error">
                 <div>
@@ -71,5 +77,19 @@ function togglePwd() {
     const f = document.getElementById('pwdField');
     f.type = f.type === 'password' ? 'text' : 'password';
 }
+
+@if(session('member_registered'))
+document.addEventListener('DOMContentLoaded', function() {
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Pendaftaran Berhasil!',
+            text: 'Tim Customer Service kami akan segera menghubungi Anda dalam waktu 30-60 menit untuk konfirmasi Priority Member.',
+            icon: 'success',
+            confirmButtonText: 'Baik, Saya Mengerti',
+            confirmButtonColor: '#15803d'
+        });
+    }
+});
+@endif
 </script>
 @endpush

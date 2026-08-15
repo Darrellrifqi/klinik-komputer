@@ -22,7 +22,7 @@ class AdminController extends Controller
             'pending_users'       => User::where('status', 'pending')->count(),
             'total_tickets'       => Ticket::count(),
             'booking_tickets'     => Ticket::where('status', 'waiting')->count(),
-            'active_tickets'      => Ticket::whereIn('status', ['checking', 'checked', 'konfirmasi_user', 'rma', 'proses_service'])->count(),
+            'active_tickets'      => Ticket::whereIn('status', ['checking', 'checked', 'konfirmasi_user', 'menunggu_part', 'rma', 'proses_service'])->count(),
             'done_tickets'        => Ticket::whereIn('status', ['done', 'siap_diambil'])->count(),
             'taken_tickets'       => Ticket::whereIn('status', ['sudah_diambil', 'taken'])->count(),
             'total_products'      => Product::count(),
@@ -200,6 +200,11 @@ class AdminController extends Controller
                 'title' => 'Konfirmasi User (Pembelian Part / Garansi)',
                 'color' => '#8b5cf6',
                 'tickets' => $allTickets->whereIn('status', ['konfirmasi_user', 'checked'])
+            ],
+            'menunggu_part' => [
+                'title' => 'Menunggu Part',
+                'color' => '#d97706',
+                'tickets' => $allTickets->where('status', 'menunggu_part')
             ],
             'proses_service' => [
                 'title' => 'Proses Service / Pengerjaan Unit',
@@ -391,18 +396,25 @@ class AdminController extends Controller
             \Illuminate\Support\Facades\Artisan::call('migrate');
         } catch (\Exception $e) {}
 
+        if (!\Illuminate\Support\Facades\Schema::hasColumn('products', 'discount_price')) {
+            \Illuminate\Support\Facades\Schema::table('products', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->decimal('discount_price', 12, 2)->nullable()->after('price');
+            });
+        }
+
         $request->validate([
-            'name'          => 'required|string|max:255',
-            'series'        => 'required|in:hype,pongo',
-            'processor'     => 'required|string|max:255',
-            'ram'           => 'required|string|max:100',
-            'storage'       => 'required|string|max:100',
-            'display'       => 'required|string|max:255',
-            'price'         => 'nullable|numeric|min:0',
-            'tokopedia_url' => 'nullable|url|max:500',
-            'image'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
-            'images'        => 'nullable|array',
-            'images.*'      => 'image|mimes:jpg,jpeg,png,webp|max:3072',
+            'name'           => 'required|string|max:255',
+            'series'         => 'required|in:hype,pongo',
+            'processor'      => 'required|string|max:255',
+            'ram'            => 'required|string|max:100',
+            'storage'        => 'required|string|max:100',
+            'display'        => 'required|string|max:255',
+            'price'          => 'nullable|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0',
+            'tokopedia_url'  => 'nullable|url|max:500',
+            'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'images'         => 'nullable|array',
+            'images.*'       => 'image|mimes:jpg,jpeg,png,webp|max:3072',
         ]);
 
         $imagePaths = [];
@@ -421,22 +433,23 @@ class AdminController extends Controller
         $features = array_filter(array_map('trim', explode("\n", $request->features ?? '')));
 
         Product::create([
-            'name'          => $request->name,
-            'series'        => $request->series,
-            'processor'     => $request->processor,
-            'ram'           => $request->ram,
-            'storage'       => $request->storage,
-            'gpu'           => $request->gpu,
-            'display'       => $request->display,
-            'battery'       => $request->battery,
-            'weight'        => $request->weight,
-            'connectivity'  => $request->connectivity,
-            'price'         => $request->price,
-            'tokopedia_url' => $request->tokopedia_url,
-            'image_path'    => $imagePath,
-            'description'   => $request->description,
-            'features'      => $features ?: null,
-            'is_active'     => $request->boolean('is_active', true),
+            'name'           => $request->name,
+            'series'         => $request->series,
+            'processor'      => $request->processor,
+            'ram'            => $request->ram,
+            'storage'        => $request->storage,
+            'gpu'            => $request->gpu,
+            'display'        => $request->display,
+            'battery'        => $request->battery,
+            'weight'         => $request->weight,
+            'connectivity'   => $request->connectivity,
+            'price'          => $request->price,
+            'discount_price' => $request->discount_price,
+            'tokopedia_url'  => $request->tokopedia_url,
+            'image_path'     => $imagePath,
+            'description'    => $request->description,
+            'features'       => $features ?: null,
+            'is_active'      => $request->boolean('is_active', true),
         ]);
 
         return redirect()->route('admin.products')->with('success', 'Produk berhasil ditambahkan.');
@@ -449,18 +462,25 @@ class AdminController extends Controller
 
     public function updateProduct(Request $request, Product $product)
     {
+        if (!\Illuminate\Support\Facades\Schema::hasColumn('products', 'discount_price')) {
+            \Illuminate\Support\Facades\Schema::table('products', function (\Illuminate\Database\Schema\Blueprint $table) {
+                $table->decimal('discount_price', 12, 2)->nullable()->after('price');
+            });
+        }
+
         $request->validate([
-            'name'          => 'required|string|max:255',
-            'series'        => 'required|in:hype,pongo',
-            'processor'     => 'required|string|max:255',
-            'ram'           => 'required|string|max:100',
-            'storage'       => 'required|string|max:100',
-            'display'       => 'required|string|max:255',
-            'price'         => 'nullable|numeric|min:0',
-            'tokopedia_url' => 'nullable|url|max:500',
-            'image'         => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
-            'images'        => 'nullable|array',
-            'images.*'      => 'image|mimes:jpg,jpeg,png,webp|max:3072',
+            'name'           => 'required|string|max:255',
+            'series'         => 'required|in:hype,pongo',
+            'processor'      => 'required|string|max:255',
+            'ram'            => 'required|string|max:100',
+            'storage'        => 'required|string|max:100',
+            'display'        => 'required|string|max:255',
+            'price'          => 'nullable|numeric|min:0',
+            'discount_price' => 'nullable|numeric|min:0',
+            'tokopedia_url'  => 'nullable|url|max:500',
+            'image'          => 'nullable|image|mimes:jpg,jpeg,png,webp|max:3072',
+            'images'         => 'nullable|array',
+            'images.*'       => 'image|mimes:jpg,jpeg,png,webp|max:3072',
         ]);
 
         $currentImages = $product->images; // array of image relative paths
@@ -493,22 +513,23 @@ class AdminController extends Controller
         $features = array_filter(array_map('trim', explode("\n", $request->features ?? '')));
 
         $product->update([
-            'name'          => $request->name,
-            'series'        => $request->series,
-            'processor'     => $request->processor,
-            'ram'           => $request->ram,
-            'storage'       => $request->storage,
-            'gpu'           => $request->gpu,
-            'display'       => $request->display,
-            'battery'       => $request->battery,
-            'weight'        => $request->weight,
-            'connectivity'  => $request->connectivity,
-            'price'         => $request->price,
-            'tokopedia_url' => $request->tokopedia_url,
-            'image_path'    => $imagePathValue,
-            'description'   => $request->description,
-            'features'      => $features ?: null,
-            'is_active'     => $request->boolean('is_active'),
+            'name'           => $request->name,
+            'series'         => $request->series,
+            'processor'      => $request->processor,
+            'ram'            => $request->ram,
+            'storage'        => $request->storage,
+            'gpu'            => $request->gpu,
+            'display'        => $request->display,
+            'battery'        => $request->battery,
+            'weight'         => $request->weight,
+            'connectivity'   => $request->connectivity,
+            'price'          => $request->price,
+            'discount_price' => $request->discount_price,
+            'tokopedia_url'  => $request->tokopedia_url,
+            'image_path'     => $imagePathValue,
+            'description'    => $request->description,
+            'features'       => $features ?: null,
+            'is_active'      => $request->boolean('is_active'),
         ]);
 
         return redirect()->route('admin.products')->with('success', 'Produk berhasil diperbarui.');
@@ -1080,6 +1101,51 @@ class AdminController extends Controller
 
         $student->delete();
         return back()->with('success', 'Data siswa PKL berhasil dihapus.');
+    }
+
+    // ─── PKL Divisions Management ─────────────────────────────────────────────
+    public function pklDivisions()
+    {
+        $divisions = \App\Models\PklDivision::orderBy('sort_order')->orderBy('name')->get();
+        return view('dashboard.superadmin.pkl.divisions', compact('divisions'));
+    }
+
+    public function storePklDivision(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|unique:pkl_divisions,name|max:100',
+        ], [
+            'name.required' => 'Nama divisi magang wajib diisi.',
+            'name.unique'   => 'Nama divisi ini sudah terdaftar di sistem.',
+            'name.max'      => 'Nama divisi maksimal 100 karakter.',
+        ]);
+
+        $maxOrder = \App\Models\PklDivision::max('sort_order') ?? 0;
+
+        \App\Models\PklDivision::create([
+            'name'       => trim($request->name),
+            'is_active'  => true,
+            'sort_order' => $maxOrder + 1,
+        ]);
+
+        return back()->with('success', "Divisi magang '{$request->name}' berhasil ditambahkan.");
+    }
+
+    public function togglePklDivision(\App\Models\PklDivision $division)
+    {
+        $division->update([
+            'is_active' => !$division->is_active,
+        ]);
+
+        $statusLabel = $division->is_active ? 'diaktifkan' : 'dinonaktifkan';
+        return back()->with('success', "Status divisi '{$division->name}' berhasil {$statusLabel}.");
+    }
+
+    public function destroyPklDivision(\App\Models\PklDivision $division)
+    {
+        $name = $division->name;
+        $division->delete();
+        return back()->with('success', "Divisi magang '{$name}' berhasil dihapus.");
     }
 
     // ─── Internship Applications ──────────────────────────────────────────────

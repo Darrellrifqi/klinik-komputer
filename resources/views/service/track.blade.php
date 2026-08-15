@@ -182,6 +182,7 @@
                 ['key'=>'unit_received',    'label'=>'Antrian Servis'],
                 ['key'=>'checking',         'label'=>'Pengecekan Teknisi'],
                 ['key'=>'konfirmasi_user',  'label'=>'Konfirmasi User'],
+                ['key'=>'menunggu_part',    'label'=>'Menunggu Part'],
                 ['key'=>'proses_service',   'label'=>'Proses Service'],
                 ['key'=>'done',             'label'=>'Siap Diambil'],
                 ['key'=>'sudah_diambil',    'label'=>'Sudah Diambil'],
@@ -189,12 +190,13 @@
             $currentStep = $ticket->status_step;
             $fillPercent = match($currentStep) {
                 1 => 0,
-                2 => 16.6,
-                3 => 33.3,
-                4 => 50,
-                5 => 66.6,
-                6 => 83.3,
-                7 => 100,
+                2 => 14.2,
+                3 => 28.5,
+                4 => 42.8,
+                5 => 57.1,
+                6 => 71.4,
+                7 => 85.7,
+                8 => 100,
                 default => 0
             };
             @endphp

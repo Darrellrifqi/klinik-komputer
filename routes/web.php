@@ -184,6 +184,11 @@ Route::middleware(['auth', 'role:superadmin'])->prefix('dashboard/admin')->group
     Route::post('/pkl/tokens/{token}/toggle', [AdminController::class, 'togglePklToken'])->name('admin.pkl.tokens.toggle');
     Route::delete('/pkl/tokens/{token}', [AdminController::class, 'destroyPklToken'])->name('admin.pkl.tokens.destroy');
 
+    Route::get('/pkl/divisions', [AdminController::class, 'pklDivisions'])->name('admin.pkl.divisions');
+    Route::post('/pkl/divisions', [AdminController::class, 'storePklDivision'])->name('admin.pkl.divisions.store');
+    Route::post('/pkl/divisions/{division}/toggle', [AdminController::class, 'togglePklDivision'])->name('admin.pkl.divisions.toggle');
+    Route::delete('/pkl/divisions/{division}', [AdminController::class, 'destroyPklDivision'])->name('admin.pkl.divisions.destroy');
+
     Route::get('/pkl/students', [AdminController::class, 'pklStudents'])->name('admin.pkl.students');
     Route::post('/pkl/students/{student}/approve', [AdminController::class, 'approvePklStudent'])->name('admin.pkl.students.approve');
     Route::post('/pkl/students/{student}/reject', [AdminController::class, 'rejectPklStudent'])->name('admin.pkl.students.reject');

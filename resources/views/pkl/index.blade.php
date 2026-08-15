@@ -176,10 +176,10 @@
     <div style="max-width: 1200px; margin: 0 auto;">
         
         <div style="text-align: center; margin-bottom: 30px;">
-            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.1em;">Direktori Alumni</span>
-            <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--text-primary); margin-top: 6px;">Riwayat Anak PKL & Siswa Internship</h2>
+            <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; color: var(--primary); letter-spacing: 0.1em;">Cerita Mereka</span>
+            <h2 style="font-size: 1.75rem; font-weight: 800; color: var(--text-primary); margin-top: 6px;">Mengenal Lebih Dekat Siswa Internship Terpilih</h2>
             <p style="font-size: 0.9rem; color: var(--text-muted); margin-top: 4px;">
-                Daftar siswa/mahasiswa PKL yang telah dan sedang mengikuti program pelatihan kerja di Klinik Komputer.
+                Kenali perjalanan beberapa siswa PKL yang mewarnai program internship kami, lengkap dengan pengalaman dan pembelajaran mereka.
             </p>
         </div>
 
@@ -225,11 +225,23 @@
                 $divColor = 'rgba(95, 138, 99, 0.08)';
                 $divTextColor = 'var(--primary)';
                 if ($student->division === 'Teknisi') {
-                    $divColor = 'rgba(181, 144, 73, 0.08)';
-                    $divTextColor = 'var(--accent)';
-                } elseif ($student->division === 'CS') {
-                    $divColor = 'rgba(59, 142, 202, 0.08)';
-                    $divTextColor = 'var(--info)';
+                    $divColor = 'rgba(217, 119, 6, 0.08)';
+                    $divTextColor = '#d97706';
+                } elseif (in_array($student->division, ['CS', 'Customer Service'])) {
+                    $divColor = 'rgba(2, 132, 199, 0.08)';
+                    $divTextColor = '#0284c7';
+                } elseif ($student->division === 'Produksi') {
+                    $divColor = 'rgba(16, 185, 129, 0.08)';
+                    $divTextColor = '#10b981';
+                } elseif ($student->division === 'Digital Sales Media') {
+                    $divColor = 'rgba(139, 92, 246, 0.08)';
+                    $divTextColor = '#8b5cf6';
+                } elseif ($student->division === 'Sales & Marketing') {
+                    $divColor = 'rgba(236, 72, 153, 0.08)';
+                    $divTextColor = '#ec4899';
+                } elseif ($student->division === 'Admin') {
+                    $divColor = 'rgba(100, 116, 139, 0.08)';
+                    $divTextColor = '#475569';
                 }
             @endphp
             <div class="student-card" data-quarter="{{ $student->period->quarter }}" data-year="{{ $student->period->year }}" style="background: var(--bg-card); border: 1px solid var(--border-light); border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: all 0.25s ease; display: flex; flex-direction: column;">

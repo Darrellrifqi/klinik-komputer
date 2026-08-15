@@ -83,12 +83,59 @@ class User extends Authenticatable
             ->count();
     }
 
+    public function getMembershipPlanAttribute(): ?string
+    {
+        $kit = ProcurementLaptopKit::where('customer_id', $this->id)
+            ->where('is_regular', true)
+            ->first();
+        return $kit ? $kit->membership_plan : null;
+    }
+
+    public function getMembershipPlanLabelAttribute(): string
+    {
+        $plan = $this->membership_plan;
+        if ($plan) {
+            return $plan;
+        }
+        if ($this->has_procurement_kit) {
+            return 'Member Pengadaan Sekolah';
+        }
+        if ($this->is_regular_member) {
+            return 'Member Mandiri';
+        }
+        return 'Non-Member';
+    }
+
+    public function getCleaningQuotaMaxAttribute(): int
+    {
+        $plan = $this->membership_plan;
+        return match($plan) {
+            'Basic Priority'    => 2,
+            'Silver Priority'   => 2,
+            'Gold Priority'     => 3,
+            'Platinum Priority' => 4,
+            default             => 2,
+        };
+    }
+
+    public function getOsQuotaMaxAttribute(): int
+    {
+        $plan = $this->membership_plan;
+        return match($plan) {
+            'Basic Priority'    => 1,
+            'Silver Priority'   => 2,
+            'Gold Priority'     => 3,
+            'Platinum Priority' => 4,
+            default             => 2,
+        };
+    }
+
     /**
-     * Remaining free tune-ups (Deep Care Cleaning) in the current period (max 2).
+     * Remaining free tune-ups (Deep Care Cleaning) in the current period.
      */
     public function tuneUpRemaining(): int
     {
-        return max(0, 2 - $this->tuneUpCount());
+        return max(0, $this->cleaning_quota_max - $this->tuneUpCount());
     }
 
     /**
@@ -107,11 +154,11 @@ class User extends Authenticatable
     }
 
     /**
-     * Remaining free Essential OS installations in the current period (max 2).
+     * Remaining free Essential OS installations in the current period.
      */
     public function osInstallRemaining(): int
     {
-        return max(0, 2 - $this->osInstallCount());
+        return max(0, $this->os_quota_max - $this->osInstallCount());
     }
 
     public function getHasProcurementKitAttribute(): bool

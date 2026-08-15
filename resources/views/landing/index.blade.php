@@ -370,7 +370,17 @@
                         </li>
                     </ul>
                     <div class="product-price">
-                        {{ $product->formatted_price }}
+                        @if($product->has_discount)
+                            <div style="font-size: 0.85rem; color: var(--text-muted); text-decoration: line-through; font-weight: 500; margin-bottom: 2px;">
+                                {{ $product->formatted_price }}
+                            </div>
+                            <div style="color: #dc2626; font-weight: 800;">
+                                {{ $product->formatted_discount_price }}
+                                <span style="font-size: 0.65rem; background: #dc2626; color: #fff; padding: 2px 6px; border-radius: 4px; font-weight: 700; margin-left: 4px; vertical-align: middle;">-{{ $product->discount_percentage }}%</span>
+                            </div>
+                        @else
+                            {{ $product->formatted_price }}
+                        @endif
                         <small>Harga sewaktu-waktu dapat berubah</small>
                     </div>
                     <a href="https://wa.me/6285103051000?text=Halo, saya ingin bertanya mengenai laptop {{ urlencode($product->name) }}"

@@ -137,10 +137,14 @@
                 @php
                     $linkedUser    = $ticket->customer;
                     $memberPeriod  = $linkedUser->tuneUpPeriod();
+                    $planLabel     = $linkedUser->membership_plan_label;
+                    $cleanMax      = $linkedUser->cleaning_quota_max;
+                    $osMax         = $linkedUser->os_quota_max;
+
                     $cleaningCount = $linkedUser->tuneUpCount();
-                    $cleaningFull  = $cleaningCount >= 2;
+                    $cleaningFull  = $cleaningCount >= $cleanMax;
                     $osCount       = $linkedUser->osInstallCount();
-                    $osFull        = $osCount >= 2;
+                    $osFull        = $osCount >= $osMax;
                 @endphp
                 <div style="background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 12px 14px; margin-bottom: 16px;">
                     <div style="font-size: 0.65rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.06em; color: var(--primary); margin-bottom: 8px;">Member Terhubung &amp; Kuota Manfaat</div>
@@ -148,12 +152,18 @@
                         <div style="display: flex; flex-direction: column; gap: 3px;">
                             <div style="font-weight: 700; font-size: 0.88rem; color: var(--text-primary);">{{ $linkedUser->name }}</div>
                             <div style="font-size: 0.75rem; color: var(--text-muted); display: flex; align-items: center; gap: 8px;">
-                                @if($ticket->laptopKit)
-                                    <span class="badge badge-primary" style="font-size:0.6rem;">Pengadaan</span>
+                                @if($ticket->laptopKit && !$ticket->laptopKit->is_regular)
+                                    <span class="badge badge-primary" style="font-size:0.6rem;">Member Pengadaan</span>
                                     <span style="font-family: monospace;">{{ $ticket->laptopKit->member_id }}</span>
                                 @else
-                                    <span class="badge badge-primary" style="font-size:0.6rem;">Member Mandiri</span>
+                                    <span class="badge badge-success" style="font-size:0.6rem; font-weight:800;">{{ strtoupper($planLabel) }}</span>
                                     <span style="font-family: monospace;">NIK: {{ $linkedUser->nik ?? '-' }}</span>
+                                    @php
+                                        $csRegSn = $ticket->laptopKit?->axioo_serial_number ?: ($ticket->customer?->laptopKits?->where('is_regular', true)->first()?->axioo_serial_number);
+                                    @endphp
+                                    @if($csRegSn)
+                                        <span style="font-family: monospace; font-weight: 700; color: #0284c7; background: #e0f2fe; padding: 2px 6px; border-radius: 4px; font-size: 0.7rem; border: 1px solid #bae6fd;">SN TERDAFTAR: {{ $csRegSn }}</span>
+                                    @endif
                                 @endif
                             </div>
                         </div>
@@ -161,11 +171,11 @@
                         <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
                             {{-- Progres 1: Deep Care Cleaning --}}
                             <div style="text-align: right;">
-                                <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 3px;">Deep Care Cleaning</div>
+                                <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 3px;">Cleaning (Quota: {{ $cleanMax }}x)</div>
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="font-family: monospace; font-weight: 800; font-size: 0.92rem; color: {{ $cleaningFull ? '#dc2626' : 'var(--primary)' }};">{{ $cleaningCount }}/2</span>
+                                    <span style="font-family: monospace; font-weight: 800; font-size: 0.92rem; color: {{ $cleaningFull ? '#dc2626' : 'var(--primary)' }};">{{ $cleaningCount }}/{{ $cleanMax }}</span>
                                     <div style="width: 44px; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden;">
-                                        <div style="width: {{ min(100, $cleaningCount/2*100) }}%; height: 100%; background: {{ $cleaningFull ? '#dc2626' : 'var(--primary)' }}; border-radius: 3px;"></div>
+                                        <div style="width: {{ min(100, $cleanMax > 0 ? $cleaningCount/$cleanMax*100 : 0) }}%; height: 100%; background: {{ $cleaningFull ? '#dc2626' : 'var(--primary)' }}; border-radius: 3px;"></div>
                                     </div>
                                 </div>
                                 <div style="font-size: 0.62rem; color: var(--text-muted); margin-top: 2px;">Reset: {{ $memberPeriod['end']->format('d M Y') }}</div>
@@ -175,15 +185,29 @@
                             <div style="text-align: right;">
                                 <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 3px;">Essential Instalasi OS</div>
                                 <div style="display: flex; align-items: center; gap: 6px;">
-                                    <span style="font-family: monospace; font-weight: 800; font-size: 0.92rem; color: {{ $osFull ? '#dc2626' : '#1e40af' }};">{{ $osCount }}/2</span>
+                                    <span style="font-family: monospace; font-weight: 800; font-size: 0.92rem; color: {{ $osFull ? '#dc2626' : '#1e40af' }};">{{ $osCount }}/{{ $osMax }}</span>
                                     <div style="width: 44px; height: 6px; background: var(--border-light); border-radius: 3px; overflow: hidden;">
-                                        <div style="width: {{ min(100, $osCount/2*100) }}%; height: 100%; background: {{ $osFull ? '#dc2626' : '#1e40af' }}; border-radius: 3px;"></div>
+                                        <div style="width: {{ min(100, $osMax > 0 ? $osCount/$osMax*100 : 0) }}%; height: 100%; background: {{ $osFull ? '#dc2626' : '#1e40af' }}; border-radius: 3px;"></div>
                                     </div>
                                 </div>
                                 <div style="font-size: 0.62rem; color: var(--text-muted); margin-top: 2px;">Reset: {{ $memberPeriod['end']->format('d M Y') }}</div>
                             </div>
                         </div>
                     </div>
+                </div>
+                @endif
+
+                @if($ticket->status === 'menunggu_part')
+                <div style="margin-bottom: 16px;">
+                    <form action="{{ route('dashboard.cs.tickets.update_status', $ticket) }}" method="POST" style="margin: 0;">
+                        @csrf
+                        <input type="hidden" name="status" value="proses_service">
+                        <input type="hidden" name="notes" value="Part/sparepart telah tiba. Status diperbarui dari Menunggu Part ke Proses Service.">
+                        <button type="submit" class="btn btn-primary" style="width: 100%; background: #15803d; border-color: #15803d; font-weight: 800; padding: 11px 18px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; box-shadow: none; font-size: 0.88rem;">
+                            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            Konfirmasi Part Sudah Datang
+                        </button>
+                    </form>
                 </div>
                 @endif
 
@@ -195,9 +219,10 @@
                         <option value="unit_received"   {{ $ticket->status === 'unit_received'   ? 'selected':'' }}>Antrian Servis</option>
                         <option value="checking"        {{ $ticket->status === 'checking'        ? 'selected':'' }}>Pengecekan Teknisi</option>
                         <option value="konfirmasi_user" {{ in_array($ticket->status, ['konfirmasi_user','checked']) ? 'selected':'' }}>Konfirmasi User</option>
+                        <option value="menunggu_part"   {{ $ticket->status === 'menunggu_part'   ? 'selected':'' }}>Menunggu Part</option>
                         <option value="proses_service"  {{ in_array($ticket->status, ['proses_service','rma','in_service']) ? 'selected':'' }}>Proses Service</option>
                         <option value="siap_diambil"    {{ in_array($ticket->status, ['siap_diambil','done'])    ? 'selected':'' }}>Siap Diambil</option>
-                        <option value="sudah_diambil"   {{ in_array($ticket->status, ['sudah_diambil','taken'])   ? 'selected':'' }}>Sudah Diambil</option>
+                        <option value="sudah_diambil"   {{ $ticket->status === 'sudah_diambil'   ? 'selected':'' }}>Sudah Diambil</option>
                         <option value="cancelled"       {{ $ticket->status === 'cancelled'       ? 'selected':'' }}>Dibatalkan</option>
                     </select>
                 </div>
@@ -209,22 +234,15 @@
                            value="{{ old('airtable_service_number', $ticket->airtable_service_number) }}"
                            class="form-control" placeholder="Contoh: AX0-1108"
                            style="padding:10px 12px; font-size:0.88rem; font-family: monospace;">
-                    <span class="form-hint" style="font-size:0.72rem; color:var(--text-muted);">Masukkan nomor servis dari Airtable saat unit diserahkan oleh customer ke kantor.</span>
                 </div>
 
-                {{-- Field: Sub-Status / Cabang --}}
+                {{-- Field: Sub-Status (Khusus Konfirmasi User) --}}
                 <div id="fieldSubStatus" style="margin-bottom: 14px; display: none;">
-                    <label class="form-label" style="font-size:0.75rem; font-weight:700; margin-bottom:5px; color:var(--primary);">Pilih Cabang / Sub-Status</label>
+                    <label class="form-label" style="font-size:0.75rem; font-weight:700; margin-bottom:5px; color:var(--primary);">Pilih Cabang / Sub-Status Konfirmasi</label>
                     <select name="sub_status" id="subStatusSelect" class="form-control" style="padding:10px 12px; font-size:0.88rem;" onchange="updateFormFields()">
                         <option value="">-- Tanpa Sub-Status --</option>
-                        <optgroup label="Konfirmasi User" id="optKonfirmasi">
-                            <option value="pembelian_part" {{ $ticket->sub_status === 'pembelian_part' ? 'selected':'' }}>Pembelian Part</option>
-                            <option value="klaim_garansi"  {{ $ticket->sub_status === 'klaim_garansi'  ? 'selected':'' }}>Klaim Garansi / RMA</option>
-                        </optgroup>
-                        <optgroup label="Proses Service" id="optProses">
-                            <option value="menunggu_part"  {{ $ticket->sub_status === 'menunggu_part'  ? 'selected':'' }}>Menunggu Part</option>
-                            <option value="pengerjaan_unit" {{ $ticket->sub_status === 'pengerjaan_unit' ? 'selected':'' }}>Pengerjaan Unit</option>
-                        </optgroup>
+                        <option value="pembelian_part" {{ $ticket->sub_status === 'pembelian_part' ? 'selected':'' }}>Pembelian Part</option>
+                        <option value="klaim_garansi"  {{ $ticket->sub_status === 'klaim_garansi'  ? 'selected':'' }}>Klaim Garansi / RMA</option>
                     </select>
                 </div>
 
@@ -310,6 +328,15 @@
                         . "https://klinik-komputer.com/service/track\n\n"
                         . "Kami akan segera melakukan pengecekan dan menginformasikan perkembangan selanjutnya. Terima kasih atas kepercayaannya!";
 
+                    // 0. Pengecekan Teknisi
+                    $msgPengecekanTeknisi = "*UPDATE SERVICE - KLINIK KOMPUTER*\n"
+                        . "Halo Kak, mau info terkait unit Kakak dengan No. Service *{$noService}*.\n\n"
+                        . "Saat ini unit Kakak sedang dalam proses pengecekan (diagnosa) oleh tim teknisi kami, untuk memastikan penyebab kendala secara menyeluruh.\n\n"
+                        . "Kami akan segera informasikan hasil pengecekan beserta tindakan/estimasi biaya (jika ada) yang diperlukan.\n\n"
+                        . "*Pesan ini adalah Pesan Otomatis, jika ada suatu hal yang dapat kami bantu, dapat membalas Pesan ini*\n\n"
+                        . "Pantau status service Kakak kapan saja di: https://klinik-komputer.com/service/track\n\n"
+                        . "Terima kasih atas kesabarannya, Kak!";
+
                     // 1. Konfirmasi Pembelian Sparepart
                     $formattedCost = $ticket->estimated_cost ? 'Rp' . number_format($ticket->estimated_cost, 0, ',', '.') : 'Rp-';
                     $msgKonfirmasiPembelianPart = "*UPDATE SERVICE - KLINIK KOMPUTER*\n"
@@ -324,11 +351,13 @@
                     // 2. Konfirmasi Klaim Garansi
                     $msgKlaimGaransi = "*UPDATE SERVICE - KLINIK KOMPUTER*\n"
                         . "Halo Kak, mau info terkait unit Kakak dengan No. Service *{$noService}*.\n\n"
-                        . "Izin Update, Kerusakan {$compText} pada unit Kakak masuk dalam cakupan garansi, sehingga tidak dikenakan biaya tambahan sama sekali.\n\n"
+                        . "Kami Izin Update ya Kak, Setelah Unit sudah dilakukan pengecekan oleh Tim Teknisi Kami, ditemukan Kerusakan pada bagian *{$compText}* pada unit Kakak.\n\n"
+                        . "Untuk part tersebut sudah masuk dalam cakupan garansi Axioo, sehingga tidak dikenakan biaya tambahan sama sekali.\n\n"
                         . "Kami akan proses klaim garansi ke pihak Axioo Pusat, dan akan kami update kembali progressnya ya Kak\n\n"
-                        . "Estimasi proses klaim: 2 - 4 Hari Kerja *diluar hari Sabtu-Minggu.\n\n"
+                        . "Estimasi proses klaim: 2 - 4 Hari Kerja \n"
+                        . "*diluar hari Sabtu-Minggu.\n\n"
                         . "*Pesan ini adalah Pesan Otomatis, jika ada suatu hal yang dapat kami bantu, dapat membalas Pesan ini*\n\n"
-                        . "Update status service bisa dicek juga di: https://klinik-komputer.com/service/track";
+                        . "Live Tracking Service: https://klinik-komputer.com/service/track";
                         
                     // 3. Proses Service - Menunggu Sparepart
                     $msgMenungguPart = "*UPDATE SERVICE - KLINIK KOMPUTER*\n"
@@ -369,6 +398,15 @@
                            style="display: none; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 9px 14px; background: #15803d; color: #ffffff; font-weight: 700; font-size: 0.85rem; border-radius: var(--radius-sm); text-decoration: none; border: none; box-shadow: 0 2px 6px rgba(21,128,61,0.25);">
                             <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
                             Kirim WA: Tanda Terima Service (Antrian Servis)
+                        </a>
+
+                        <a href="https://wa.me/{{ $waPhone }}?text={{ rawurlencode($msgPengecekanTeknisi) }}"
+                           target="_blank" rel="noopener noreferrer"
+                           id="btnWaPengecekanTeknisi"
+                           class="btn"
+                           style="display: none; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 9px 14px; background: #15803d; color: #ffffff; font-weight: 700; font-size: 0.85rem; border-radius: var(--radius-sm); text-decoration: none; border: none; box-shadow: 0 2px 6px rgba(21,128,61,0.25);">
+                            <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+                            Kirim WA: Pengecekan Teknisi
                         </a>
                         <a href="https://wa.me/{{ $waPhone }}?text={{ rawurlencode($msgKonfirmasiPembelianPart) }}"
                            target="_blank" rel="noopener noreferrer"
@@ -440,7 +478,7 @@
                                 @if($h->old_status)<span class="badge badge-secondary" style="font-size:0.65rem;">{{ ucfirst($h->old_status) }}</span><span style="color:var(--text-muted); font-size:0.8rem;">&rarr;</span>@endif
                                 <span class="badge badge-primary" style="font-size:0.65rem;">{{ ucfirst($h->new_status) }}</span>
                             </div>
-                            <span style="font-size:0.75rem; color:var(--text-muted);">{{ $h->created_at->format('d M Y, H:i') }}</span>
+                            <span style="font-size:0.75rem; color:var(--text-muted);">{{ $h->created_at->setTimezone('Asia/Jakarta')->format('d M Y, H:i') }}</span>
                         </div>
                         @if($h->notes)
                         <p style="font-size:0.8rem; color:var(--text-secondary); margin:0;">{{ $h->notes }}</p>
@@ -495,18 +533,16 @@ function updateFormFields() {
     if (status === 'konfirmasi_user' || status === 'checked') {
         // Status Konfirmasi User: Tampilkan Sub-Status Konfirmasi & Estimasi Biaya
         if (fieldSubStatus) fieldSubStatus.style.display = 'block';
-        if (optGroupKonfirmasi) optGroupKonfirmasi.style.display = 'block';
         if (fieldEstimatedCost) fieldEstimatedCost.style.display = 'block';
-    } else if (status === 'proses_service' || status === 'rma' || status === 'in_service') {
-        // Status Proses Service: Tampilkan Sub-Status Proses & Estimasi Biaya
-        if (fieldSubStatus) fieldSubStatus.style.display = 'block';
-        if (optGroupProses) optGroupProses.style.display = 'block';
+    } else if (status === 'menunggu_part' || status === 'proses_service' || status === 'rma' || status === 'in_service') {
+        // Status Menunggu Part & Proses Service: Tampilkan Estimasi Biaya saja (Tanpa Sub-Status)
         if (fieldEstimatedCost) fieldEstimatedCost.style.display = 'block';
     }
 
     // Dynamic single WA Template button visibility
     const containerWa = document.getElementById('containerWaButton');
     const btnUnitDiterima = document.getElementById('btnWaUnitDiterima');
+    const btnPengecekan = document.getElementById('btnWaPengecekanTeknisi');
     const btnKonfirmasiPart = document.getElementById('btnWaKonfirmasiPembelianPart');
     const btnKlaim = document.getElementById('btnWaKlaimGaransi');
     const btnMenunggu = document.getElementById('btnWaMenungguPart');
@@ -514,6 +550,7 @@ function updateFormFields() {
     const btnSiap = document.getElementById('btnWaSiapDiambil');
 
     if (btnUnitDiterima) btnUnitDiterima.style.display = 'none';
+    if (btnPengecekan) btnPengecekan.style.display = 'none';
     if (btnKonfirmasiPart) btnKonfirmasiPart.style.display = 'none';
     if (btnKlaim) btnKlaim.style.display = 'none';
     if (btnMenunggu) btnMenunggu.style.display = 'none';
@@ -524,18 +561,20 @@ function updateFormFields() {
 
     if (status === 'unit_received') {
         activeBtn = btnUnitDiterima;
+    } else if (status === 'checking') {
+        activeBtn = btnPengecekan;
     } else if (status === 'konfirmasi_user' || status === 'checked') {
         if (subStatus === 'pembelian_part') {
             activeBtn = btnKonfirmasiPart;
         } else if (subStatus === 'klaim_garansi') {
             activeBtn = btnKlaim;
-        }
-    } else if (status === 'proses_service' || status === 'rma' || status === 'in_service') {
-        if (subStatus === 'menunggu_part' || subStatus === 'pembelian_part') {
-            activeBtn = btnMenunggu;
         } else {
-            activeBtn = btnProses;
+            activeBtn = btnKonfirmasiPart;
         }
+    } else if (status === 'menunggu_part') {
+        activeBtn = btnMenunggu;
+    } else if (status === 'proses_service' || status === 'rma' || status === 'in_service') {
+        activeBtn = btnProses;
     } else if (status === 'siap_diambil' || status === 'done') {
         activeBtn = btnSiap;
     }

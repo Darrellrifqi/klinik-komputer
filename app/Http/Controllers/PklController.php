@@ -63,7 +63,8 @@ class PklController extends Controller
      */
     public function create()
     {
-        return view('pkl.create');
+        $divisions = \App\Models\PklDivision::getActiveDivisions();
+        return view('pkl.create', compact('divisions'));
     }
 
     /**

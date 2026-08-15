@@ -34,6 +34,11 @@ class TechnicianController extends Controller
                 'color' => '#8b5cf6',
                 'tickets' => $allTickets->whereIn('status', ['konfirmasi_user', 'checked'])
             ],
+            'menunggu_part' => [
+                'title' => 'Menunggu Part',
+                'color' => '#d97706',
+                'tickets' => $allTickets->where('status', 'menunggu_part')
+            ],
             'proses_service' => [
                 'title' => 'Proses Service / Pengerjaan Unit',
                 'color' => '#64748b',
@@ -125,12 +130,14 @@ class TechnicianController extends Controller
                 $notes = "Selesai pengecekan teknisi. Komponen: " . implode(', ', $components) . ". Penyebab: {$request->cause}";
                 break;
 
+
+
             case 'set_menunggu_part':
                 $ticket->update([
-                    'status'     => 'proses_service',
-                    'sub_status' => 'menunggu_part',
+                    'status'     => 'menunggu_part',
+                    'sub_status' => null,
                 ]);
-                $notes = 'Teknisi memperbarui progres: Menunggu Part (Sparepart).';
+                $notes = 'Teknisi memperbarui status: Menunggu Part (Sparepart).';
                 break;
 
             case 'set_pengerjaan_unit':
