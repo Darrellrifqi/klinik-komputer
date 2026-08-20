@@ -41,19 +41,20 @@ class PklController extends Controller
         // Load active ACP Partner Schools for the application dropdown
         $acpSchools = AcpPartnerSchool::where('is_active', true)->orderBy('name', 'asc')->get();
 
-        // Load approved students sorted by year and quarter ascending
+        // Load approved students sorted by year and quarter descending (newest first on the left)
         $students = PklStudent::with(['period'])
             ->where('status', 'approved')
             ->join('pkl_periods', 'pkl_students.pkl_period_id', '=', 'pkl_periods.id')
-            ->orderBy('pkl_periods.year', 'asc')
-            ->orderBy('pkl_periods.quarter', 'asc')
+            ->orderBy('pkl_periods.year', 'desc')
+            ->orderBy('pkl_periods.quarter', 'desc')
+            ->orderBy('pkl_students.id', 'desc')
             ->select('pkl_students.*')
             ->get();
 
-        // Get unique years that have approved students
+        // Get unique years that have approved students (newest first)
         $years = PklPeriod::whereHas('students', function ($q) {
             $q->where('status', 'approved');
-        })->orderBy('year', 'asc')->distinct()->pluck('year');
+        })->orderBy('year', 'desc')->distinct()->pluck('year');
 
         return view('pkl.index', compact('students', 'years', 'acpSchools'));
     }

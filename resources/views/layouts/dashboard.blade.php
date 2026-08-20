@@ -48,6 +48,20 @@
         .swal2-actions {
             gap: 10px !important;
         }
+        nav[role="navigation"] svg,
+        .pagination svg,
+        svg.w-5,
+        svg.h-5,
+        svg.w-4,
+        svg.h-4 {
+            width: 16px !important;
+            height: 16px !important;
+            max-width: 16px !important;
+            max-height: 16px !important;
+            min-width: 16px !important;
+            display: inline-block !important;
+            vertical-align: middle !important;
+        }
     </style>
     @stack('styles')
 </head>

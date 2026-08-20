@@ -109,7 +109,21 @@ class Ticket extends Model
 
     public function getDropoffScheduleAttribute($value): ?string
     {
-        if (!$value) return null;
+        if (!$value) {
+            if ($this->created_at) {
+                $carbonDate = \Carbon\Carbon::parse($this->created_at);
+                $dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                $monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+                $dayName = $dayNames[$carbonDate->dayOfWeek];
+                $monthName = $monthNames[$carbonDate->month];
+                $formattedDate = "{$dayName}, {$carbonDate->day} {$monthName} {$carbonDate->year}";
+                $formattedTime = $carbonDate->format('H:i');
+
+                return "{$formattedDate} (Jam {$formattedTime} WIB)";
+            }
+            return null;
+        }
 
         // Clean any repeated "Jam Jam", "WIB WIB", "Jam (Jam", etc.
         $cleaned = preg_replace('/\bJam\s+Jam\b/i', 'Jam', $value);

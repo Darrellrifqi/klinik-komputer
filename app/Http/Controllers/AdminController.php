@@ -1031,10 +1031,27 @@ class AdminController extends Controller
             'token' => 'required|string|unique:pkl_periods,token|max:50',
             'quarter' => 'required|string|in:Q1,Q2,Q3,Q4',
             'year' => 'required|integer|min:2020|max:2050',
+        ], [
+            'token.required' => 'Kode token registrasi wajib diisi.',
+            'token.unique' => 'Kode token ini sudah terdaftar. Silakan gunakan kode token lain.',
+            'token.max' => 'Kode token maksimal 50 karakter.',
+            'quarter.required' => 'Kuartal wajib dipilih.',
+            'year.required' => 'Tahun wajib diisi.',
         ]);
 
+        // Check if combination of quarter and year already exists
+        $existingPeriod = PklPeriod::where('quarter', $request->quarter)
+            ->where('year', $request->year)
+            ->first();
+
+        if ($existingPeriod) {
+            return back()->withInput()->withErrors([
+                'quarter' => "Periode {$request->quarter} - {$request->year} sudah memiliki token (" . $existingPeriod->token . ")."
+            ]);
+        }
+
         PklPeriod::create([
-            'token' => $request->token,
+            'token' => strtoupper(trim($request->token)),
             'quarter' => $request->quarter,
             'year' => $request->year,
             'is_active' => true,

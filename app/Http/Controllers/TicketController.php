@@ -156,6 +156,16 @@ class TicketController extends Controller
             }
         }
 
+        $now = \Carbon\Carbon::now();
+        $dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        $monthNames = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        $dayName = $dayNames[$now->dayOfWeek];
+        $monthName = $monthNames[$now->month];
+        $formattedDate = "{$dayName}, {$now->day} {$monthName} {$now->year}";
+        $formattedTime = $now->format('H:i');
+        $dropoffSchedule = "{$formattedDate} (Jam {$formattedTime} WIB)";
+
         $ticket = Ticket::create([
             'ticket_number'           => Ticket::generateTicketNumber(),
             'queue_number'            => Ticket::generateQueueNumber(),
@@ -165,6 +175,7 @@ class TicketController extends Controller
             'brand'                   => $request->brand,
             'model'                   => $request->model,
             'damage_description'      => $request->damage_description,
+            'dropoff_schedule'        => $dropoffSchedule,
             'status'                  => 'unit_received', // Walk-in CS ticket directly enters Antrian Servis (Unit Diterima)
             'airtable_service_number' => $request->airtable_service_number,
             'notes'                   => $request->notes,
