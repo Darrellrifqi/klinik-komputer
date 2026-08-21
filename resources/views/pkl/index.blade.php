@@ -222,13 +222,13 @@
         <div style="position: relative;">
             <!-- Carousel Navigation Arrows -->
             <button type="button" id="prevPklBtn" onclick="scrollPklCarousel(-1)" aria-label="Previous"
-                    style="position: absolute; left: -14px; top: 50%; transform: translateY(-50%); z-index: 15; width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 14px rgba(0,0,0,0.12); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: all 0.2s ease;">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    style="position: absolute; left: -16px; top: 50%; transform: translateY(-50%); z-index: 25; width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 14px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: all 0.2s ease;">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><polyline points="15 18 9 12 15 6"></polyline></svg>
             </button>
 
             <button type="button" id="nextPklBtn" onclick="scrollPklCarousel(1)" aria-label="Next"
-                    style="position: absolute; right: -14px; top: 50%; transform: translateY(-50%); z-index: 15; width: 40px; height: 40px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 14px rgba(0,0,0,0.12); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: all 0.2s ease;">
-                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    style="position: absolute; right: -16px; top: 50%; transform: translateY(-50%); z-index: 25; width: 42px; height: 42px; border-radius: 50%; background: var(--bg-card); border: 1px solid var(--border-light); box-shadow: 0 4px 14px rgba(0,0,0,0.15); cursor: pointer; display: flex; align-items: center; justify-content: center; color: var(--text-primary); transition: all 0.2s ease;">
+                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="pointer-events: none;"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
 
             <div class="students-grid" id="studentsGrid" style="display: flex; gap: 18px; align-items: stretch; overflow-x: auto; scroll-behavior: smooth; scroll-snap-type: x mandatory; padding: 12px 4px 20px; -webkit-overflow-scrolling: touch; scrollbar-width: thin;">
@@ -308,6 +308,68 @@
 </div>
 
 <script>
+// PKL Carousel Scroll Script & Dynamic Arrow Visibility
+window.updatePklCarouselArrows = function() {
+    const grid = document.getElementById('studentsGrid');
+    const prevBtn = document.getElementById('prevPklBtn');
+    const nextBtn = document.getElementById('nextPklBtn');
+
+    if (!grid || !prevBtn || !nextBtn) return;
+
+    const scrollLeft = Math.ceil(grid.scrollLeft);
+    const maxScrollLeft = grid.scrollWidth - grid.clientWidth;
+
+    // Mentok Kiri -> Sembunyikan Arrow Kiri
+    if (scrollLeft <= 5) {
+        prevBtn.style.display = 'none';
+    } else {
+        prevBtn.style.display = 'flex';
+    }
+
+    // Mentok Kanan -> Sembunyikan Arrow Kanan
+    if (maxScrollLeft <= 5 || scrollLeft >= maxScrollLeft - 8) {
+        nextBtn.style.display = 'none';
+    } else {
+        nextBtn.style.display = 'flex';
+    }
+};
+
+window.scrollPklCarousel = function(direction) {
+    const grid = document.getElementById('studentsGrid');
+    if (grid) {
+        const scrollStep = (270 * 2) * direction;
+        grid.scrollBy({ left: scrollStep, behavior: 'smooth' });
+        setTimeout(updatePklCarouselArrows, 350);
+    }
+};
+
+document.addEventListener('DOMContentLoaded', function() {
+    const grid = document.getElementById('studentsGrid');
+    const prevBtn = document.getElementById('prevPklBtn');
+    const nextBtn = document.getElementById('nextPklBtn');
+
+    if (grid) {
+        grid.addEventListener('scroll', updatePklCarouselArrows);
+        window.addEventListener('resize', updatePklCarouselArrows);
+    }
+
+    if (prevBtn) {
+        prevBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            scrollPklCarousel(-1);
+        });
+    }
+
+    if (nextBtn) {
+        nextBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            scrollPklCarousel(1);
+        });
+    }
+
+    // Initial arrow visibility check
+    setTimeout(updatePklCarouselArrows, 100);
+
     const acpInput = document.getElementById('acpSchoolInput');
     const acpHiddenId = document.getElementById('acpPartnerSchoolId');
     const acpDropdown = document.getElementById('acpSchoolDropdown');
@@ -385,15 +447,6 @@
         });
     }
 
-    // PKL Carousel Scroll Script
-    window.scrollPklCarousel = function(direction) {
-        const grid = document.getElementById('studentsGrid');
-        if (grid) {
-            const scrollStep = 268 * 2 * direction; // Scroll width of 2 cards
-            grid.scrollBy({ left: scrollStep, behavior: 'smooth' });
-        }
-    };
-
     // Filter Tabs Script for PKL Students
     const filterTabs = document.querySelectorAll('.filter-tab');
     const yearFilter = document.getElementById('yearFilter');
@@ -422,8 +475,10 @@
 
         if (studentCount) studentCount.textContent = count;
 
-        const grid = document.getElementById('studentsGrid');
-        if (grid) grid.scrollTo({ left: 0, behavior: 'smooth' });
+        if (grid) {
+            grid.scrollTo({ left: 0, behavior: 'smooth' });
+            setTimeout(updatePklCarouselArrows, 300);
+        }
     }
 
     filterTabs.forEach(tab => {
