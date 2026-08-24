@@ -8,10 +8,82 @@
 @endsection
 
 @section('content')
-<div style="height: calc(100vh - 180px); display: grid; grid-template-columns: 320px 1fr;" class="dash-card">
+
+<style>
+    .cs-chat-container {
+        height: calc(100vh - 180px);
+        display: grid;
+        grid-template-columns: 320px 1fr;
+    }
+    .cs-mobile-back-btn {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-content {
+            padding: 8px !important;
+        }
+        .cs-chat-container {
+            display: flex !important;
+            flex-direction: column !important;
+            height: calc(100vh - 130px) !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+        .cs-mobile-back-btn {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 1rem !important;
+            font-weight: 800 !important;
+            color: var(--primary) !important;
+            text-decoration: none !important;
+            margin-right: 4px !important;
+            padding: 0 !important;
+            width: 32px !important;
+            height: 32px !important;
+            background: var(--bg-alt) !important;
+            border-radius: 50% !important;
+            border: 1px solid var(--border-light) !important;
+            flex-shrink: 0 !important;
+        }
+
+        @if(isset($chat))
+            /* Active Chat Mode: Hide Chat List on Mobile */
+            .cs-chat-left-panel {
+                display: none !important;
+            }
+            .cs-chat-right-panel {
+                display: flex !important;
+                flex: 1 !important;
+                width: 100% !important;
+            }
+        @else
+            /* List Mode: Hide Active Chat Room Empty State on Mobile */
+            .cs-chat-left-panel {
+                display: flex !important;
+                flex: 1 !important;
+                width: 100% !important;
+            }
+            .cs-chat-right-panel {
+                display: none !important;
+            }
+        @endif
+
+        .cs-header-member-id {
+            display: none !important;
+        }
+
+        #chatMessages > div {
+            max-width: 85% !important;
+        }
+    }
+</style>
+
+<div class="dash-card cs-chat-container">
     
     <!-- LEFT PANEL: Chat Rooms List -->
-    <div style="border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fff;">
+    <div class="cs-chat-left-panel" style="border-right: 1px solid var(--border); display: flex; flex-direction: column; background: #fff;">
         <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); background: var(--bg-alt);">
             <h4 style="margin: 0; font-size: 0.9rem; font-weight: 800; color: var(--text-primary); text-transform: uppercase; letter-spacing: 0.05em;">Ruang Obrolan</h4>
         </div>
@@ -60,25 +132,26 @@
     </div>
 
     <!-- RIGHT PANEL: Active Chat Room -->
-    <div style="display: flex; flex-direction: column; background: var(--bg-alt);">
+    <div class="cs-chat-right-panel" style="display: flex; flex-direction: column; background: var(--bg-alt);">
         @if(isset($chat))
             <!-- Chat Room Header -->
-            <div style="padding: 14px 20px; border-bottom: 1px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(95, 138, 99, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem;">
+            <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 10px; min-width: 0; overflow: hidden;">
+                    <a href="{{ route('dashboard.cs.chat') }}" class="cs-mobile-back-btn" title="Kembali ke Ruang Obrolan">
+                        ←
+                    </a>
+                    <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(95, 138, 99, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0;">
                         {{ strtoupper(substr($chat->customer->name ?? 'M', 0, 1)) }}
                     </div>
-                    <div>
-                        <h4 style="margin: 0; font-size: 0.95rem; font-weight: 700; color: var(--text-primary);">{{ $chat->customer->name }}</h4>
-                        <div style="font-size: 0.72rem; color: var(--text-muted); display: flex; gap: 8px; align-items: center;">
-                            <span>WhatsApp: <strong>{{ $chat->customer->phone }}</strong></span>
-                            <span>&bull;</span>
-                            <span>Email: <strong>{{ $chat->customer->email }}</strong></span>
+                    <div style="min-width: 0; overflow: hidden;">
+                        <h4 style="margin: 0; font-size: 0.9rem; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{{ $chat->customer->name }}</h4>
+                        <div style="font-size: 0.7rem; color: var(--text-muted); display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+                            <span>{{ $chat->customer->phone }}</span>
                         </div>
                     </div>
                 </div>
                 @if($chat->customer->laptopKits->count() > 0)
-                <div style="text-align: right;">
+                <div class="cs-header-member-id" style="text-align: right; flex-shrink: 0;">
                     <span class="badge badge-primary" style="font-family: monospace; font-size: 0.7rem; padding: 4px 8px;">
                         Member ID: {{ $chat->customer->laptopKits->first()->member_id }}
                     </span>

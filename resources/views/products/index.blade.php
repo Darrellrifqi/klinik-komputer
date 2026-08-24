@@ -263,69 +263,69 @@
 </section>
 
 <!-- Modal Detail Produk Dynamic Carousel -->
-<div id="productModal" style="display: none; position: fixed; inset: 0; z-index: 9999; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 20px; transition: opacity 0.25s ease;">
-    <div style="background: var(--bg-card); width: 100%; max-width: 880px; border-radius: 20px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: row; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35); position: relative; max-height: 90vh; animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);">
+<div id="productModal" class="product-modal-overlay" style="display: none;">
+    <div class="product-modal-card">
         
         <!-- Close Button -->
-        <button id="closeModalBtn" type="button" style="position: absolute; top: 16px; right: 16px; z-index: 10; width: 36px; height: 36px; border-radius: 50%; background: var(--bg-alt); border: 1px solid var(--border); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s ease;">
+        <button id="closeModalBtn" type="button" class="product-modal-close" aria-label="Tutup">
             <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
 
         <!-- Modal Left: Product Image Carousel -->
-        <div style="width: 48%; background: #f8fafc; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 24px; border-right: 1px solid var(--border-light); position: relative;">
+        <div class="product-modal-left">
             
             <!-- Main Showcase Image Frame -->
-            <div style="width: 100%; height: 280px; display: flex; align-items: center; justify-content: center; position: relative;">
-                <img id="modalProductImg" src="" alt="Detail Produk" style="max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; transition: opacity 0.2s ease;">
+            <div class="product-modal-img-wrap">
+                <img id="modalProductImg" src="" alt="Detail Produk">
                 
                 <!-- Fallback SVG Placeholder -->
-                <div id="modalFallbackPlaceholder" style="display: none; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); gap: 8px;">
+                <div id="modalFallbackPlaceholder" class="product-modal-fallback">
                     <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                    <span style="font-size: 0.8rem; font-weight: 600;">Belum Ada Foto Produk</span>
+                    <span>Belum Ada Foto Produk</span>
                 </div>
 
                 <!-- Navigation Controls -->
-                <button id="modalPrevSlide" type="button" style="display: none; position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.9); border: 1px solid var(--border); color: var(--text-primary); align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">‹</button>
-                <button id="modalNextSlide" type="button" style="display: none; position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.9); border: 1px solid var(--border); color: var(--text-primary); align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">›</button>
+                <button id="modalPrevSlide" type="button" class="product-modal-nav prev">‹</button>
+                <button id="modalNextSlide" type="button" class="product-modal-nav next">›</button>
                 
                 <!-- Slide Counter Badge -->
-                <div id="modalSlideCounter" style="display: none; position: absolute; bottom: 4px; left: 50%; transform: translateX(-50%); background: rgba(15,23,42,0.75); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 10px; border-radius: 99px;">1 / 1</div>
+                <div id="modalSlideCounter" class="product-modal-counter">1 / 1</div>
             </div>
 
             <!-- Thumbnail Selector Strip -->
-            <div id="modalThumbsContainer" style="display: flex; gap: 8px; margin-top: 16px; overflow-x: auto; max-width: 100%; padding-bottom: 4px;">
+            <div id="modalThumbsContainer" class="product-modal-thumbs">
                 {{-- Thumbnails generated dynamically by JS --}}
             </div>
         </div>
 
         <!-- Modal Right: Full Specifications -->
-        <div style="width: 52%; padding: 32px; display: flex; flex-direction: column; overflow-y: auto;">
+        <div class="product-modal-right">
             <div style="margin-bottom: 12px;">
                 <span id="modalProductBadge" class="badge badge-primary" style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; padding: 4px 10px; border-radius: 6px;">Axioo Hype</span>
             </div>
 
-            <h2 id="modalProductTitle" style="font-size: 1.45rem; font-weight: 800; color: var(--text-primary); margin-bottom: 6px; line-height: 1.25;">Laptop Axioo</h2>
+            <h2 id="modalProductTitle" class="product-modal-title">Laptop Axioo</h2>
             
-            <div id="modalProductPrice" style="font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-bottom: 16px;">
+            <div id="modalProductPrice" class="product-modal-price">
                 Rp 0
             </div>
 
-            <p id="modalProductDesc" style="font-size: 0.85rem; color: var(--text-secondary); line-height: 1.5; margin-bottom: 20px; display: none; background: var(--bg-alt); padding: 12px; border-radius: 8px; border: 1px solid var(--border-light);"></p>
+            <p id="modalProductDesc" class="product-modal-desc"></p>
 
-            <div style="font-weight: 700; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 10px;">Spesifikasi Lengkap Unit</div>
+            <div class="product-modal-specs-header">Spesifikasi Lengkap Unit</div>
             
             <!-- Dynamic Specs List -->
-            <div id="modalProductSpecs" style="display: flex; flex-direction: column; gap: 8px; font-size: 0.85rem; margin-bottom: 24px;">
+            <div id="modalProductSpecs" class="product-modal-specs">
                 {{-- Specs populated dynamically by JS --}}
             </div>
 
-            <div style="margin-top: auto; display: flex; flex-direction: row; gap: 10px; align-items: center;">
-                <a id="modalWaBtn" href="#" target="_blank" class="btn btn-primary" style="flex: 1; text-align: center; justify-content: center; font-weight: 700; padding: 12px; border-radius: 10px; white-space: nowrap; font-size: 0.84rem;">
+            <div class="product-modal-actions">
+                <a id="modalWaBtn" href="#" target="_blank" class="btn btn-primary product-modal-btn">
                     <svg viewBox="0 0 24 24" width="17" height="17" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981z"/></svg>
                     Tanya Stok via WA
                 </a>
                 
-                <a id="modalTokopediaBtn" href="#" target="_blank" class="btn btn-online-shop" style="flex: 1; justify-content: center; text-align: center; font-weight: 700; padding: 12px; border-radius: 10px; display: none; white-space: nowrap; font-size: 0.84rem;">
+                <a id="modalTokopediaBtn" href="#" target="_blank" class="btn btn-online-shop product-modal-btn tokped" style="display: none;">
                     <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
                     Online Shop
                 </a>
@@ -351,27 +351,263 @@
     transform: scale(1.05) !important;
 }
 
+/* Product Modal Styling */
+.product-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: opacity 0.25s ease;
+}
+
+.product-modal-card {
+    background: var(--bg-card);
+    width: 100%;
+    max-width: 880px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    position: relative;
+    max-height: 90vh;
+    animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 20;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    transition: all 0.2s ease;
+}
+.product-modal-close:hover {
+    background: #ffffff;
+    transform: scale(1.05);
+}
+
+.product-modal-left {
+    width: 48%;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 24px;
+    border-right: 1px solid var(--border-light);
+    position: relative;
+    flex-shrink: 0;
+}
+
+.product-modal-img-wrap {
+    width: 100%;
+    height: 280px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.product-modal-img-wrap img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    transition: opacity 0.2s ease;
+}
+
+.product-modal-fallback {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    gap: 8px;
+}
+
+.product-modal-nav {
+    display: none;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    border: 1px solid var(--border);
+    color: var(--text-primary);
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 5;
+}
+.product-modal-nav.prev { left: 0; }
+.product-modal-nav.next { right: 0; }
+
+.product-modal-counter {
+    display: none;
+    position: absolute;
+    bottom: 4px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(15,23,42,0.75);
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 99px;
+}
+
+.product-modal-thumbs {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    overflow-x: auto;
+    width: 100%;
+    max-width: 100%;
+    padding-bottom: 4px;
+}
+
+.product-modal-right {
+    width: 52%;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.product-modal-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+    line-height: 1.25;
+}
+
+.product-modal-price {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 16px;
+}
+
+.product-modal-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 20px;
+    display: none;
+    background: var(--bg-alt);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid var(--border-light);
+}
+
+.product-modal-specs-header {
+    font-weight: 700;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+}
+
+.product-modal-specs {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 0.85rem;
+    margin-bottom: 24px;
+}
+
+.product-modal-actions {
+    margin-top: auto;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    align-items: center;
+}
+
+.product-modal-btn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+    font-weight: 700;
+    padding: 12px;
+    border-radius: 10px;
+    white-space: nowrap;
+    font-size: 0.84rem;
+}
+
+/* Mobile Devices Fix */
 @media (max-width: 768px) {
-    #productModal > div {
-        flex-direction: column !important;
-        max-height: 95vh !important;
-        overflow-y: auto !important;
+    .product-modal-overlay {
+        padding: 12px !important;
     }
-    #productModal > div > div:first-child {
+    .product-modal-card {
+        flex-direction: column !important;
+        max-height: 90vh !important;
+        overflow-y: auto !important;
+        border-radius: 16px !important;
+    }
+    .product-modal-left {
         width: 100% !important;
         border-right: none !important;
-        border-bottom: 1px solid var(--border) !important;
-        padding: 16px !important;
+        border-bottom: 1px solid var(--border-light) !important;
+        padding: 20px 16px 14px !important;
     }
-    #modalThumbsContainer {
+    .product-modal-img-wrap {
+        height: 210px !important;
+    }
+    .product-modal-thumbs {
         flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
         width: 100% !important;
         max-height: none !important;
         overflow-x: auto !important;
+        margin-top: 10px !important;
     }
-    #productModal > div > div:last-child {
+    .product-modal-right {
         width: 100% !important;
-        padding: 24px !important;
+        padding: 20px 18px 24px !important;
+        overflow-y: visible !important;
+    }
+    .product-modal-title {
+        font-size: 1.2rem !important;
+    }
+    .product-modal-price {
+        font-size: 1.3rem !important;
+        margin-bottom: 12px !important;
+    }
+    .product-modal-actions {
+        flex-direction: column !important;
+        gap: 8px !important;
+        margin-top: 16px !important;
+    }
+    .product-modal-btn {
+        width: 100% !important;
     }
 }
 </style>

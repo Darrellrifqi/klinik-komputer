@@ -13,12 +13,12 @@
 
         <!-- Search Form -->
         <form method="GET" action="{{ route('service.track') }}" style="margin-bottom: 28px;">
-            <div style="display: flex; gap: 8px;">
+            <div class="track-search-wrap" style="display: flex; gap: 8px;">
                 <input type="text" name="ticket_number" class="form-control"
                        value="{{ $ticketNumber ?? '' }}"
                        placeholder="Nomor Tiket Servis..."
                        style="flex: 1; font-size: 0.95rem; font-family: monospace;">
-                <button type="submit" class="btn btn-primary">Lacak Unit</button>
+                <button type="submit" class="btn btn-primary" style="white-space: nowrap;">Lacak Unit</button>
             </div>
         </form>
 
@@ -71,8 +71,6 @@
                 </div>
                 <span class="badge badge-{{ $ticket->status_color }}" style="padding: 6px 12px;">
                     {{ $ticket->full_status_label }}
-                </span>
-            </div>
                 </span>
             </div>
 
@@ -173,6 +171,34 @@
     .progress-steps-wrap .step-item.active .step-label {
         color: var(--primary, #5f8a63);
     }
+
+    @media (max-width: 768px) {
+        .track-search-wrap {
+            flex-direction: column !important;
+        }
+        .track-search-wrap button {
+            width: 100% !important;
+        }
+        .progress-steps-scroll-container {
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch !important;
+            padding-bottom: 12px !important;
+            margin-bottom: 16px !important;
+        }
+        .progress-steps-wrap {
+            min-width: 640px !important;
+            margin: 16px 0 20px 0 !important;
+        }
+        .track-info-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+        }
+        .card {
+            padding: 16px !important;
+        }
+    }
 </style>
 
             <!-- Progress Steps -->
@@ -202,19 +228,21 @@
             @endphp
 
             @if($ticket->status !== 'cancelled')
-            <div class="progress-steps-wrap">
-                <div class="progress-track-line-bg"></div>
-                <div class="progress-track-line-fill" style="width: calc({{ $fillPercent }}% * 0.8);"></div>
-                @foreach($steps as $i => $step)
-                <div class="step-item {{ $currentStep > $i ? 'done' : ($currentStep === $i+1 ? 'active' : '') }}">
-                    <div class="step-circle">
-                        @if($currentStep > $i) &check;
-                        @else {{ $i+1 }}
-                        @endif
+            <div class="progress-steps-scroll-container">
+                <div class="progress-steps-wrap">
+                    <div class="progress-track-line-bg"></div>
+                    <div class="progress-track-line-fill" style="width: calc({{ $fillPercent }}% * 0.8);"></div>
+                    @foreach($steps as $i => $step)
+                    <div class="step-item {{ $currentStep > $i ? 'done' : ($currentStep === $i+1 ? 'active' : '') }}">
+                        <div class="step-circle">
+                            @if($currentStep > $i) &check;
+                            @else {{ $i+1 }}
+                            @endif
+                        </div>
+                        <div class="step-label">{{ $step['label'] }}</div>
                     </div>
-                    <div class="step-label">{{ $step['label'] }}</div>
+                    @endforeach
                 </div>
-                @endforeach
             </div>
             @if($ticket->sub_status_label)
             <div style="text-align: center; margin-top: -18px; margin-bottom: 24px;">
@@ -232,7 +260,7 @@
             <!-- Unit Info & Dropoff Schedule -->
             <div style="background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px;">
                 <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Informasi Unit & Penyerahan</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.82rem;">
+                <div class="track-info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.82rem;">
                     <div><span style="color: var(--text-muted);">Nama:</span> <strong>{{ $ticket->customer_name }}</strong></div>
                     <div><span style="color: var(--text-muted);">Tipe:</span> <strong>{{ strtoupper($ticket->unit_type) }}</strong></div>
                     <div><span style="color: var(--text-muted);">Merek & Model:</span> <strong>{{ $ticket->brand }} {{ $ticket->model }}</strong></div>
@@ -244,7 +272,7 @@
             @if($ticket->start_check_date)
             <div style="background: var(--bg-alt); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 14px; margin-bottom: 12px;">
                 <div style="font-size: 0.65rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Laporan Pengecekan</div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.82rem;">
+                <div class="track-info-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.82rem;">
                     <div><span style="color: var(--text-muted);">Mulai Pemeriksaan:</span> <strong>{{ $ticket->start_check_date->format('d M Y') }}</strong></div>
                     <div><span style="color: var(--text-muted);">Teknisi PJ:</span> <strong>{{ $ticket->pic_name ?? '-' }}</strong></div>
                 </div>

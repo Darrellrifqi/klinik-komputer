@@ -218,6 +218,32 @@
         </div>
 
         @if($students->count() > 0)
+        <style>
+            @media (max-width: 768px) {
+                #studentsGrid {
+                    gap: 0 !important;
+                    padding: 12px 0 20px 0 !important;
+                    scroll-snap-type: x mandatory !important;
+                    width: 100% !important;
+                }
+                #studentsGrid .student-card {
+                    flex: 0 0 100% !important;
+                    width: 100% !important;
+                    min-width: 100% !important;
+                    max-width: 100% !important;
+                    scroll-snap-align: center !important;
+                    scroll-snap-stop: always !important;
+                    box-sizing: border-box !important;
+                }
+                #prevPklBtn {
+                    left: 6px !important;
+                }
+                #nextPklBtn {
+                    right: 6px !important;
+                }
+            }
+        </style>
+
         <!-- Students Carousel Wrapper -->
         <div style="position: relative;">
             <!-- Carousel Navigation Arrows -->
@@ -337,7 +363,10 @@ window.updatePklCarouselArrows = function() {
 window.scrollPklCarousel = function(direction) {
     const grid = document.getElementById('studentsGrid');
     if (grid) {
-        const scrollStep = (270 * 2) * direction;
+        const firstCard = grid.querySelector('.student-card');
+        const cardWidth = firstCard ? firstCard.offsetWidth : 270;
+        const isMobile = window.innerWidth <= 768;
+        const scrollStep = isMobile ? (cardWidth * direction) : ((cardWidth + 18) * 2 * direction);
         grid.scrollBy({ left: scrollStep, behavior: 'smooth' });
         setTimeout(updatePklCarouselArrows, 350);
     }

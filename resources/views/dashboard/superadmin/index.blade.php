@@ -8,14 +8,55 @@
 @endsection
 
 @section('content')
+
+<style>
+    .superadmin-stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 24px;
+        align-items: stretch;
+    }
+    .superadmin-charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 20px;
+        margin-bottom: 24px;
+    }
+    .superadmin-stat-card {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    @media (max-width: 768px) {
+        .dashboard-content {
+            padding: 10px 12px !important;
+        }
+        .superadmin-stats-grid {
+            gap: 10px !important;
+            margin-bottom: 10px !important;
+        }
+        .superadmin-charts-grid {
+            grid-template-columns: 1fr !important;
+            gap: 10px !important;
+            margin-bottom: 12px !important;
+        }
+        .superadmin-stat-card {
+            padding: 14px 16px !important;
+        }
+    }
+</style>
+
 {{-- Include Chart.js --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 {{-- 1. Stat Cards Row --}}
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 24px; align-items: stretch;">
+<div class="superadmin-stats-grid">
     
     <!-- Group 1: Layanan Servis -->
-    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div class="dash-card superadmin-stat-card">
         <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); min-height: 24px; display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
             <span style="width: 6px; height: 6px; background: var(--primary); border-radius: 50%; flex-shrink: 0;"></span>
             <span>Layanan Servis</span>
@@ -44,7 +85,7 @@
     </div>
 
     <!-- Group 2: Pengadaan Sekolah -->
-    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div class="dash-card superadmin-stat-card">
         <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--accent); min-height: 24px; display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
             <span style="width: 6px; height: 6px; background: var(--accent); border-radius: 50%; flex-shrink: 0;"></span>
             <span>Pengadaan Sekolah</span>
@@ -73,7 +114,7 @@
     </div>
 
     <!-- Group 3: Pengguna & Produk -->
-    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div class="dash-card superadmin-stat-card">
         <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--info); min-height: 24px; display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
             <span style="width: 6px; height: 6px; background: var(--info); border-radius: 50%; flex-shrink: 0;"></span>
             <span>Pengguna & Produk</span>
@@ -97,7 +138,7 @@
     </div>
 
     <!-- Group 4: Internship & PKL Sekolah -->
-    <div class="dash-card" style="padding: 20px; display: flex; flex-direction: column; justify-content: space-between;">
+    <div class="dash-card superadmin-stat-card">
         <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #8b5cf6; min-height: 24px; display: flex; align-items: center; gap: 6px; margin-bottom: 14px;">
             <span style="width: 6px; height: 6px; background: #8b5cf6; border-radius: 50%; flex-shrink: 0;"></span>
             <span>Internship Sekolah</span>
@@ -122,7 +163,7 @@
 </div>
 
 {{-- 2. Monitoring Charts Section --}}
-<div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px; margin-bottom: 24px;">
+<div class="superadmin-charts-grid">
     
     {{-- Daily Demand Trend Line Chart --}}
     <div class="card" style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 22px;">

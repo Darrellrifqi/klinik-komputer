@@ -113,7 +113,147 @@
 @endsection
 
 @section('content')
-<!-- Stats -->
+
+<style>
+    @media (max-width: 768px) {
+        .dashboard-content {
+            padding: 10px 12px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+
+        /* 1. Hero Profile Card */
+        .member-profile-header {
+            background: #ffffff !important;
+            border: 1px solid var(--border) !important;
+            border-radius: 12px !important;
+            padding: 12px 14px !important;
+            margin-bottom: 12px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 10px !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02) !important;
+        }
+        .member-profile-header .user-contact-info {
+            margin-left: 0 !important;
+            display: block !important;
+            margin-top: 2px !important;
+            word-break: break-word !important;
+            font-size: 0.7rem !important;
+        }
+
+        /* 2. Equal 2-Column Stats Grid */
+        .stats-grid {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+            margin-bottom: 14px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .stat-card {
+            padding: 10px 12px !important;
+            gap: 8px !important;
+            border-radius: 10px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+        }
+        .stat-card-membership {
+            display: none !important; /* Hide redundant 3rd card on mobile so 2 main stats form a clean 50-50 grid */
+        }
+        .stat-icon {
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+        }
+        .stat-info .stat-num {
+            font-size: 1.15rem !important;
+        }
+        .stat-info .stat-label {
+            font-size: 0.62rem !important;
+        }
+
+        /* 3. Member Benefits Grid */
+        .member-benefits-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            margin-bottom: 16px !important;
+        }
+        .member-benefits-grid > div {
+            padding: 14px !important;
+            border-radius: 12px !important;
+        }
+        .quota-slots-grid {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 6px !important;
+        }
+
+        /* 4. Non-Member Upgrade Banner */
+        .non-member-banner {
+            flex-direction: column !important;
+            text-align: center !important;
+            padding: 12px 14px !important;
+            gap: 10px !important;
+            border-radius: 10px !important;
+        }
+        .non-member-banner a {
+            width: 100% !important;
+            text-align: center !important;
+        }
+    }
+</style>
+
+<!-- Flash Notifications -->
+@if(session('success'))
+<div class="alert alert-success" style="margin-bottom: 14px; border-radius: 8px;">{{ session('success') }}</div>
+@endif
+@if(session('error'))
+<div class="alert alert-error" style="margin-bottom: 14px; border-radius: 8px;">{{ session('error') }}</div>
+@endif
+
+@php
+    $registeredSn = $regularKits->first()?->axioo_serial_number;
+@endphp
+
+{{-- 1. Hero User Profile Card --}}
+<div class="member-profile-header" style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <div style="width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light); color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; background: linear-gradient(135deg, var(--primary), #15803d);">
+            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+        </div>
+        <div>
+            <div style="font-size: 0.9rem; font-weight: 800; color: var(--text-primary);">
+                Selamat datang, {{ auth()->user()->name }}
+            </div>
+            <div class="user-contact-info" style="font-size: 0.73rem; color: var(--text-muted); margin-top: 1px;">
+                ({{ auth()->user()->phone ?? 'Belum ada No. HP' }} &bull; {{ auth()->user()->email }})
+            </div>
+        </div>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+        @if(!empty($registeredSn))
+            <span class="badge" style="padding: 5px 12px; font-size: 0.75rem; border-radius: 6px; font-weight: 800; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-family: monospace; letter-spacing: 0.04em;">
+                SN TERDAFTAR: {{ $registeredSn }}
+            </span>
+        @elseif($isPengadaan || $isUmum)
+            <span class="badge badge-success" style="padding: 5px 12px; font-size: 0.75rem; border-radius: 6px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;">
+                {{ $userPlanBadge }}
+            </span>
+        @else
+            <span class="badge badge-primary" style="padding: 4px 10px; font-size: 0.68rem; border-radius: 6px; font-weight: 700; background: var(--bg-alt); color: var(--text-muted); border: 1px solid var(--border);">
+                Non-Member
+            </span>
+        @endif
+    </div>
+</div>
+
+<!-- 2. Equal Stats Grid -->
 <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); margin-bottom: 20px;">
     <div class="stat-card">
         <div class="stat-icon green">
@@ -139,7 +279,7 @@
         </div>
     </div>
     @if($isPengadaan)
-    <div class="stat-card">
+    <div class="stat-card stat-card-membership">
         <div class="stat-icon green">
             <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
@@ -153,10 +293,7 @@
         </div>
     </div>
     @elseif($isUmum)
-    @php
-        $registeredSn = $regularKits->first()?->axioo_serial_number;
-    @endphp
-    <div class="stat-card">
+    <div class="stat-card stat-card-membership">
         <div class="stat-icon green">
             <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
@@ -172,7 +309,7 @@
         </div>
     </div>
     @else
-    <div class="stat-card">
+    <div class="stat-card stat-card-membership">
         <div class="stat-icon blue">
             <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -187,47 +324,6 @@
     @endif
 </div>
 
-<!-- Flash Notifications -->
-    @if(session('success'))
-    <div class="alert alert-success" style="margin-bottom: 20px; border-radius: 8px;">{{ session('success') }}</div>
-    @endif
-    @if(session('error'))
-    <div class="alert alert-error" style="margin-bottom: 20px; border-radius: 8px;">{{ session('error') }}</div>
-    @endif
-
-    {{-- User Profile Header Badge --}}
-    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 12px 18px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 10px;">
-            <div style="width: 32px; height: 32px; border-radius: 50%; background: var(--bg-alt); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; border: 1px solid var(--border);">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
-            </div>
-            <div>
-                <span style="font-size: 0.88rem; font-weight: 700; color: var(--text-primary);">
-                    Selamat datang, {{ auth()->user()->name }}
-                </span>
-                <span style="font-size: 0.75rem; color: var(--text-muted); margin-left: 8px;">
-                    ({{ auth()->user()->phone ?? 'Belum ada No. HP' }} &bull; {{ auth()->user()->email }})
-                </span>
-            </div>
-        </div>
-
-        <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-            @if(!empty($registeredSn))
-                <span class="badge" style="padding: 6px 14px; font-size: 0.78rem; border-radius: 6px; font-weight: 800; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-family: monospace; letter-spacing: 0.04em;">
-                    SN TERDAFTAR: {{ $registeredSn }}
-                </span>
-            @elseif($isPengadaan || $isUmum)
-                <span class="badge badge-success" style="padding: 6px 14px; font-size: 0.78rem; border-radius: 6px; font-weight: 800; letter-spacing: 0.04em; text-transform: uppercase;">
-                    {{ $userPlanBadge }}
-                </span>
-            @else
-                <span class="badge badge-primary" style="padding: 3px 8px; font-size: 0.68rem; border-radius: 6px; font-weight: 700; background: var(--bg-alt); color: var(--text-muted); border: 1px solid var(--border);">
-                    Non-Member
-                </span>
-            @endif
-        </div>
-    </div>
-
 {{-- Member Benefit Cards: Deep Care Cleaning & Essential Instalasi OS --}}
 @if($isPengadaan || $isUmum)
 @php
@@ -239,7 +335,7 @@
     $osQuotaFull   = $osInstallCount >= $osQuotaMax;
 @endphp
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px;">
+<div class="member-benefits-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-bottom: 24px;">
 
     <!-- Benefit Bar 1: Cleaning -->
     <div style="position: relative; background: #ffffff; border: 1px solid var(--border); border-radius: 14px; padding: 20px 22px; box-shadow: 0 4px 18px rgba(0,0,0,0.03); overflow: hidden; display: flex; flex-direction: column; justify-content: space-between;">
@@ -271,7 +367,7 @@
             </div>
 
             {{-- Dynamic Quota Slot Cards --}}
-            <div style="display: grid; grid-template-columns: repeat({{ min($cleaningQuotaMax, 4) }}, 1fr); gap: 10px; margin-bottom: 8px;">
+            <div class="quota-slots-grid" style="display: grid; grid-template-columns: repeat({{ min($cleaningQuotaMax, 4) }}, 1fr); gap: 10px; margin-bottom: 8px;">
                 @for($i = 1; $i <= $cleaningQuotaMax; $i++)
                     @php $isDone = $tuneUpCount >= $i; @endphp
                     <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $isDone ? 'rgba(95,138,99,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $isDone ? 'var(--primary)' : 'var(--border)' }}; transition: all 0.3s ease;">
@@ -332,7 +428,7 @@
             </div>
 
             {{-- Dynamic Quota Slot Cards --}}
-            <div style="display: grid; grid-template-columns: repeat({{ min($osQuotaMax, 4) }}, 1fr); gap: 10px; margin-bottom: 8px;">
+            <div class="quota-slots-grid" style="display: grid; grid-template-columns: repeat({{ min($osQuotaMax, 4) }}, 1fr); gap: 10px; margin-bottom: 8px;">
                 @for($j = 1; $j <= $osQuotaMax; $j++)
                     @php $isOsDone = $osInstallCount >= $j; @endphp
                     <div style="position: relative; border-radius: 10px; overflow: hidden; background: {{ $isOsDone ? 'rgba(59,130,246,0.07)' : 'var(--bg-alt)' }}; border: 1.5px solid {{ $isOsDone ? '#2563eb' : 'var(--border)' }}; transition: all 0.3s ease;">
@@ -366,7 +462,7 @@
 </div>
 
 @else
-<div style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+<div class="non-member-banner" style="background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 16px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
     <div style="font-size: 0.78rem; color: var(--text-secondary);">
         💡 <strong style="color: var(--text-primary);">Ingin benefit 2x Deep Care Cleaning &amp; 2x Essential OS gratis per tahun?</strong> Hubungi CS untuk pendaftaran Member Umum.
     </div>

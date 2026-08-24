@@ -28,7 +28,27 @@
 @endsection
 
 @section('content')
-<div style="height: calc(100vh - 180px); display: flex; flex-direction: column;" class="dash-card">
+
+<style>
+    @media (max-width: 768px) {
+        .dashboard-content {
+            padding: 8px !important;
+        }
+        .cust-chat-container {
+            height: calc(100vh - 130px) !important;
+            border-radius: 8px !important;
+            overflow: hidden !important;
+        }
+        #chatMessages {
+            padding: 12px !important;
+        }
+        #chatMessages > div {
+            max-width: 88% !important;
+        }
+    }
+</style>
+
+<div style="height: calc(100vh - 180px); display: flex; flex-direction: column;" class="dash-card cust-chat-container">
     <div class="dash-card-header" style="padding: 14px 20px; border-bottom: 1px solid var(--border); background: #fff; display: flex; align-items: center; justify-content: space-between;">
         <div style="display: flex; align-items: center; gap: 12px;">
             <div style="width: 40px; height: 40px; border-radius: 50%; background: rgba(95, 138, 99, 0.1); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.1rem;">

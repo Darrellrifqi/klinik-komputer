@@ -8,17 +8,146 @@
 @endsection
 
 @section('topbar_actions')
-<a href="{{ route('dashboard.cs.create') }}" class="btn btn-primary btn-sm">Buat Tiket</a>
+<a href="{{ route('dashboard.cs.create') }}" class="btn btn-primary btn-sm">+ Buat Tiket</a>
 @endsection
 
 @section('content')
 
+<style>
+    /* Default Desktop Layout Styles */
+    .cs-stats-grid-top {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+    .cs-stats-grid-bottom {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+    }
+    .cs-desktop-table-wrap {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+    }
+    .cs-mobile-ticket-list {
+        display: none;
+    }
+
+    /* Dedicated Mobile HP Layout Styles (<= 768px) */
+    @media (max-width: 768px) {
+        .topbar-title h2,
+        .topbar-title p,
+        .topbar-actions .btn-primary {
+            display: none !important;
+        }
+
+        .dashboard-content {
+            padding: 10px 12px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            box-sizing: border-box !important;
+            overflow-x: hidden !important;
+        }
+
+        /* 1. Mobile Stat Cards */
+        .cs-stats-grid-top {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+        }
+        .cs-stats-grid-bottom {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 8px !important;
+        }
+        .cs-stats-grid-bottom > div:last-child {
+            grid-column: 1 / -1 !important; /* Make 3rd card span full width on row 2 */
+        }
+        .cs-stat-card-item {
+            padding: 8px 10px !important;
+            gap: 8px !important;
+            border-radius: 8px !important;
+        }
+
+        /* 2. Hide Desktop Table & Show Mobile Ticket Cards */
+        .cs-desktop-table-wrap {
+            display: none !important;
+        }
+        .cs-mobile-ticket-list {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 10px !important;
+            padding: 10px !important;
+        }
+
+        /* Mobile Card Styling */
+        .cs-mobile-ticket-card {
+            background: #ffffff !important;
+            border: 1px solid var(--border-light) !important;
+            border-radius: 10px !important;
+            padding: 12px 14px !important;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 8px !important;
+        }
+        .cs-m-card-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            border-bottom: 1px dashed var(--border-light) !important;
+            padding-bottom: 6px !important;
+        }
+        .cs-m-ticket-num {
+            font-family: monospace !important;
+            font-weight: 800 !important;
+            color: var(--primary) !important;
+            font-size: 0.88rem !important;
+        }
+        .cs-m-card-body {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 4px !important;
+            font-size: 0.8rem !important;
+        }
+        .cs-m-customer-name {
+            font-weight: 700 !important;
+            color: var(--text-primary) !important;
+            font-size: 0.88rem !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            flex-wrap: wrap !important;
+        }
+        .cs-m-unit-info {
+            color: var(--text-secondary) !important;
+            font-size: 0.78rem !important;
+        }
+        .cs-m-meta {
+            font-size: 0.72rem !important;
+            color: var(--text-muted) !important;
+        }
+        .cs-m-card-footer {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            border-top: 1px solid var(--border-light) !important;
+            padding-top: 8px !important;
+            margin-top: 4px !important;
+        }
+        .cs-m-actions {
+            display: flex !important;
+            gap: 6px !important;
+            align-items: center !important;
+        }
+    }
+</style>
+
 {{-- ════════ STATS ════════ --}}
 <div style="margin-bottom: 20px; display: flex; flex-direction: column; gap: 12px;">
-    {{-- Baris 1: 4 Kolom --}}
-    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+    {{-- Baris 1: 4 Kolom di Desktop / 2 Kolom di Mobile --}}
+    <div class="cs-stats-grid-top">
         {{-- Menunggu Unit --}}
-        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+        <div class="cs-stat-card-item" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
             <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(234, 179, 8, 0.12); color: #d97706;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
@@ -32,7 +161,7 @@
         </div>
 
         {{-- Antrian Servis --}}
-        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+        <div class="cs-stat-card-item" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
             <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(2, 132, 199, 0.12); color: #0284c7;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
@@ -45,7 +174,7 @@
         </div>
 
         {{-- Pengecekan Teknisi --}}
-        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+        <div class="cs-stat-card-item" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
             <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(59, 130, 246, 0.12); color: #2563eb;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="11" cy="11" r="8"></circle>
@@ -59,7 +188,7 @@
         </div>
 
         {{-- Konfirmasi User --}}
-        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+        <div class="cs-stat-card-item" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
             <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(139, 92, 246, 0.12); color: #7c3aed;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
@@ -72,10 +201,10 @@
         </div>
     </div>
 
-    {{-- Baris 2: 3 Kolom --}}
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+    {{-- Baris 2: 3 Kolom di Desktop / 2 Kolom + 1 Full Width di Mobile --}}
+    <div class="cs-stats-grid-bottom">
         {{-- Menunggu Sparepart --}}
-        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+        <div class="cs-stat-card-item" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
             <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(245, 158, 11, 0.12); color: #d97706;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
@@ -90,7 +219,7 @@
         </div>
 
         {{-- Proses Service --}}
-        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+        <div class="cs-stat-card-item" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
             <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(100, 116, 139, 0.12); color: #475569;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
@@ -103,7 +232,7 @@
         </div>
 
         {{-- Selesai --}}
-        <div style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
+        <div class="cs-stat-card-item" style="padding: 10px 12px; display: flex; align-items: center; gap: 10px; border-radius: 8px; background: var(--bg-card); border: 1px solid var(--border);">
             <div style="width: 34px; height: 34px; min-width: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: rgba(22, 163, 74, 0.12); color: #16a34a;">
                 <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
@@ -131,24 +260,27 @@
                 <a href="{{ route('dashboard.cs.create') }}" class="btn btn-outline btn-sm" style="font-size: 0.72rem; padding: 3px 8px;">+ Buat Tiket</a>
             @endif
         </div>
+
         <div class="dash-card-body" style="padding: 0;">
             @if($group['tickets']->count() > 0)
-            <div class="table-wrap">
-                <table>
+
+            {{-- 1. DESKTOP FULL TABLE VIEW --}}
+            <div class="cs-desktop-table-wrap">
+                <table style="width: 100%; border-collapse: collapse;">
                     <thead>
                         <tr>
-                            <th style="padding: 8px 14px; font-size: 0.72rem;">No. Tiket / Antrian</th>
-                            <th style="padding: 8px 14px; font-size: 0.72rem;">Customer</th>
-                            <th style="padding: 8px 14px; font-size: 0.72rem;">Unit Perangkat</th>
-                            <th style="padding: 8px 14px; font-size: 0.72rem;">Teknisi PJ</th>
-                            <th style="padding: 8px 14px; font-size: 0.72rem;">Status Rinci</th>
-                            <th style="padding: 8px 14px; font-size: 0.72rem;">Dibuat</th>
-                            <th style="padding: 8px 14px; font-size: 0.72rem;">Aksi</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem; text-align: left; background: var(--bg-alt); border-bottom: 1px solid var(--border);">No. Tiket / Antrian</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem; text-align: left; background: var(--bg-alt); border-bottom: 1px solid var(--border);">Customer</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem; text-align: left; background: var(--bg-alt); border-bottom: 1px solid var(--border);">Unit Perangkat</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem; text-align: left; background: var(--bg-alt); border-bottom: 1px solid var(--border);">Teknisi PJ</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem; text-align: left; background: var(--bg-alt); border-bottom: 1px solid var(--border);">Status Rinci</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem; text-align: left; background: var(--bg-alt); border-bottom: 1px solid var(--border);">Dibuat</th>
+                            <th style="padding: 8px 14px; font-size: 0.72rem; text-align: left; background: var(--bg-alt); border-bottom: 1px solid var(--border);">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach($group['tickets'] as $ticket)
-                        <tr>
+                        <tr style="border-bottom: 1px solid var(--border-light);">
                             <td style="padding: 8px 14px;">
                                 <div style="font-family:monospace; font-weight:700; color:var(--primary); font-size:0.85rem;">{{ $ticket->ticket_number }}</div>
                                 @if($ticket->airtable_service_number)
@@ -207,6 +339,50 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- 2. DEDICATED MOBILE TICKET CARDS LIST --}}
+            <div class="cs-mobile-ticket-list">
+                @foreach($group['tickets'] as $ticket)
+                <div class="cs-mobile-ticket-card">
+                    <div class="cs-m-card-header">
+                        <div>
+                            <span class="cs-m-ticket-num">{{ $ticket->ticket_number }}</span>
+                            <span style="font-size:0.7rem; color:var(--text-muted); margin-left:6px;">#{{ $ticket->queue_number }}</span>
+                        </div>
+                        <span class="badge badge-{{ $ticket->status_color }}" style="font-size:0.68rem; padding:2px 8px;">{{ $ticket->sub_status_label ?? $ticket->status_label }}</span>
+                    </div>
+                    <div class="cs-m-card-body">
+                        <div class="cs-m-customer-name">
+                            <span>{{ $ticket->customer_name }}</span>
+                            @if($ticket->is_member)
+                                <span class="badge" style="background:{{ $ticket->member_badge_bg }}; color:#fff; font-size:0.58rem; padding:1px 5px; border-radius:3px;">{{ $ticket->member_type_label }}</span>
+                            @endif
+                        </div>
+                        <div class="cs-m-meta">{{ $ticket->customer_phone }}</div>
+                        <div class="cs-m-unit-info" style="margin-top: 4px; font-weight: 600;">
+                            {{ $ticket->brand }} {{ $ticket->model }} <small>({{ $ticket->unit_type }})</small>
+                        </div>
+                        @if($ticket->dropoff_schedule)
+                            <div style="font-size:0.72rem; color:var(--primary); font-weight:600; margin-top:2px;">
+                                Penyerahan: {{ $ticket->dropoff_schedule }}
+                            </div>
+                        @endif
+                    </div>
+                    <div class="cs-m-card-footer">
+                        <span class="cs-m-meta">PJ: <strong>{{ $ticket->technician?->name ?? '—' }}</strong></span>
+                        <div class="cs-m-actions">
+                            <a href="{{ route('dashboard.cs.show', $ticket) }}" class="btn btn-outline btn-sm" style="padding: 3px 8px; font-size: 0.75rem;">Detail</a>
+                            <form action="{{ route('dashboard.cs.tickets.destroy', $ticket) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus tiket {{ $ticket->ticket_number }} ini?');" style="margin: 0;">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm" style="padding: 3px 8px; font-size: 0.75rem;">Hapus</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+
             @else
             <div style="padding: 8px 14px; color: var(--text-muted); font-size: 0.8rem; font-style: italic; background: var(--bg);">
                 Tidak ada tiket pada status ini.

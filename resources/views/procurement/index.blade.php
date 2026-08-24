@@ -48,7 +48,111 @@
     <!-- Form Section -->
     <section class="section">
         <div class="section-inner" style="max-width: 900px;">
-            <div style="display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start;">
+            
+            <style>
+                .procurement-main-grid {
+                    display: grid;
+                    grid-template-columns: minmax(0, 1fr) 340px;
+                    gap: 32px;
+                    align-items: start;
+                }
+                .procurement-form-row {
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    gap: 14px;
+                }
+                .procurement-category-box {
+                    margin-bottom: 18px;
+                    padding: 14px 18px;
+                    background: var(--bg-alt);
+                    border-radius: 10px;
+                    border: 1px solid var(--border-light);
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    gap: 12px;
+                }
+                .procurement-add-row-wrap {
+                    display: flex;
+                    align-items: center;
+                    flex-wrap: wrap;
+                    gap: 10px;
+                    margin-bottom: 0;
+                }
+
+                @media (max-width: 768px) {
+                    .procurement-main-grid {
+                        grid-template-columns: 1fr !important;
+                        gap: 24px !important;
+                    }
+                    .procurement-form-row {
+                        grid-template-columns: 1fr !important;
+                        gap: 10px !important;
+                    }
+                    .procurement-category-box {
+                        flex-direction: column !important;
+                        align-items: flex-start !important;
+                    }
+                    .procurement-category-box > div:last-child {
+                        width: 100% !important;
+                        display: flex !important;
+                        justify-content: space-between !important;
+                    }
+                    .procurement-add-row-wrap {
+                        flex-direction: column !important;
+                        align-items: flex-start !important;
+                    }
+                    .procurement-add-row-wrap span {
+                        margin-left: 0 !important;
+                    }
+                    .card {
+                        padding: 16px !important;
+                    }
+                    .procurement-sidebar-sticky {
+                        position: static !important;
+                    }
+                    .table-wrap {
+                        border: none !important;
+                        background: transparent !important;
+                        overflow: visible !important;
+                    }
+                    #itemsTable {
+                        min-width: 100% !important;
+                        width: 100% !important;
+                        display: block !important;
+                    }
+                    #itemsTable thead {
+                        display: none !important;
+                    }
+                    #itemsTable tbody {
+                        display: flex !important;
+                        flex-direction: column !important;
+                        gap: 12px !important;
+                    }
+                    #itemsTable tr.item-row {
+                        display: flex !important;
+                        flex-direction: column !important;
+                        background: var(--bg-alt) !important;
+                        padding: 14px !important;
+                        border-radius: 10px !important;
+                        border: 1px solid var(--border-light) !important;
+                        gap: 10px !important;
+                    }
+                    #itemsTable td {
+                        display: block !important;
+                        width: 100% !important;
+                        padding: 0 !important;
+                    }
+                    #itemsTable td:last-child {
+                        display: flex !important;
+                        justify-content: flex-end !important;
+                        margin-top: 4px !important;
+                    }
+                }
+            </style>
+
+            <div class="procurement-main-grid">
 
                 <!-- Form -->
                 <div>
@@ -83,7 +187,7 @@
                                 @error('school_name')<span class="form-error">{{ $message }}</span>@enderror
                             </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                            <div class="procurement-form-row">
                                 <div class="form-group">
                                     <label class="form-label">Jenis Institusi <span>*</span></label>
                                     <select name="school_type" class="form-control" required>
@@ -121,7 +225,7 @@
                                 <p style="font-size: 0.8rem; color: var(--text-muted);">Penanggung jawab pengadaan dari pihak sekolah. Kami akan menghubungi melalui WhatsApp.</p>
                             </div>
 
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                            <div class="procurement-form-row">
                                 <div class="form-group">
                                     <label class="form-label">Nama Lengkap PIC <span>*</span></label>
                                     <input type="text" name="pic_name" class="form-control"
@@ -166,7 +270,7 @@
                             </div>
 
                             <!-- Opsi Pilih Kategori Pengadaan: Retail vs TKDN -->
-                            <div style="margin-bottom: 18px; padding: 14px 18px; background: var(--bg-alt); border-radius: 10px; border: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                            <div class="procurement-category-box">
                                 <div>
                                     <label style="font-size: 0.85rem; font-weight: 700; color: var(--text-primary); margin: 0; display: flex; align-items: center; gap: 6px;">
                                         Kategori / Lisensi Pengadaan Unit:
@@ -246,12 +350,12 @@
                             @endif
 
                             <!-- Items Multi-Row Table -->
-                            <div class="table-wrap" style="margin-bottom: 16px; border: 1px solid var(--border-light); border-radius: 8px; overflow: visible;">
+                            <div class="table-wrap" style="margin-bottom: 16px; border: 1px solid var(--border-light); border-radius: 8px;">
                                 <table style="width: 100%; border-collapse: collapse;" id="itemsTable">
                                     <thead>
                                         <tr style="background: var(--bg-alt); text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; color: var(--text-muted); border-bottom: 1px solid var(--border);">
-                                            <th style="padding: 10px 14px; text-align: left; width: 62%;">Nama / Model Unit Laptop <span style="color:var(--danger);">*</span></th>
-                                            <th style="padding: 10px 14px; text-align: left; width: 26%;">Total Unit <span style="color:var(--danger);">*</span></th>
+                                            <th style="padding: 10px 14px; text-align: left; width: 60%;">Nama / Model Unit Laptop <span style="color:var(--danger);">*</span></th>
+                                            <th style="padding: 10px 14px; text-align: left; width: 28%;">Total Unit <span style="color:var(--danger);">*</span></th>
                                             <th style="padding: 10px 14px; text-align: center; width: 12%;">Aksi</th>
                                         </tr>
                                     </thead>
@@ -261,12 +365,12 @@
                                             <td style="padding: 10px 14px;">
                                                 <input type="text" name="items[0][model]" class="form-control item-model-input"
                                                        list="retailLaptopModelsDatalist"
-                                                       placeholder="Ketik untuk mencari seri Retail (misal: Hype 5)..."
+                                                       placeholder="Ketik seri Retail (misal: Hype 5)..."
                                                        required style="padding: 10px; font-size: 0.88rem; border-radius: 6px;">
                                             </td>
                                             <td style="padding: 10px 14px;">
                                                 <input type="number" name="items[0][units]" class="form-control item-units-input"
-                                                       placeholder="Contoh: 20" min="1" max="10000" required
+                                                       placeholder="Jumlah unit..." min="1" max="10000" required
                                                        style="padding: 10px; font-size: 0.88rem; border-radius: 6px;"
                                                        oninput="calculateGrandTotal()">
                                             </td>
@@ -281,7 +385,7 @@
                             </div>
 
                             <!-- Add Row Button -->
-                            <div style="margin-bottom: 0;">
+                            <div class="procurement-add-row-wrap">
                                 <style>
                                     .btn-add-unit {
                                         display: inline-flex;
@@ -308,7 +412,7 @@
                                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                                     Tambah Unit Lainnya
                                 </button>
-                                <span style="font-size: 0.76rem; color: var(--text-muted); margin-left: 10px;">Klik untuk menambahkan jenis unit laptop kedua/lainnya.</span>
+                                <span style="font-size: 0.76rem; color: var(--text-muted);">Klik untuk menambahkan jenis unit laptop kedua/lainnya.</span>
                             </div>
                         </div>
 
@@ -337,7 +441,7 @@
                 </div>
 
                 <!-- Sidebar Info -->
-                <div style="position: sticky; top: 84px;">
+                <div class="procurement-sidebar-sticky" style="position: sticky; top: 84px;">
                     <!-- Benefit Garansi Pengadaan -->
                     <div class="card" style="margin-bottom: 16px; background: #ffffff; border: 1px solid var(--border-light); border-radius: 12px; padding: 18px 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
                         <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); margin-bottom: 12px;">Benefit Garansi Pengadaan</div>
@@ -637,7 +741,7 @@
 <script>
     let itemRowIndex = 1;
     let currentDatalistId = 'retailLaptopModelsDatalist';
-    let currentPlaceholder = 'Ketik untuk mencari seri Retail (misal: Hype 5)...';
+    let currentPlaceholder = 'Ketik seri Retail (misal: Hype 5)...';
 
     function toggleTkdnMode(isTkdn) {
         const retailList  = document.getElementById('retailAvailableList');
@@ -646,7 +750,7 @@
 
         if (isTkdn) {
             currentDatalistId  = 'tkdnLaptopModelsDatalist';
-            currentPlaceholder = 'Ketik untuk mencari seri TKDN (misal: Chromebook TKDN)...';
+            currentPlaceholder = 'Ketik seri TKDN (misal: Chromebook)...';
             if (retailList) retailList.style.display = 'none';
             if (tkdnList)   tkdnList.style.display   = 'block';
             if (badge) {
@@ -655,7 +759,7 @@
             }
         } else {
             currentDatalistId  = 'retailLaptopModelsDatalist';
-            currentPlaceholder = 'Ketik untuk mencari seri Retail (misal: Hype 5)...';
+            currentPlaceholder = 'Ketik seri Retail (misal: Hype 5)...';
             if (retailList) retailList.style.display = 'block';
             if (tkdnList)   tkdnList.style.display   = 'none';
             if (badge) {

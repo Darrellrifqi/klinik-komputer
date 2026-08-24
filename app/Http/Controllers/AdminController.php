@@ -77,7 +77,7 @@ class AdminController extends Controller
     // User management
     public function users(Request $request)
     {
-        $query = User::whereNot('role', 'superadmin');
+        $query = User::query();
         if ($request->filled('role')) $query->where('role', $request->role);
         if ($request->filled('status')) $query->where('status', $request->status);
         $users = $query->with('laptopKits')->latest()->paginate(20);

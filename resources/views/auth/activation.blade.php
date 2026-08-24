@@ -15,7 +15,7 @@
             @endif
                 
                 {{-- LEFT COLUMN: MEMBERSHIP BENEFITS --}}
-                <div class="card" style="padding: 36px; border: 1px solid var(--border); background: var(--bg-card); box-shadow: var(--shadow-lg);">
+                <div class="card membership-benefits-card" style="padding: 36px; border: 1px solid var(--border); background: var(--bg-card); box-shadow: var(--shadow-lg);">
                     <div style="margin-bottom: 24px;">
                         <span style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--primary); display: inline-block; margin-bottom: 6px;">KLINIK KOMPUTER - PRIORITY MEMBER</span>
                         <h2 style="font-size: 1.45rem; color: var(--text-primary); margin-bottom: 8px; font-weight: 800; line-height: 1.3;">Upgrade Perawatan Perangkatmu, Lebih Hemat & Lebih Prioritas</h2>
@@ -418,6 +418,14 @@
     @media (max-width: 900px) {
         .activation-grid-wrapper {
             grid-template-columns: 1fr !important;
+        }
+    }
+    @media (max-width: 768px) {
+        .membership-benefits-card {
+            display: none !important;
+        }
+        .activation-wrapper-container {
+            padding: 80px 14px 40px !important;
         }
     }
 </style>

@@ -19,10 +19,11 @@
         <form method="GET" style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
             <select name="role" class="form-control" style="width:auto; padding: 6px 12px; font-size:0.8rem;">
                 <option value="">Semua Peran</option>
-                <option value="customer" {{ request('role')==='customer' ? 'selected':'' }}>Customer</option>
-                <option value="cs"       {{ request('role')==='cs'       ? 'selected':'' }}>CS</option>
-                <option value="teknisi"  {{ request('role')==='teknisi'  ? 'selected':'' }}>Teknisi</option>
-                <option value="produksi" {{ request('role')==='produksi' ? 'selected':'' }}>Produksi</option>
+                <option value="customer"   {{ request('role')==='customer'   ? 'selected':'' }}>Customer</option>
+                <option value="cs"         {{ request('role')==='cs'         ? 'selected':'' }}>CS</option>
+                <option value="teknisi"    {{ request('role')==='teknisi'    ? 'selected':'' }}>Teknisi</option>
+                <option value="produksi"   {{ request('role')==='produksi'   ? 'selected':'' }}>Produksi</option>
+                <option value="superadmin" {{ request('role')==='superadmin' ? 'selected':'' }}>Super Admin</option>
             </select>
             <select name="status" class="form-control" style="width:auto; padding: 6px 12px; font-size:0.8rem;">
                 <option value="">Semua Status</option>
@@ -141,7 +142,7 @@
                             @if(auth()->user()->isSuperAdmin() && $user->id !== auth()->id())
                             <form action="{{ route('admin.users.role', $user) }}" method="POST" style="display:inline-block;">
                                 @csrf
-                                <select name="role" onchange="if(confirm('Ubah role {{ $user->name }} menjadi ' + this.options[this.selectedIndex].text + '?')) this.form.submit(); else this.value='{{ $user->role }}';"
+                                <select name="role" data-current-role="{{ $user->role }}" onchange="confirmRoleChange(this, '{{ addslashes($user->name) }}')"
                                         style="font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--primary); background: #ffffff; color: var(--text-primary); cursor: pointer;">
                                     <option value="customer"   {{ $user->role==='customer'   ? 'selected':'' }}>Customer</option>
                                     <option value="cs"         {{ $user->role==='cs'         ? 'selected':'' }}>CS (Staff CS)</option>
@@ -225,6 +226,39 @@ function toggleCreateAccForm() {
         card.style.display = (card.style.display === 'none' || card.style.display === '') ? 'block' : 'none';
         if (card.style.display === 'block') {
             card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+    }
+}
+
+function confirmRoleChange(selectEl, userName) {
+    const selectedText = selectEl.options[selectEl.selectedIndex].text;
+    const oldRole = selectEl.getAttribute('data-current-role');
+    
+    if (selectEl.value === oldRole) return;
+
+    if (typeof Swal !== 'undefined') {
+        Swal.fire({
+            title: 'Konfirmasi Ubah Role',
+            html: `Apakah Anda yakin ingin mengubah role <strong>${userName}</strong> menjadi <span style="color:var(--primary); font-weight:700;">${selectedText}</span>?`,
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#5f8a63',
+            cancelButtonColor: '#64748b',
+            confirmButtonText: 'Ya, Ubah Role',
+            cancelButtonText: 'Batal',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                selectEl.form.submit();
+            } else {
+                selectEl.value = oldRole;
+            }
+        });
+    } else {
+        if (confirm(`Ubah role ${userName} menjadi ${selectedText}?`)) {
+            selectEl.form.submit();
+        } else {
+            selectEl.value = oldRole;
         }
     }
 }
