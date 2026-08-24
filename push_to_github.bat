@@ -1,5 +1,6 @@
 @echo off
 title Push Klinik Komputer to GitHub
+color 0A
 echo ========================================================
 echo   Pushing Klinik Komputer Project to GitHub
 echo   Repository: https://github.com/Darrellrifqi/klinik-komputer.git
@@ -22,12 +23,13 @@ git commit -m "Update program Klinik Komputer"
 
 echo.
 echo [4/4] Pushing to GitHub (main branch)...
-git push -u origin main
+git push origin main
 
 echo.
 echo ========================================================
-echo   Process completed! Check your repository on GitHub:
+echo   Proses Push Berhasil Selesai!
+echo   Cek repository Anda di GitHub:
 echo   https://github.com/Darrellrifqi/klinik-komputer
+echo ========================================================
 echo.
 pause
-
