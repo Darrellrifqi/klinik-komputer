@@ -21,10 +21,10 @@ class RoleMiddleware
                 ->with('error', 'Akun Anda belum diaktifkan atau telah ditolak.');
         }
 
-        if (!in_array($user->role, $roles)) {
-            return redirect()->route('dashboard')->with('error', 'Akses tidak diizinkan.');
+        if ($user->role === 'superadmin' || in_array($user->role, $roles)) {
+            return $next($request);
         }
 
-        return $next($request);
+        return redirect()->route('dashboard')->with('error', 'Akses tidak diizinkan.');
     }
 }
