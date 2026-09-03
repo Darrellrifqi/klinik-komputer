@@ -38,8 +38,11 @@ class User extends Authenticatable
     public function isCustomer(): bool { return $this->role === 'customer'; }
     public function isCs(): bool { return $this->role === 'cs'; }
     public function isTechnician(): bool { return $this->role === 'teknisi'; }
+    public function isTeknisi(): bool { return $this->role === 'teknisi'; }
     public function isProduction(): bool { return $this->role === 'produksi'; }
+    public function isProduksi(): bool { return $this->role === 'produksi'; }
     public function isSuperAdmin(): bool { return $this->role === 'superadmin'; }
+    public function isAdmin(): bool { return $this->role === 'superadmin'; }
     public function isActive(): bool { return $this->status === 'active'; }
 
     public function tickets()

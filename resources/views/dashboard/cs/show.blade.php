@@ -6,7 +6,7 @@
 @section('sidebar_nav')
 @if(auth()->user()->isSuperAdmin())
     @include('dashboard.superadmin.sidebar')
-@elseif(auth()->user()->isTeknisi())
+@elseif(auth()->user()->isTechnician())
     @include('dashboard.teknisi.sidebar')
 @else
     @include('dashboard.cs.sidebar')
