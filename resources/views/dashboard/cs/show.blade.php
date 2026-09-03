@@ -16,7 +16,7 @@
 @section('content')
 <div style="max-width:800px;">
     <div style="display:flex; gap:12px; margin-bottom:16px; flex-wrap:wrap; align-items:center; justify-content:space-between;">
-        <a href="{{ auth()->user()->isSuperAdmin() ? route('admin.tickets') : route('dashboard.cs') }}" class="btn btn-outline btn-sm">← Kembali</a>
+        <a href="{{ auth()->user()->isSuperAdmin() ? route('admin.tickets') : route('dashboard.cs') }}" class="btn btn-outline btn-sm">Kembali</a>
         <div style="display:flex; gap:8px; align-items:center;">
             <a href="{{ route('service.track') }}?ticket_number={{ $ticket->ticket_number }}"
                target="_blank" class="btn btn-outline btn-sm">Lihat Tracking Publik</a>
