@@ -75,6 +75,13 @@ class ServiceController extends Controller
             'created_by'         => auth()->id(),
         ]);
 
+        // Synchronize to Airtable
+        try {
+            app(\App\Services\AirtableService::class)->syncTicket($ticket->fresh());
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Airtable Sync on Customer Booking failed: ' . $e->getMessage());
+        }
+
         return view('service.success', compact('ticket'));
     }
 

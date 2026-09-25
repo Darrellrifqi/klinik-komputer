@@ -88,6 +88,8 @@ Route::middleware(['auth', 'role:cs'])->prefix('dashboard/cs')->group(function (
     Route::get('/tickets/{ticket}', [TicketController::class, 'show'])->name('dashboard.cs.show');
     Route::post('/tickets/{ticket}/status', [TicketController::class, 'updateTicketStatus'])->name('dashboard.cs.tickets.update_status');
     Route::delete('/tickets/{ticket}', [TicketController::class, 'destroy'])->name('dashboard.cs.tickets.destroy');
+    Route::get('/tickets/{ticket}/invoice', [TicketController::class, 'printInvoice'])->name('dashboard.cs.tickets.invoice');
+    Route::get('/tickets/{ticket}/receipt', [TicketController::class, 'printReceipt'])->name('dashboard.cs.tickets.receipt');
     Route::get('/procurement-list', [TicketController::class, 'procurementIndex'])->name('dashboard.cs.procurement.index');
     Route::get('/procurement/{order}', [TicketController::class, 'showProcurement'])->name('dashboard.cs.procurement.show');
     Route::post('/procurement/{order}/update', [TicketController::class, 'updateProcurement'])->name('dashboard.cs.procurement.update');

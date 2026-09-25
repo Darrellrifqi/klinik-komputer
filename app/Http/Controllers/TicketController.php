@@ -194,6 +194,13 @@ class TicketController extends Controller
             'notes'      => 'Tiket Walk-in dibuat oleh CS: ' . auth()->user()->name,
         ]);
 
+        // Synchronize to Airtable
+        try {
+            app(\App\Services\AirtableService::class)->syncTicket($ticket->fresh());
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Airtable Sync on Ticket Create failed: ' . $e->getMessage());
+        }
+
         return redirect()->route('dashboard.cs')->with('success', "Tiket Walk-in {$ticket->ticket_number} berhasil dibuat dan masuk ke Antrian Servis. Nomor antrian: #{$ticket->queue_number}");
     }
 
@@ -348,6 +355,13 @@ class TicketController extends Controller
             'notes'      => $request->notes ?: 'Status diperbarui oleh CS: ' . auth()->user()->name,
         ]);
 
+        // Synchronize to Airtable
+        try {
+            app(\App\Services\AirtableService::class)->syncTicket($ticket->fresh());
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Airtable Sync on Ticket Status Update failed: ' . $e->getMessage());
+        }
+
         return back()->with('success', 'Status tracking tiket berhasil diperbarui menjadi: ' . $ticket->fresh()->status_label);
     }
 
@@ -388,5 +402,246 @@ class TicketController extends Controller
         $ticket->delete();
 
         return redirect()->route('dashboard.cs')->with('success', "Tiket {$ticketNumber} berhasil dihapus secara permanen dari database.");
+    }
+
+    public function printInvoice(Request $request, Ticket $ticket)
+    {
+        // CS bisa override harga lewat query param ?price=xxx
+        $harga = (float) $request->query('price', $ticket->estimated_cost ?? 0);
+
+        // Format nomor invoice: SSINV{YY}-{Bulan}{Tanggal}{Urutan}
+        // Menggunakan tanggal hari ini (tanggal cetak invoice)
+        $today        = now()->timezone('Asia/Jakarta');
+        $todayDateStr = $today->format('Y-m-d');
+        $todayKey     = 'invoice_daily_tickets_' . $todayDateStr;
+        $invoicedToday = \Illuminate\Support\Facades\Cache::get($todayKey, []);
+        if (!in_array($ticket->id, $invoicedToday)) {
+            $invoicedToday[] = $ticket->id;
+            \Illuminate\Support\Facades\Cache::put($todayKey, $invoicedToday, now()->endOfDay());
+        }
+        $orderOfDay       = array_search($ticket->id, $invoicedToday) + 1;
+        $defaultInvNumber = 'SSINV' . $today->format('y') . '-' . $today->format('md') . str_pad($orderOfDay, 2, '0', STR_PAD_LEFT);
+
+        $invoiceNumber = $request->query('inv', $defaultInvNumber);
+        $invoiceDate   = $today->format('d F Y');
+        $dueDate       = $today->copy()->addDays(1)->format('d F Y');
+        $term          = '1 days';
+        $noPo          = '-';
+
+        // Buat deskripsi item default jika tidak diisi CS
+        $itemBrandModel = trim(($ticket->brand ?? '') . ' ' . ($ticket->model ?? ''));
+        $componentPart  = '';
+        if (!empty($ticket->components_issue)) {
+            $componentPart = is_array($ticket->components_issue)
+                ? implode(', ', $ticket->components_issue)
+                : $ticket->components_issue;
+        }
+
+        if ($componentPart && $itemBrandModel) {
+            $defaultDesc = $componentPart . ' ' . $itemBrandModel;
+        } elseif ($itemBrandModel) {
+            $defaultDesc = $itemBrandModel;
+        } elseif ($componentPart) {
+            $defaultDesc = $componentPart;
+        } else {
+            $defaultDesc = $ticket->unit_type ? 'Servis ' . ucfirst($ticket->unit_type) : 'Servis Unit Komputer';
+        }
+
+        $description   = $request->query('desc', $defaultDesc);
+        $bankAccount   = $request->query('bank_account', 'CIMB 1100');
+
+        // Handle multiple items jika ada
+        $itemsJson = $request->query('items');
+        $items = [];
+        if ($itemsJson) {
+            $decoded = json_decode($itemsJson, true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                $items = $decoded;
+            }
+        }
+        if (empty($items)) {
+            $items = [
+                [
+                    'desc'   => $description,
+                    'qty'    => 1,
+                    'price'  => $harga,
+                    'amount' => $harga,
+                ]
+            ];
+        }
+
+        $calculatedTotal = 0;
+        foreach ($items as &$item) {
+            $item['desc']   = trim($item['desc'] ?? '');
+            $item['qty']    = isset($item['qty']) && (int)$item['qty'] > 0 ? (int)$item['qty'] : 1;
+            $item['price']  = isset($item['price']) ? (float)$item['price'] : 0;
+            $item['amount'] = isset($item['amount']) && (float)$item['amount'] > 0 ? (float)$item['amount'] : ($item['qty'] * $item['price']);
+            $calculatedTotal += $item['amount'];
+        }
+        unset($item);
+
+        if ($calculatedTotal > 0) {
+            $harga = $calculatedTotal;
+        }
+
+        $terbilangText = $this->terbilang((int)$harga);
+
+        return view('dashboard.cs.invoice', compact(
+            'ticket',
+            'harga',
+            'invoiceNumber',
+            'invoiceDate',
+            'dueDate',
+            'term',
+            'noPo',
+            'description',
+            'items',
+            'bankAccount',
+            'terbilangText'
+        ));
+    }
+
+    public function printReceipt(Request $request, Ticket $ticket)
+    {
+        $harga = (float) $request->query('price', $ticket->estimated_cost ?? 0);
+
+        // Format nomor invoice & receipt: SSINV/PR{YY}-{Bulan}{Tanggal}{Urutan}
+        $today        = now()->timezone('Asia/Jakarta');
+        $todayDateStr = $today->format('Y-m-d');
+        $todayKey     = 'invoice_daily_tickets_' . $todayDateStr;
+        $invoicedToday = \Illuminate\Support\Facades\Cache::get($todayKey, []);
+        if (!in_array($ticket->id, $invoicedToday)) {
+            $invoicedToday[] = $ticket->id;
+            \Illuminate\Support\Facades\Cache::put($todayKey, $invoicedToday, now()->endOfDay());
+        }
+        $orderOfDay       = array_search($ticket->id, $invoicedToday) + 1;
+        $defaultInvNumber = 'SSINV' . $today->format('y') . '-' . $today->format('md') . str_pad($orderOfDay, 2, '0', STR_PAD_LEFT);
+        $defaultRecNumber = 'PR' . $today->format('y') . '-' . $today->format('md') . str_pad($orderOfDay, 2, '0', STR_PAD_LEFT);
+
+        $receiptNumber = $request->query('rec', $defaultRecNumber);
+        $invoiceNumber = $request->query('inv', $defaultInvNumber);
+        $receiptDate   = $today->format('d F Y');
+        $paidBy        = $request->query('paid_by', 'Bank Transfer');
+        $paymentMethod = $request->query('payment_method', 'CIMB 1100');
+        $noteStatus    = $request->query('note_status', 'Dibayar Lunas');
+        $extraNote     = $request->query('extra_note', '');
+        $warranty      = $request->query('warranty', 'Garansi Sparepart 3 Bulan');
+        $picName       = $request->query('pic', $ticket->pic_name ?: 'Bagus Mayan Permana');
+
+        // Buat deskripsi item default jika tidak diisi CS
+        $itemBrandModel = trim(($ticket->brand ?? '') . ' ' . ($ticket->model ?? ''));
+        $componentPart  = '';
+        if (!empty($ticket->components_issue)) {
+            $componentPart = is_array($ticket->components_issue)
+                ? implode(', ', $ticket->components_issue)
+                : $ticket->components_issue;
+        }
+
+        if ($componentPart && $itemBrandModel) {
+            $defaultDesc = $componentPart . ' ' . $itemBrandModel;
+        } elseif ($itemBrandModel) {
+            $defaultDesc = $itemBrandModel;
+        } elseif ($componentPart) {
+            $defaultDesc = $componentPart;
+        } else {
+            $defaultDesc = $ticket->unit_type ? 'Servis ' . ucfirst($ticket->unit_type) : 'Servis Unit Komputer';
+        }
+
+        $description   = $request->query('desc', $defaultDesc);
+
+        // Handle multiple product descriptions jika ada
+        $itemsJson = $request->query('items');
+        $items = [];
+        $calculatedTotal = 0;
+        if ($itemsJson) {
+            $decoded = json_decode($itemsJson, true);
+            if (is_array($decoded) && count($decoded) > 0) {
+                foreach ($decoded as $it) {
+                    if (is_array($it)) {
+                        $d = trim($it['desc'] ?? '');
+                        $q = isset($it['qty']) && (int)$it['qty'] > 0 ? (int)$it['qty'] : 1;
+                        $p = isset($it['price']) ? (float)$it['price'] : 0;
+                        $a = isset($it['amount']) && (float)$it['amount'] > 0 ? (float)$it['amount'] : ($q * $p);
+                        if ($d !== '') {
+                            $items[] = [
+                                'desc'   => $d,
+                                'qty'    => $q,
+                                'price'  => $p,
+                                'amount' => $a,
+                            ];
+                            $calculatedTotal += $a;
+                        }
+                    } elseif (is_string($it) && trim($it) !== '') {
+                        $items[] = [
+                            'desc'   => trim($it),
+                            'qty'    => 1,
+                            'price'  => $harga,
+                            'amount' => $harga,
+                        ];
+                    }
+                }
+            }
+        }
+        if (empty($items)) {
+            $items = [
+                [
+                    'desc'   => $description,
+                    'qty'    => 1,
+                    'price'  => $harga,
+                    'amount' => $harga,
+                ]
+            ];
+        }
+
+        if ($calculatedTotal > 0 && (!$request->has('price') || (float)$request->query('price') <= 0 || (float)$request->query('price') == $calculatedTotal)) {
+            $harga = $calculatedTotal;
+        }
+
+        $terbilangText = $this->terbilang((int)$harga);
+
+        return view('dashboard.cs.receipt', compact(
+            'ticket',
+            'harga',
+            'receiptNumber',
+            'invoiceNumber',
+            'receiptDate',
+            'paidBy',
+            'paymentMethod',
+            'noteStatus',
+            'extraNote',
+            'description',
+            'items',
+            'warranty',
+            'picName',
+            'terbilangText'
+        ));
+    }
+
+    private function terbilang($nilai)
+    {
+        $nilai = abs($nilai);
+        $huruf = ["", "satu", "dua", "tiga", "empat", "lima", "enam", "tujuh", "delapan", "sembilan", "sepuluh", "sebelas"];
+        if ($nilai < 12) {
+            return " " . $huruf[$nilai];
+        } elseif ($nilai < 20) {
+            return $this->terbilang($nilai - 10) . " belas";
+        } elseif ($nilai < 100) {
+            return $this->terbilang((int)($nilai / 10)) . " puluh" . $this->terbilang($nilai % 10);
+        } elseif ($nilai < 200) {
+            return " seratus" . $this->terbilang($nilai - 100);
+        } elseif ($nilai < 1000) {
+            return $this->terbilang((int)($nilai / 100)) . " ratus" . $this->terbilang($nilai % 100);
+        } elseif ($nilai < 2000) {
+            return " seribu" . $this->terbilang($nilai - 1000);
+        } elseif ($nilai < 1000000) {
+            return $this->terbilang((int)($nilai / 1000)) . " ribu" . $this->terbilang($nilai % 1000);
+        } elseif ($nilai < 1000000000) {
+            return $this->terbilang((int)($nilai / 1000000)) . " juta" . $this->terbilang($nilai % 1000000);
+        } elseif ($nilai < 1000000000000) {
+            return $this->terbilang((int)($nilai / 1000000000)) . " milyar" . $this->terbilang(fmod($nilai, 1000000000));
+        } elseif ($nilai < 1000000000000000) {
+            return $this->terbilang((int)($nilai / 1000000000000)) . " trilyun" . $this->terbilang(fmod($nilai, 1000000000000));
+        }
+        return "";
     }
 }

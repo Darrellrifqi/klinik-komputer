@@ -165,6 +165,7 @@
         </div>
         <div class="footer-bottom">
             <span>&copy; {{ date('Y') }} Klinik Komputer | PT Mabito Karya. All rights reserved.</span>
+            <span style="font-weight: 500; opacity: 0.85;">Developer by Drl</span>
             <span style="font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Mitra Resmi Axioo</span>
         </div>
     </footer>

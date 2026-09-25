@@ -178,6 +178,13 @@ class TechnicianController extends Controller
             'notes'      => $notes,
         ]);
 
+        // Synchronize to Airtable
+        try {
+            app(\App\Services\AirtableService::class)->syncTicket($ticket->fresh());
+        } catch (\Throwable $e) {
+            \Illuminate\Support\Facades\Log::warning('Airtable Sync on Technician Status Update failed: ' . $e->getMessage());
+        }
+
         return redirect()->back()->with('success', 'Status tiket berhasil diperbarui.');
     }
 

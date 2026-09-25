@@ -28,6 +28,368 @@
         </div>
     </div>
 
+    <!-- Invoice & Receipt Print Buttons -->
+    <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+        <button
+            onclick="document.getElementById('modalInvoice').style.display='flex'"
+            style="display:inline-flex; align-items:center; gap:8px; padding:9px 18px; background:#1e3a5f; color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(30,58,95,0.25); font-family:inherit;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            Cetak Invoice
+        </button>
+
+        <button
+            onclick="document.getElementById('modalReceipt').style.display='flex'"
+            style="display:inline-flex; align-items:center; gap:8px; padding:9px 18px; background:#15803d; color:white; border:none; border-radius:8px; font-size:0.85rem; font-weight:700; cursor:pointer; box-shadow:0 2px 8px rgba(21,128,61,0.25); font-family:inherit;">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Cetak Payment Receipt
+        </button>
+    </div>
+
+    <!-- Modal Input Harga Invoice -->
+    <div id="modalInvoice"
+         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center; padding:20px;"
+         onclick="if(event.target===this) this.style.display='none'">
+        <div style="background:white; border-radius:12px; padding:28px 32px; max-width:540px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:92vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                <div>
+                    <div style="font-size:1.05rem; font-weight:800; color:#1a202c;">Cetak Invoice</div>
+                    <div style="font-size:0.78rem; color:#64748b; margin-top:2px;">{{ $ticket->ticket_number }} &bull; {{ $ticket->customer_name }}</div>
+                </div>
+                <button onclick="document.getElementById('modalInvoice').style.display='none'" style="background:none; border:none; cursor:pointer; color:#94a3b8; font-size:1.4rem; line-height:1;">&#x2715;</button>
+            </div>
+
+            @php
+                $defaultPart = '';
+                if (!empty($ticket->components_issue)) {
+                    $defaultPart = is_array($ticket->components_issue) ? implode(', ', $ticket->components_issue) : $ticket->components_issue;
+                }
+                $brandModel = trim(($ticket->brand ?? '') . ' ' . ($ticket->model ?? ''));
+                if ($defaultPart && $brandModel) {
+                    $initialDesc = $defaultPart . ' ' . $brandModel;
+                } elseif ($brandModel) {
+                    $initialDesc = $brandModel;
+                } elseif ($defaultPart) {
+                    $initialDesc = $defaultPart;
+                } else {
+                    $initialDesc = $ticket->unit_type ? 'Servis ' . ucfirst($ticket->unit_type) : 'Servis Komputer';
+                }
+            @endphp
+
+            <!-- Daftar Produk / Layanan -->
+            <div style="margin-bottom:14px;">
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:#374151; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;">
+                    Daftar Produk / Layanan
+                </label>
+                <div id="invoiceItemsContainer" style="display:flex; flex-direction:column; gap:8px;">
+                    <div class="inv-item-row" style="display:flex; gap:8px; align-items:center;">
+                        <input type="text"
+                               class="inv-item-desc"
+                               value="{{ $initialDesc }}"
+                               placeholder="Nama Produk / Layanan"
+                               style="flex:2; min-width:0; padding:9px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none;"
+                               onfocus="this.style.borderColor='#1e3a5f'"
+                               onblur="this.style.borderColor='#e2e8f0'">
+                        <div style="display:flex; align-items:center; gap:3px;">
+                            <input type="number"
+                                   class="inv-item-qty"
+                                   value="1"
+                                   min="1"
+                                   title="Jumlah"
+                                   style="width:50px; padding:9px 6px; text-align:center; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:700; color:#1a202c; font-family:inherit; outline:none;"
+                                   oninput="calcInvoiceTotals()"
+                                   onfocus="this.style.borderColor='#1e3a5f'"
+                                   onblur="this.style.borderColor='#e2e8f0'">
+                            <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Unit</span>
+                        </div>
+                        <div style="flex:1.4; min-width:0;">
+                            <input type="number"
+                                   class="inv-item-price"
+                                   value="{{ $ticket->estimated_cost ?? '' }}"
+                                   placeholder="Harga (Rp)"
+                                   min="0"
+                                   style="width:100%; padding:9px 10px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:700; color:#1a202c; font-family:inherit; outline:none;"
+                                   oninput="calcInvoiceTotals()"
+                                   onfocus="this.style.borderColor='#1e3a5f'"
+                                   onblur="this.style.borderColor='#e2e8f0'">
+                        </div>
+                        <button type="button"
+                                class="btn-del-inv-item"
+                                onclick="removeInvoiceItemRow(this)"
+                                style="display:none; padding:7px 9px; background:#fee2e2; color:#dc2626; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.85rem;"
+                                title="Hapus Barang">✕</button>
+                    </div>
+                </div>
+
+                <button type="button"
+                        onclick="addInvoiceItemRow()"
+                        style="margin-top:8px; display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:#eff6ff; color:#1e3a5f; border:1.5px dashed #93c5fd; border-radius:6px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; transition:background 0.15s;"
+                        onmouseover="this.style.background='#dbeafe'"
+                        onmouseout="this.style.background='#eff6ff'">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Add Produk
+                </button>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:6px;">
+                <div>
+                    <label style="display:block; font-size:0.75rem; font-weight:700; color:#374151; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;">
+                        Total Harga (Rp)
+                    </label>
+                    <input type="number"
+                           id="invoicePriceInput"
+                           value="{{ $ticket->estimated_cost ?? '' }}"
+                           placeholder="0"
+                           min="0"
+                           style="width:100%; padding:10px 14px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.95rem; font-weight:700; color:#1a202c; font-family:inherit; outline:none; background:#f8fafc;"
+                           readonly>
+                </div>
+                <div>
+                    <label style="display:block; font-size:0.75rem; font-weight:700; color:#374151; margin-bottom:6px; text-transform:uppercase; letter-spacing:0.05em;">
+                        Detail Akun
+                    </label>
+                    <select id="invoiceBankAccountInput"
+                            style="width:100%; padding:10px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none; background:#ffffff; cursor:pointer;"
+                            onfocus="this.style.borderColor='#1e3a5f'"
+                            onblur="this.style.borderColor='#e2e8f0'">
+                        <option value="CIMB 1100" selected>CIMB 1100</option>
+                        <option value="CIMB 5600">CIMB 5600</option>
+                    </select>
+                </div>
+            </div>
+            <div id="invoicePriceHelper" style="font-size:0.72rem; color:#94a3b8; margin-bottom:16px;">
+                @if($ticket->estimated_cost)
+                    Total Terhitung: Rp {{ number_format($ticket->estimated_cost, 0, ',', '.') }}
+                @else
+                    Isi harga pada produk untuk menghitung total otomatis.
+                @endif
+            </div>
+
+            <div style="display:flex; gap:10px;">
+                <button
+                    onclick="
+                        var items = [];
+                        var rows = document.querySelectorAll('#invoiceItemsContainer .inv-item-row');
+                        rows.forEach(function(r) {
+                            var d = r.querySelector('.inv-item-desc').value.trim();
+                            var q = parseInt(r.querySelector('.inv-item-qty').value) || 1;
+                            var p = parseFloat(r.querySelector('.inv-item-price').value) || 0;
+                            if (d !== '') {
+                                items.push({ desc: d, qty: q, price: p, amount: q * p });
+                            }
+                        });
+                        if (items.length === 0) {
+                            alert('Silakan masukkan minimal 1 deskripsi produk / layanan.');
+                            return;
+                        }
+                        var price = document.getElementById('invoicePriceInput').value;
+                        if (!price || price <= 0) {
+                            alert('Silakan masukkan harga produk terlebih dahulu.');
+                            return;
+                        }
+                        var bank = document.getElementById('invoiceBankAccountInput').value;
+                        var url = '{{ route('dashboard.cs.tickets.invoice', $ticket) }}'
+                            + '?price=' + encodeURIComponent(price)
+                            + '&desc=' + encodeURIComponent(items[0].desc)
+                            + '&bank_account=' + encodeURIComponent(bank)
+                            + '&items=' + encodeURIComponent(JSON.stringify(items));
+                        window.open(url, '_blank');
+                        document.getElementById('modalInvoice').style.display='none';
+                    "
+                    style="flex:1; padding:11px 0; background:#1e3a5f; color:white; border:none; border-radius:8px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                    Buka & Cetak Invoice
+                </button>
+                <button
+                    onclick="document.getElementById('modalInvoice').style.display='none'"
+                    style="padding:11px 18px; background:#f1f5f9; color:#64748b; border:none; border-radius:8px; font-size:0.88rem; font-weight:600; cursor:pointer; font-family:inherit;">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Input Payment Receipt -->
+    <div id="modalReceipt"
+         style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.55); z-index:9999; align-items:center; justify-content:center; padding:20px;"
+         onclick="if(event.target===this) this.style.display='none'">
+        <div style="background:white; border-radius:12px; padding:28px 32px; max-width:480px; width:100%; box-shadow:0 20px 60px rgba(0,0,0,0.3); max-height:92vh; overflow-y:auto;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+                <div>
+                    <div style="font-size:1.05rem; font-weight:800; color:#1a202c;">Cetak Payment Receipt</div>
+                    <div style="font-size:0.78rem; color:#64748b; margin-top:2px;">{{ $ticket->ticket_number }} &bull; {{ $ticket->customer_name }}</div>
+                </div>
+                <button onclick="document.getElementById('modalReceipt').style.display='none'" style="background:none; border:none; cursor:pointer; color:#94a3b8; font-size:1.4rem; line-height:1;">&#x2715;</button>
+            </div>
+
+            <!-- Jumlah Pembayaran -->
+            <div style="margin-bottom:13px;">
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:#374151; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em;">
+                    Jumlah Pembayaran / Amount (Rp)
+                </label>
+                <input type="number"
+                       id="receiptPriceInput"
+                       value="{{ $ticket->estimated_cost ?? '' }}"
+                       placeholder="Contoh: 245000"
+                       min="0"
+                       style="width:100%; padding:10px 14px; border:2px solid #e2e8f0; border-radius:8px; font-size:1rem; font-weight:700; color:#1a202c; font-family:inherit; outline:none; transition:border 0.15s;"
+                       onfocus="this.style.borderColor='#15803d'"
+                       onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+
+            <!-- Deskripsi Item / Sparepart -->
+            <div style="margin-bottom:13px;">
+                <label style="display:block; font-size:0.75rem; font-weight:700; color:#374151; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em;">
+                    Deskripsi Item / Sparepart
+                </label>
+                <div id="receiptItemsContainer" style="display:flex; flex-direction:column; gap:8px;">
+                    <div class="receipt-item-row" style="display:flex; gap:8px; align-items:center;">
+                        <input type="text"
+                               class="receipt-item-desc"
+                               value="{{ $initialDesc }}"
+                               placeholder="Contoh: Keyboard Dell Lattitude E7250"
+                               style="flex:1; padding:9px 14px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.9rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none; transition:border 0.15s;"
+                               onfocus="this.style.borderColor='#15803d'"
+                               onblur="this.style.borderColor='#e2e8f0'">
+                        <button type="button"
+                                class="btn-del-receipt-item"
+                                onclick="removeReceiptItemRow(this)"
+                                style="display:none; padding:7px 11px; background:#fee2e2; color:#dc2626; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.85rem;"
+                                title="Hapus Barang">✕</button>
+                    </div>
+                </div>
+
+                <button type="button"
+                        onclick="addReceiptItemRow()"
+                        style="margin-top:8px; display:inline-flex; align-items:center; gap:6px; padding:6px 14px; background:#f0fdf4; color:#15803d; border:1.5px dashed #86efac; border-radius:6px; font-size:0.78rem; font-weight:700; cursor:pointer; font-family:inherit; transition:background 0.15s;"
+                        onmouseover="this.style.background='#dcfce7'"
+                        onmouseout="this.style.background='#f0fdf4'">
+                    <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Add Produk
+                </button>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:13px;">
+                <!-- Paid By (Metode) -->
+                <div>
+                    <label style="display:block; font-size:0.73rem; font-weight:700; color:#374151; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em;">
+                        Metode (Paid By)
+                    </label>
+                    <select id="receiptPaidByInput"
+                            style="width:100%; padding:9px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none; background:#ffffff; cursor:pointer;"
+                            onfocus="this.style.borderColor='#15803d'"
+                            onblur="this.style.borderColor='#e2e8f0'">
+                        <option value="Bank Transfer" selected>Bank Transfer</option>
+                        <option value="Qris KK">Qris KK</option>
+                    </select>
+                </div>
+                <!-- Channel / Bank Account -->
+                <div>
+                    <label style="display:block; font-size:0.73rem; font-weight:700; color:#374151; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em;">
+                        Detail Akun
+                    </label>
+                    <select id="receiptPaymentMethodInput"
+                            style="width:100%; padding:9px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none; background:#ffffff; cursor:pointer;"
+                            onfocus="this.style.borderColor='#15803d'"
+                            onblur="this.style.borderColor='#e2e8f0'">
+                        <option value="CIMB 1100" selected>CIMB 1100</option>
+                        <option value="CIMB 5600">CIMB 5600</option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:16px;">
+                <!-- Status Pelunasan (Note) -->
+                <div>
+                    <label style="display:block; font-size:0.73rem; font-weight:700; color:#374151; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em;">
+                        Status Catatan
+                    </label>
+                    <select id="receiptNoteStatusInput"
+                            style="width:100%; padding:9px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none; background:#ffffff; cursor:pointer;"
+                            onfocus="this.style.borderColor='#15803d'"
+                            onblur="this.style.borderColor='#e2e8f0'">
+                        <option value="Dibayar Lunas" selected>Dibayar Lunas</option>
+                        <option value="Down Payment 50%">Down Payment 50%</option>
+                    </select>
+                </div>
+                <!-- Garansi -->
+                <div>
+                    <label style="display:block; font-size:0.73rem; font-weight:700; color:#374151; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em;">
+                        Garansi Sparepart / Service
+                    </label>
+                    <select id="receiptWarrantyInput"
+                            style="width:100%; padding:9px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none; background:#ffffff; cursor:pointer;"
+                            onfocus="this.style.borderColor='#15803d'"
+                            onblur="this.style.borderColor='#e2e8f0'">
+                        <option value="Garansi Service 14 Hari">Garansi Service 14 Hari</option>
+                        <option value="Garansi Sparepart 1 Bulan">Garansi Sparepart 1 Bulan</option>
+                        <option value="Garansi Sparepart 3 Bulan" selected>Garansi Sparepart 3 Bulan</option>
+                        <option value="Garansi Sparepart 6 Bulan">Garansi Sparepart 6 Bulan</option>
+                        <option value="Garansi Sparepart 9 Bulan">Garansi Sparepart 9 Bulan</option>
+                        <option value="Garansi Sparepart 12 Bulan">Garansi Sparepart 12 Bulan</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Keterangan Tambahan -->
+            <div style="margin-bottom:16px;">
+                <label style="display:block; font-size:0.73rem; font-weight:700; color:#374151; margin-bottom:5px; text-transform:uppercase; letter-spacing:0.05em;">
+                    Keterangan Tambahan (Opsional)
+                </label>
+                <input type="text"
+                       id="receiptExtraNoteInput"
+                       placeholder="Contoh: Sisa pelunasan saat pengambilan unit / dll."
+                       style="width:100%; padding:9px 14px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none; transition:border 0.15s;"
+                       onfocus="this.style.borderColor='#15803d'"
+                       onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button
+                    onclick="
+                        var rItems = [];
+                        var rRows = document.querySelectorAll('#receiptItemsContainer .receipt-item-row');
+                        rRows.forEach(function(r) {
+                            var val = r.querySelector('.receipt-item-desc').value.trim();
+                            if (val !== '') rItems.push(val);
+                        });
+                        if (rItems.length === 0) {
+                            alert('Silakan masukkan minimal 1 deskripsi produk.');
+                            return;
+                        }
+                        var price = document.getElementById('receiptPriceInput').value;
+                        if(!price || price <= 0) { alert('Silakan masukkan jumlah pembayaran terlebih dahulu.'); return; }
+                        var paidBy = document.getElementById('receiptPaidByInput').value;
+                        var method = document.getElementById('receiptPaymentMethodInput').value;
+                        var noteStatus = document.getElementById('receiptNoteStatusInput').value;
+                        var warranty = document.getElementById('receiptWarrantyInput').value;
+                        var extraNote = document.getElementById('receiptExtraNoteInput').value;
+
+                        var url = '{{ route('dashboard.cs.tickets.receipt', $ticket) }}'
+                            + '?price=' + encodeURIComponent(price)
+                            + '&desc=' + encodeURIComponent(rItems[0])
+                            + '&paid_by=' + encodeURIComponent(paidBy)
+                            + '&payment_method=' + encodeURIComponent(method)
+                            + '&note_status=' + encodeURIComponent(noteStatus)
+                            + '&extra_note=' + encodeURIComponent(extraNote)
+                            + '&warranty=' + encodeURIComponent(warranty)
+                            + '&items=' + encodeURIComponent(JSON.stringify(rItems));
+
+                        window.open(url, '_blank');
+                        document.getElementById('modalReceipt').style.display='none';
+                    "
+                    style="flex:1; padding:11px 0; background:#15803d; color:white; border:none; border-radius:8px; font-size:0.88rem; font-weight:700; cursor:pointer; font-family:inherit; display:flex; align-items:center; justify-content:center; gap:8px; box-shadow:0 2px 8px rgba(21,128,61,0.25);">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                    Buka & Cetak Payment Receipt
+                </button>
+                <button
+                    onclick="document.getElementById('modalReceipt').style.display='none'"
+                    style="padding:11px 18px; background:#f1f5f9; color:#64748b; border:none; border-radius:8px; font-size:0.88rem; font-weight:600; cursor:pointer; font-family:inherit;">
+                    Batal
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Ticket Header -->
     <div class="dash-card" style="margin-bottom:16px;">
         <div class="dash-card-header" style="display:flex; justify-content:space-between; align-items:center;">
@@ -508,6 +870,135 @@
 
 @push('scripts')
 <script>
+// Invoice Dynamic Item Functions
+function calcInvoiceTotals() {
+    var rows = document.querySelectorAll('#invoiceItemsContainer .inv-item-row');
+    var total = 0;
+    rows.forEach(function(row) {
+        var qtyInput = row.querySelector('.inv-item-qty');
+        var priceInput = row.querySelector('.inv-item-price');
+        var qty = parseInt(qtyInput ? qtyInput.value : 1) || 1;
+        var price = parseFloat(priceInput ? priceInput.value : 0) || 0;
+        total += (qty * price);
+    });
+    var priceInput = document.getElementById('invoicePriceInput');
+    if (priceInput) {
+        priceInput.value = total;
+    }
+    var helper = document.getElementById('invoicePriceHelper');
+    if (helper) {
+        helper.textContent = 'Total Terhitung: Rp ' + total.toLocaleString('id-ID');
+    }
+}
+
+function addInvoiceItemRow() {
+    var container = document.getElementById('invoiceItemsContainer');
+    if (!container) return;
+    var row = document.createElement('div');
+    row.className = 'inv-item-row';
+    row.style.cssText = 'display:flex; gap:8px; align-items:center;';
+    row.innerHTML = `
+        <input type="text"
+               class="inv-item-desc"
+               placeholder="Nama Produk / Layanan Tambahan"
+               style="flex:2; min-width:0; padding:9px 12px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none;"
+               onfocus="this.style.borderColor='#1e3a5f'"
+               onblur="this.style.borderColor='#e2e8f0'">
+        <div style="display:flex; align-items:center; gap:3px;">
+            <input type="number"
+                   class="inv-item-qty"
+                   value="1"
+                   min="1"
+                   title="Jumlah"
+                   style="width:50px; padding:9px 6px; text-align:center; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:700; color:#1a202c; font-family:inherit; outline:none;"
+                   oninput="calcInvoiceTotals()"
+                   onfocus="this.style.borderColor='#1e3a5f'"
+                   onblur="this.style.borderColor='#e2e8f0'">
+            <span style="font-size:0.75rem; color:#64748b; font-weight:600;">Unit</span>
+        </div>
+        <div style="flex:1.4; min-width:0;">
+            <input type="number"
+                   class="inv-item-price"
+                   placeholder="Harga (Rp)"
+                   min="0"
+                   style="width:100%; padding:9px 10px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.88rem; font-weight:700; color:#1a202c; font-family:inherit; outline:none;"
+                   oninput="calcInvoiceTotals()"
+                   onfocus="this.style.borderColor='#1e3a5f'"
+                   onblur="this.style.borderColor='#e2e8f0'">
+        </div>
+        <button type="button"
+                class="btn-del-inv-item"
+                onclick="removeInvoiceItemRow(this)"
+                style="padding:7px 9px; background:#fee2e2; color:#dc2626; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.85rem;"
+                title="Hapus Barang">✕</button>
+    `;
+    container.appendChild(row);
+    updateInvoiceDeleteButtons();
+    row.querySelector('.inv-item-desc').focus();
+}
+
+function removeInvoiceItemRow(btn) {
+    var row = btn.closest('.inv-item-row');
+    if (row) {
+        row.remove();
+        updateInvoiceDeleteButtons();
+        calcInvoiceTotals();
+    }
+}
+
+function updateInvoiceDeleteButtons() {
+    var rows = document.querySelectorAll('#invoiceItemsContainer .inv-item-row');
+    rows.forEach(function(row) {
+        var btn = row.querySelector('.btn-del-inv-item');
+        if (btn) {
+            btn.style.display = rows.length > 1 ? 'block' : 'none';
+        }
+    });
+}
+
+// Receipt Dynamic Item Functions
+function addReceiptItemRow() {
+    var container = document.getElementById('receiptItemsContainer');
+    if (!container) return;
+    var row = document.createElement('div');
+    row.className = 'receipt-item-row';
+    row.style.cssText = 'display:flex; gap:8px; align-items:center;';
+    row.innerHTML = `
+        <input type="text"
+               class="receipt-item-desc"
+               placeholder="Contoh: Sparepart / Item Tambahan"
+               style="flex:1; padding:9px 14px; border:2px solid #e2e8f0; border-radius:8px; font-size:0.9rem; font-weight:600; color:#1a202c; font-family:inherit; outline:none; transition:border 0.15s;"
+               onfocus="this.style.borderColor='#15803d'"
+               onblur="this.style.borderColor='#e2e8f0'">
+        <button type="button"
+                class="btn-del-receipt-item"
+                onclick="removeReceiptItemRow(this)"
+                style="padding:7px 11px; background:#fee2e2; color:#dc2626; border:none; border-radius:6px; cursor:pointer; font-weight:bold; font-size:0.85rem;"
+                title="Hapus Barang">✕</button>
+    `;
+    container.appendChild(row);
+    updateReceiptDeleteButtons();
+    row.querySelector('.receipt-item-desc').focus();
+}
+
+function removeReceiptItemRow(btn) {
+    var row = btn.closest('.receipt-item-row');
+    if (row) {
+        row.remove();
+        updateReceiptDeleteButtons();
+    }
+}
+
+function updateReceiptDeleteButtons() {
+    var rows = document.querySelectorAll('#receiptItemsContainer .receipt-item-row');
+    rows.forEach(function(row) {
+        var btn = row.querySelector('.btn-del-receipt-item');
+        if (btn) {
+            btn.style.display = rows.length > 1 ? 'block' : 'none';
+        }
+    });
+}
+
 function updateFormFields() {
     const statusSelect = document.getElementById('statusSelect');
     const subStatusSelect = document.getElementById('subStatusSelect');
