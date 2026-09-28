@@ -22,8 +22,13 @@ echo [3/5] Current status:
 git status --short
 
 echo.
-set /p COMMIT_MSG=Masukkan commit message (kosongkan untuk default): 
-if "%COMMIT_MSG%"=="" set COMMIT_MSG=Update program Klinik Komputer
+:: Auto commit message pakai tanggal & waktu sekarang
+for /f "tokens=1-3 delims=/" %%a in ("%DATE%") do set TODAY=%%c-%%b-%%a
+for /f "tokens=1-2 delims=:" %%a in ("%TIME: =0%") do set TIMENOW=%%a%%b
+set AUTO_MSG=Update %TODAY% %TIMENOW%
+
+set /p COMMIT_MSG=Commit message (Enter untuk pakai: "%AUTO_MSG%"): 
+if "%COMMIT_MSG%"=="" set COMMIT_MSG=%AUTO_MSG%
 
 echo.
 echo [4/5] Creating commit: "%COMMIT_MSG%"
@@ -35,15 +40,23 @@ git push origin main
 
 if %ERRORLEVEL% NEQ 0 (
     echo.
-    echo [ERROR] Push gagal! Coba pull dulu dengan: git pull origin main
-    pause
-    exit /b 1
+    echo [ERROR] Push gagal! Mencoba pull terlebih dahulu...
+    git pull origin main --rebase
+    echo.
+    echo Retry push...
+    git push origin main
+    if %ERRORLEVEL% NEQ 0 (
+        echo.
+        echo [ERROR] Push tetap gagal. Cek koneksi atau resolve conflict secara manual.
+        pause
+        exit /b 1
+    )
 )
 
 echo.
 echo ========================================================
-echo   Proses Push Berhasil Selesai!
-echo   Cek repository Anda di GitHub:
+echo   Push Berhasil!
+echo   Cek repository Anda di:
 echo   https://github.com/Darrellrifqi/klinik-komputer
 echo ========================================================
 echo.
